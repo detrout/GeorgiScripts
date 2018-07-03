@@ -10,11 +10,6 @@ import sys
 import numpy
 from sets import Set
 
-try:
-	import psyco
-	psyco.full()
-except:
-	pass
 
 def run():
 
