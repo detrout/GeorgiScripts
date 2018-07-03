@@ -41,34 +41,7 @@ def main(cmdline=None):
     if args.singlemodelgenes:
         print('will only use genes with one isoform')
 
-    listoflines = open(args.gtf, 'rt')
-    GeneDict={}
-    for line in listoflines:
-        if line.startswith('#'):
-            continue
-        fields=line.strip().split('\t')
-        if fields[2]!='exon':
-            continue
-        if args.biotype is not None:
-            if fields[1] != args.biotype:
-                continue
-        chr=fields[0]
-        strand=fields[6]
-        left=int(fields[3])
-        right=int(fields[4])
-        geneID=fields[8].split('gene_id "')[1].split('";')[0]
-        transcriptID=fields[8].split('transcript_id "')[1].split('";')[0]
-        if GeneDict.has_key(geneID):
-            pass
-        else:
-            GeneDict[geneID]={}
-        if GeneDict[geneID].has_key(transcriptID):
-            if chr != GeneDict[geneID][transcriptID][0][0]:
-                continue
-        else:
-            GeneDict[geneID][transcriptID]=[]
-        GeneDict[geneID][transcriptID].append((chr,left,right,strand))
-
+    GeneDict = get_gene_dict(args.gtf, args.biotype)
     print('finished inputting annotation')
 
     CoverageDict={}
@@ -166,6 +139,36 @@ def main(cmdline=None):
             outfile.write(str(i) + '\t' + str(output_Array[i])+'\n')
 
     outfile.close()
+
+def get_gene_dict(filename, source):
+    listoflines = open(filename, 'rt')
+    GeneDict={}
+    for line in listoflines:
+        if line.startswith('#'):
+            continue
+        fields=line.strip().split('\t')
+        if fields[2]!='exon':
+            continue
+        if source is not None and fields[1] != source:
+            continue
+        chr=fields[0]
+        strand=fields[6]
+        left=int(fields[3])
+        right=int(fields[4])
+        geneID=fields[8].split('gene_id "')[1].split('";')[0]
+        transcriptID=fields[8].split('transcript_id "')[1].split('";')[0]
+        if GeneDict.has_key(geneID):
+            pass
+        else:
+            GeneDict[geneID]={}
+        if GeneDict[geneID].has_key(transcriptID):
+            if chr != GeneDict[geneID][transcriptID][0][0]:
+                continue
+        else:
+            GeneDict[geneID][transcriptID]=[]
+        GeneDict[geneID][transcriptID].append((chr,left,right,strand))
+
+    return GeneDict
 
 if __name__ == '__main__':
     main()
