@@ -5,6 +5,7 @@
 # Georgi Marinov                 #
 #                                # 
 ##################################
+from __future__ import print_function
 
 from argparse import ArgumentParser
 import sys
@@ -29,16 +30,16 @@ def main(cmdline=None):
     args = parser.parse_args(cmdline)
 
     if args.biotype is not None:
-        print 'will only consider', args.biotype, 'genes'
+        print('will only consider', args.biotype, 'genes')
 
     if args.maxGeneLength is not None:
-        print 'will only consider genes longer than', args.minGeneLength, 'and shorter than', args.maxGeneLength
+        print('will only consider genes longer than', args.minGeneLength, 'and shorter than', args.maxGeneLength)
 
     if args.normalize:
-        print 'will normalize scores'
+        print('will normalize scores')
 
     if args.singlemodelgenes:
-        print 'will only use genes with one isoform'
+        print('will only use genes with one isoform')
 
     listoflines = open(args.gtf, 'rt')
     GeneDict={}
@@ -68,7 +69,7 @@ def main(cmdline=None):
             GeneDict[geneID][transcriptID]=[]
         GeneDict[geneID][transcriptID].append((chr,left,right,strand))
 
-    print 'finished inputting annotation'
+    print('finished inputting annotation')
 
     CoverageDict={}
 
@@ -106,13 +107,13 @@ def main(cmdline=None):
             if CoverageDict[chr].has_key(j):
                 CoverageDict[chr][j]=score
 
-    print 'finished inputting wiggle'
+    print('finished inputting wiggle')
 
     output_Array={}
     for i in range(100):
         output_Array[i]=0
 
-    print len(GeneDict.keys())
+    print(len(GeneDict.keys()))
 
     if args.printlist:
         outfile=open(args.outputfilename + '.geneList','w')
@@ -154,7 +155,7 @@ def main(cmdline=None):
     if args.printlist:
         outfile.close()
 
-    print geneNumber, 'genes considered'
+    print(geneNumber, 'genes considered')
 
     outfile=open(args.outputfilename, 'wt')
 
