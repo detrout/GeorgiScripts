@@ -61,7 +61,7 @@ def main(cmdline=None):
     for geneID in GeneDict.keys():
         NucleotideList=[]
         for transcriptID in GeneDict[geneID].keys():
-            for (chr,left,right,strand) in GeneDict[geneID][transcriptID]:
+            for (chromosome,left,right,strand) in GeneDict[geneID][transcriptID]:
                 for i in range(left,right):
                     NucleotideList.append(i)
         NucleotideList=list(Set(NucleotideList))
@@ -80,7 +80,7 @@ def main(cmdline=None):
             b=k+stepsize
             counts=[]
             for i in range(int(k),int(b)):
-                counts.append(CoverageDict[chr][NucleotideList[i]])
+                counts.append(CoverageDict[chromosome][NucleotideList[i]])
             final_vector.append(numpy.mean(counts))
             k=b
         i=0
@@ -117,7 +117,7 @@ def get_gene_dict(filename, source):
             continue
         if source is not None and fields[1] != source:
             continue
-        chr=fields[0]
+        chromosome=fields[0]
         strand=fields[6]
         left=int(fields[3])
         right=int(fields[4])
@@ -128,11 +128,11 @@ def get_gene_dict(filename, source):
         else:
             GeneDict[geneID]={}
         if GeneDict[geneID].has_key(transcriptID):
-            if chr != GeneDict[geneID][transcriptID][0][0]:
+            if chromosome != GeneDict[geneID][transcriptID][0][0]:
                 continue
         else:
             GeneDict[geneID][transcriptID]=[]
-        GeneDict[geneID][transcriptID].append((chr,left,right,strand))
+        GeneDict[geneID][transcriptID].append((chromosome,left,right,strand))
 
     return GeneDict
 
@@ -145,13 +145,13 @@ def build_coverage_dict(GeneDict, singlemodelgenes):
             continue
         i+=1
         for transcriptID in GeneDict[geneID].keys():
-            for (chr,left,right,strand) in GeneDict[geneID][transcriptID]:
-                if CoverageDict.has_key(chr):
+            for (chromosome,left,right,strand) in GeneDict[geneID][transcriptID]:
+                if CoverageDict.has_key(chromosome):
                     pass
                 else:
-                    CoverageDict[chr]={}
+                    CoverageDict[chromosome]={}
                 for j in range(left,right):
-                    CoverageDict[chr][j]=0
+                    CoverageDict[chromosome][j]=0
     return CoverageDict
 
 def score_wiggle(wigglename, CoverageDict):
@@ -162,17 +162,17 @@ def score_wiggle(wigglename, CoverageDict):
         if line.startswith('#'):
             continue
         fields=line.replace(' ','\t').strip().split('\t')
-        chr=fields[0]
+        chromosome=fields[0]
         left=int(fields[1])
         right=int(fields[2])
         score=float(fields[3])
-        if CoverageDict.has_key(chr):
+        if CoverageDict.has_key(chromosome):
             pass
         else:
             continue
         for j in range(left,right):
-            if CoverageDict[chr].has_key(j):
-                CoverageDict[chr][j]=score
+            if CoverageDict[chromosome].has_key(j):
+                CoverageDict[chromosome][j]=score
 
         
 if __name__ == '__main__':
