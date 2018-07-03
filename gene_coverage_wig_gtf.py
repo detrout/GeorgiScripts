@@ -44,42 +44,8 @@ def main(cmdline=None):
     GeneDict = get_gene_dict(args.gtf, args.biotype)
     print('finished inputting annotation')
 
-    CoverageDict={}
-
-    i=0
-    for geneID in GeneDict.keys():
-        if args.singlemodelgenes and len(GeneDict[geneID].keys()) > 1:
-            del GeneDict[geneID]
-            continue
-        i+=1
-        for transcriptID in GeneDict[geneID].keys():
-            for (chr,left,right,strand) in GeneDict[geneID][transcriptID]:
-                if CoverageDict.has_key(chr):
-                    pass
-                else:
-                    CoverageDict[chr]={}
-                for j in range(left,right):
-                    CoverageDict[chr][j]=0
-
-    listoflines = open(args.wig, 'rt')
-    for line in listoflines:
-        if line.startswith('track'):
-            continue
-        if line.startswith('#'):
-            continue
-        fields=line.replace(' ','\t').strip().split('\t')
-        chr=fields[0]
-        left=int(fields[1])
-        right=int(fields[2])
-        score=float(fields[3])
-        if CoverageDict.has_key(chr):
-            pass
-        else:
-            continue
-        for j in range(left,right):
-            if CoverageDict[chr].has_key(j):
-                CoverageDict[chr][j]=score
-
+    CoverageDict = build_coverage_dict(GeneDict, args.singlemodelgenes)
+    score_wiggle(args.wig, CoverageDict)
     print('finished inputting wiggle')
 
     output_Array={}
@@ -170,5 +136,44 @@ def get_gene_dict(filename, source):
 
     return GeneDict
 
+def build_coverage_dict(GeneDict, singlemodelgenes):
+    CoverageDict = {}
+    i=0
+    for geneID in GeneDict.keys():
+        if singlemodelgenes and len(GeneDict[geneID].keys()) > 1:
+            del GeneDict[geneID]
+            continue
+        i+=1
+        for transcriptID in GeneDict[geneID].keys():
+            for (chr,left,right,strand) in GeneDict[geneID][transcriptID]:
+                if CoverageDict.has_key(chr):
+                    pass
+                else:
+                    CoverageDict[chr]={}
+                for j in range(left,right):
+                    CoverageDict[chr][j]=0
+    return CoverageDict
+
+def score_wiggle(wigglename, CoverageDict):
+    listoflines = open(wigglename, 'rt')
+    for line in listoflines:
+        if line.startswith('track'):
+            continue
+        if line.startswith('#'):
+            continue
+        fields=line.replace(' ','\t').strip().split('\t')
+        chr=fields[0]
+        left=int(fields[1])
+        right=int(fields[2])
+        score=float(fields[3])
+        if CoverageDict.has_key(chr):
+            pass
+        else:
+            continue
+        for j in range(left,right):
+            if CoverageDict[chr].has_key(j):
+                CoverageDict[chr][j]=score
+
+        
 if __name__ == '__main__':
     main()
