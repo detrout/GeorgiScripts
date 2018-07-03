@@ -6,50 +6,41 @@
 #                                # 
 ##################################
 
+from argparse import ArgumentParser
 import sys
 import numpy
 from sets import Set
 
+def main(cmdline=None):
+    parser = ArgumentParser()
+    parser.add_argument('-field1', dest='biotype', help='biotype name')
+    parser.add_argument('-normalize', action='store_true', default=False,
+                        help='normalize scores')
+    parser.add_argument('-maxGeneLength', default=None, type=int,
+                        help='maximum gene length to consider')
+    parser.add_argument('-singlemodelgenes', default=False, action='store_true',
+                        help='only consider genes with a single model')
+    parser.add_argument('-printlist', default=False, action='store_true',
+                        help='write gene ids considered to <outfile>.geneList')
+    parser.add_argument('gtf', help='GTF file name')
+    parser.add_argument('wig', help='wiggle file to score')
+    parser.add_argument('minGeneLength', type=int, help='minimum gene length to consider')
+    parser.add_argument('outputfilename', help='filename to write coverage data to')
+    args = parser.parse_args(cmdline)
 
-def run():
+    if args.biotype is not None:
+        print 'will only consider', args.biotype, 'genes'
 
-    if len(sys.argv) < 4:
-        print 'usage: python %s gtf wig minGeneLength outfile [-field1 biotype] [-normalize] [-maxGeneLength bp] [-singlemodelgenes] [-printlist]' % sys.argv[0]
-        sys.exit(1)
+    if args.maxGeneLength is not None:
+        print 'will only consider genes longer than', args.minGeneLength, 'and shorter than', args.maxGeneLength
 
-    gtf = sys.argv[1]
-    wig = sys.argv[2]
-    minGeneLength = int(sys.argv[3])
-    outputfilename = sys.argv[4]
-
-    doPrintList = False
-    if '-printlist' in sys.argv:
-        doPrintList = True
-
-    doBioType=False
-    BioType=''
-    if '-field1' in sys.argv:
-        doBioType=True
-        BioType=sys.argv[sys.argv.index('-field1')+1]
-        print 'will only consider', BioType, 'genes'
-
-    doMaxGeneLength=False
-    if '-maxGeneLength' in sys.argv:
-        doMaxGeneLength=True
-        maxGeneLength=int(sys.argv[sys.argv.index('-maxGeneLength')+1])
-        print 'will only consider genes longer than', minGeneLength, 'and shorter than', maxGeneLength
-
-    doNormalize=False
-    if '-normalize' in sys.argv:
-        doNormalize=True
+    if args.normalize:
         print 'will normalize scores'
 
-    doSingleModel=False
-    if '-singlemodelgenes' in sys.argv:
-        doSingleModel=True
+    if args.singlemodelgenes:
         print 'will only use genes with one isoform'
 
-    listoflines = open(gtf)
+    listoflines = open(args.gtf, 'rt')
     GeneDict={}
     for line in listoflines:
         if line.startswith('#'):
@@ -57,8 +48,8 @@ def run():
         fields=line.strip().split('\t')
         if fields[2]!='exon':
             continue
-        if doBioType:
-            if fields[1] != BioType:
+        if args.biotype is not None:
+            if fields[1] != args.biotype:
                 continue
         chr=fields[0]
         strand=fields[6]
@@ -83,7 +74,7 @@ def run():
 
     i=0
     for geneID in GeneDict.keys():
-        if doSingleModel and len(GeneDict[geneID].keys()) > 1:
+        if args.singlemodelgenes and len(GeneDict[geneID].keys()) > 1:
             del GeneDict[geneID]
             continue
         i+=1
@@ -96,7 +87,7 @@ def run():
                 for j in range(left,right):
                     CoverageDict[chr][j]=0
 
-    listoflines = open(wig)
+    listoflines = open(args.wig, 'rt')
     for line in listoflines:
         if line.startswith('track'):
             continue
@@ -123,8 +114,8 @@ def run():
 
     print len(GeneDict.keys())
 
-    if doPrintList:
-        outfile=open(outputfilename + '.geneList','w')
+    if args.printlist:
+        outfile=open(args.outputfilename + '.geneList','w')
 
     geneNumber=0.0
     for geneID in GeneDict.keys():
@@ -138,11 +129,10 @@ def run():
         if strand=='-' or strand=='R':
             NucleotideList.reverse()
         geneLength=len(NucleotideList)
-        if geneLength < minGeneLength:
+        if geneLength < args.minGeneLength:
             continue
-        if doMaxGeneLength:
-            if geneLength > maxGeneLength:
-                continue
+        if args.maxGeneLength is not None and geneLength > args.maxGeneLength:
+            continue
         stepsize = geneLength/100.0
         k=0
         final_vector=[]
@@ -158,22 +148,23 @@ def run():
             output_Array[i]+=v
             i+=1
         geneNumber+=1
-        if doPrintList:
+        if args.printlist:
             outfile.write(geneID + '\n')
 
-    if doPrintList:
+    if args.printlist:
         outfile.close()
 
     print geneNumber, 'genes considered'
 
-    outfile=open(outputfilename,'w')
+    outfile=open(args.outputfilename, 'wt')
 
     for i in range(100):
-        if doNormalize:
+        if args.normalize:
             outfile.write(str(i) + '\t' + str(output_Array[i]/geneNumber)+'\n')
         else:
             outfile.write(str(i) + '\t' + str(output_Array[i])+'\n')
 
     outfile.close()
 
-run()
+if __name__ == '__main__':
+    main()
