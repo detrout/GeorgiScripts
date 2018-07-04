@@ -48,61 +48,27 @@ def main(cmdline=None):
     score_wiggle(args.wig, CoverageDict)
     print('finished inputting wiggle')
 
-    output_Array={}
-    for i in range(100):
-        output_Array[i]=0
-
     print(len(GeneDict.keys()))
 
     if args.printlist:
-        outfile=open(args.outputfilename + '.geneList','w')
+        outfile = open(args.outputfilename + '.geneList', 'wt')
+    else:
+        outfile = None
 
-    geneNumber=0.0
-    for geneID in GeneDict.keys():
-        NucleotideList=[]
-        for transcriptID in GeneDict[geneID].keys():
-            for (chromosome,left,right,strand) in GeneDict[geneID][transcriptID]:
-                for i in range(left,right):
-                    NucleotideList.append(i)
-        NucleotideList=list(Set(NucleotideList))
-        NucleotideList.sort()
-        if strand=='-' or strand=='R':
-            NucleotideList.reverse()
-        geneLength=len(NucleotideList)
-        if geneLength < args.minGeneLength:
-            continue
-        if args.maxGeneLength is not None and geneLength > args.maxGeneLength:
-            continue
-        stepsize = geneLength/100.0
-        k=0
-        final_vector=[]
-        while k < geneLength-stepsize:
-            b=k+stepsize
-            counts=[]
-            for i in range(int(k),int(b)):
-                counts.append(CoverageDict[chromosome][NucleotideList[i]])
-            final_vector.append(numpy.mean(counts))
-            k=b
-        i=0
-        for v in final_vector:
-            output_Array[i]+=v
-            i+=1
-        geneNumber+=1
-        if args.printlist:
-            outfile.write(geneID + '\n')
-
+    outputArray, geneNumber = compute_coverage_array(
+            GeneDict, CoverageDict,
+            args.minGeneLength, args.maxGeneLength,
+            outfile)
     if args.printlist:
         outfile.close()
-
-    print(geneNumber, 'genes considered')
 
     outfile=open(args.outputfilename, 'wt')
 
     for i in range(100):
         if args.normalize:
-            outfile.write(str(i) + '\t' + str(output_Array[i]/geneNumber)+'\n')
+            outfile.write(str(i) + '\t' + str(outputArray[i]/geneNumber)+'\n')
         else:
-            outfile.write(str(i) + '\t' + str(output_Array[i])+'\n')
+            outfile.write(str(i) + '\t' + str(outputArray[i])+'\n')
 
     outfile.close()
 
@@ -174,6 +140,47 @@ def score_wiggle(wigglename, CoverageDict):
             if CoverageDict[chromosome].has_key(j):
                 CoverageDict[chromosome][j]=score
 
-        
+
+def compute_coverage_array(GeneDict, CoverageDict, minGeneLength, maxGeneLength, geneStream=None):
+    outputArray = numpy.zeros(shape=100)
+
+    geneNumber=0.0
+    for geneID in GeneDict.keys():
+        NucleotideList=[]
+        for transcriptID in GeneDict[geneID].keys():
+            for (chromosome,left,right,strand) in GeneDict[geneID][transcriptID]:
+                for i in range(left,right):
+                    NucleotideList.append(i)
+        NucleotideList=list(Set(NucleotideList))
+        NucleotideList.sort()
+        if strand=='-' or strand=='R':
+            NucleotideList.reverse()
+        geneLength=len(NucleotideList)
+        if geneLength < minGeneLength:
+            continue
+        if maxGeneLength is not None and geneLength > maxGeneLength:
+            continue
+        stepsize = geneLength/100.0
+        k=0
+        final_vector=[]
+        while k < geneLength-stepsize:
+            b=k+stepsize
+            counts=[]
+            for i in range(int(k),int(b)):
+                counts.append(CoverageDict[chromosome][NucleotideList[i]])
+            final_vector.append(numpy.mean(counts))
+            k=b
+        i=0
+        for v in final_vector:
+            outputArray[i]+=v
+            i+=1
+        geneNumber+=1
+        if geneStream is not None:
+            geneStream.write(geneID)
+            geneStream.write('\n')
+
+    print(geneNumber, 'genes considered')
+    return outputArray, geneNumber
+
 if __name__ == '__main__':
     main()
