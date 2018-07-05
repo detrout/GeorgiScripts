@@ -88,11 +88,11 @@ def get_gene_dict(filename, source):
         right=int(fields[4])
         geneID=fields[8].split('gene_id "')[1].split('";')[0]
         transcriptID=fields[8].split('transcript_id "')[1].split('";')[0]
-        if GeneDict.has_key(geneID):
+        if geneID in GeneDict:
             pass
         else:
             GeneDict[geneID]={}
-        if GeneDict[geneID].has_key(transcriptID):
+        if transcriptID in GeneDict[geneID]:
             if chromosome != GeneDict[geneID][transcriptID][0][0]:
                 continue
         else:
@@ -111,7 +111,7 @@ def build_coverage_dict(GeneDict, singlemodelgenes):
         i+=1
         for transcriptID in GeneDict[geneID].keys():
             for (chromosome,left,right,strand) in GeneDict[geneID][transcriptID]:
-                if CoverageDict.has_key(chromosome):
+                if chromosome in CoverageDict:
                     pass
                 else:
                     CoverageDict[chromosome]={}
@@ -131,12 +131,12 @@ def score_wiggle(wigglename, CoverageDict):
         left=int(fields[1])
         right=int(fields[2])
         score=float(fields[3])
-        if CoverageDict.has_key(chromosome):
+        if chromosome in CoverageDict:
             pass
         else:
             continue
         for j in range(left,right):
-            if CoverageDict[chromosome].has_key(j):
+            if j in CoverageDict[chromosome]:
                 CoverageDict[chromosome][j]=score
 
 
