@@ -103,12 +103,10 @@ def get_gene_dict(filename, source):
 
 def build_coverage_dict(GeneDict, singlemodelgenes):
     CoverageDict = {}
-    i=0
     for geneID in GeneDict:
             del GeneDict[geneID]
         if singlemodelgenes and len(GeneDict[geneID]) > 1:
             continue
-        i+=1
         for transcriptID in GeneDict[geneID]:
             for (chromosome,left,right,strand) in GeneDict[geneID][transcriptID]:
                 if chromosome in CoverageDict:
