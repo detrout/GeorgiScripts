@@ -104,12 +104,12 @@ def get_gene_dict(filename, source):
 def build_coverage_dict(GeneDict, singlemodelgenes):
     CoverageDict = {}
     i=0
-    for geneID in GeneDict.keys():
-        if singlemodelgenes and len(GeneDict[geneID].keys()) > 1:
+    for geneID in GeneDict:
             del GeneDict[geneID]
+        if singlemodelgenes and len(GeneDict[geneID]) > 1:
             continue
         i+=1
-        for transcriptID in GeneDict[geneID].keys():
+        for transcriptID in GeneDict[geneID]:
             for (chromosome,left,right,strand) in GeneDict[geneID][transcriptID]:
                 if chromosome in CoverageDict:
                     pass
@@ -144,9 +144,9 @@ def compute_coverage_array(GeneDict, CoverageDict, minGeneLength, maxGeneLength,
     outputArray = numpy.zeros(shape=100)
 
     geneNumber=0.0
-    for geneID in GeneDict.keys():
+    for geneID in GeneDict:
         NucleotideList=[]
-        for transcriptID in GeneDict[geneID].keys():
+        for transcriptID in GeneDict[geneID]:
             for (chromosome,left,right,strand) in GeneDict[geneID][transcriptID]:
                 for i in range(left,right):
                     NucleotideList.append(i)
