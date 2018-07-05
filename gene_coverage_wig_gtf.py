@@ -20,6 +20,7 @@ def main(cmdline=None):
                         help='maximum gene length to consider')
     parser.add_argument('-singlemodelgenes', default=False, action='store_true',
                         help='only consider genes with a single model')
+    parser.add_argument('-genetype', help='limit to specified gene type')
     parser.add_argument('-printlist', default=False, action='store_true',
                         help='write gene ids considered to <outfile>.geneList')
     parser.add_argument('gtf', help='GTF file name')
@@ -40,7 +41,10 @@ def main(cmdline=None):
     if args.singlemodelgenes:
         print('will only use genes with one isoform')
 
-    GeneDict = get_gene_dict(args.gtf, args.sourcetype)
+    if args.genetype:
+        print('will only consider genes of type', args.genetype)
+
+    GeneDict = get_gene_dict(args.gtf, args.sourcetype, args.genetype)
     print('finished inputting annotation')
 
     CoverageDict = build_coverage_dict(GeneDict, args.singlemodelgenes)
@@ -71,7 +75,7 @@ def main(cmdline=None):
 
     outfile.close()
 
-def get_gene_dict(filename, source):
+def get_gene_dict(filename, source, gene_type_filter=None):
     listoflines = open(filename, 'rt')
     GeneDict={}
     for line in listoflines:
@@ -86,6 +90,13 @@ def get_gene_dict(filename, source):
         strand=fields[6]
         left=int(fields[3])
         right=int(fields[4])
+        if gene_type_filter is not None:
+            try:
+                geneType = get_gff_attribute_value_by_key(fields[8], 'gene_type')
+            except ValueError:
+                continue
+            if geneType != gene_type_filter:
+                continue
         geneID = get_gff_attribute_value_by_key(fields[8], 'gene_id')
         transcriptID = get_gff_attribute_value_by_key(fields[8], 'transcript_id')
         if geneID in GeneDict:
