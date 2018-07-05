@@ -86,8 +86,8 @@ def get_gene_dict(filename, source):
         strand=fields[6]
         left=int(fields[3])
         right=int(fields[4])
-        geneID=fields[8].split('gene_id "')[1].split('";')[0]
-        transcriptID=fields[8].split('transcript_id "')[1].split('";')[0]
+        geneID = get_gff_attribute_value_by_key(fields[8], 'gene_id')
+        transcriptID = get_gff_attribute_value_by_key(fields[8], 'transcript_id')
         if geneID in GeneDict:
             pass
         else:
@@ -100,6 +100,14 @@ def get_gene_dict(filename, source):
         GeneDict[geneID][transcriptID].append((chromosome,left,right,strand))
 
     return GeneDict
+
+def get_gff_attribute_value_by_key(field, name):
+    start = field.index(name)
+    start += len(name)
+    start = field.index('"', start)
+    start += 1
+    end = field.index('"', start)
+    return field[start:end]
 
 def build_coverage_dict(GeneDict, singlemodelgenes):
     CoverageDict = {}
