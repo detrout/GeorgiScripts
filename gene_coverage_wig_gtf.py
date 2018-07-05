@@ -47,7 +47,7 @@ def main(cmdline=None):
     score_wiggle(args.wig, CoverageDict)
     print('finished inputting wiggle')
 
-    print(len(GeneDict.keys()))
+    print('genes passed type filters', len(GeneDict))
 
     if args.printlist:
         outfile = open(args.outputfilename + '.geneList', 'wt')
