@@ -14,7 +14,7 @@ from sets import Set
 
 def main(cmdline=None):
     parser = ArgumentParser()
-    parser.add_argument('-field1', dest='biotype', help='biotype name')
+    parser.add_argument('-field1', dest='sourcetype', help='sourcetype name')
     parser.add_argument('-normalize', action='store_true', default=False,
                         help='normalize scores')
     parser.add_argument('-maxGeneLength', default=None, type=int,
@@ -29,8 +29,8 @@ def main(cmdline=None):
     parser.add_argument('outputfilename', help='filename to write coverage data to')
     args = parser.parse_args(cmdline)
 
-    if args.biotype is not None:
-        print('will only consider', args.biotype, 'genes')
+    if args.sourcetype is not None:
+        print('will only consider', args.sourcetype, 'genes')
 
     if args.maxGeneLength is not None:
         print('will only consider genes longer than', args.minGeneLength, 'and shorter than', args.maxGeneLength)
@@ -41,7 +41,7 @@ def main(cmdline=None):
     if args.singlemodelgenes:
         print('will only use genes with one isoform')
 
-    GeneDict = get_gene_dict(args.gtf, args.biotype)
+    GeneDict = get_gene_dict(args.gtf, args.sourcetype)
     print('finished inputting annotation')
 
     CoverageDict = build_coverage_dict(GeneDict, args.singlemodelgenes)
