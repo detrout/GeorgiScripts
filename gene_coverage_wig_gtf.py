@@ -10,7 +10,6 @@ from __future__ import print_function
 from argparse import ArgumentParser
 import sys
 import numpy
-from sets import Set
 
 def main(cmdline=None):
     parser = ArgumentParser()
@@ -151,8 +150,7 @@ def compute_coverage_array(GeneDict, CoverageDict, minGeneLength, maxGeneLength,
             for (chromosome,left,right,strand) in GeneDict[geneID][transcriptID]:
                 for i in range(left,right):
                     NucleotideList.append(i)
-        NucleotideList=list(Set(NucleotideList))
-        NucleotideList.sort()
+        NucleotideList=sorted(set(NucleotideList))
         if strand=='-' or strand=='R':
             NucleotideList.reverse()
         geneLength=len(NucleotideList)
