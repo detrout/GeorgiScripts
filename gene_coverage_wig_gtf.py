@@ -103,9 +103,10 @@ def get_gene_dict(filename, source):
 
 def build_coverage_dict(GeneDict, singlemodelgenes):
     CoverageDict = {}
+    genesToRemove = set()
     for geneID in GeneDict:
-            del GeneDict[geneID]
         if singlemodelgenes and len(GeneDict[geneID]) > 1:
+            genesToRemove.add(geneID)
             continue
         for transcriptID in GeneDict[geneID]:
             for (chromosome,left,right,strand) in GeneDict[geneID][transcriptID]:
@@ -115,6 +116,8 @@ def build_coverage_dict(GeneDict, singlemodelgenes):
                     CoverageDict[chromosome]={}
                 for j in range(left,right):
                     CoverageDict[chromosome][j]=0
+    for geneID in genesToRemove:
+        del GeneDict[geneID]
     return CoverageDict
 
 def score_wiggle(wigglename, CoverageDict):
