@@ -10,6 +10,10 @@ from __future__ import print_function
 from argparse import ArgumentParser
 import sys
 import numpy
+import logging
+
+logger = logging.getLogger('gene_coverage_wig_gtf')
+
 
 def main(cmdline=None):
     parser = ArgumentParser()
@@ -23,35 +27,40 @@ def main(cmdline=None):
     parser.add_argument('-genetype', help='limit to specified gene type')
     parser.add_argument('-printlist', default=False, action='store_true',
                         help='write gene ids considered to <outfile>.geneList')
+    parser.add_argument('-q', '--quiet', action='store_true',
+                        help='only report errors')
     parser.add_argument('gtf', help='GTF file name')
     parser.add_argument('wig', help='wiggle file to score')
     parser.add_argument('minGeneLength', type=int, help='minimum gene length to consider')
     parser.add_argument('outputfilename', help='filename to write coverage data to')
     args = parser.parse_args(cmdline)
 
+    if args.quiet:
+        logging.basicConfig(level=logging.WARN)
+    else:
+        logging.basicConfig(level=logging.INFO)
+
     if args.sourcetype is not None:
-        print('will only consider', args.sourcetype, 'genes')
+        logger.info('will only consider %s genes', args.sourceType)
 
     if args.maxGeneLength is not None:
-        print('will only consider genes longer than', args.minGeneLength, 'and shorter than', args.maxGeneLength)
+        logger.info('will only consider genes longer than %s and shorter than %s',
+                    args.minGeneLength,
+                    args.maxGeneLength)
 
     if args.normalize:
-        print('will normalize scores')
+        logger.info('will normalize scores')
 
     if args.singlemodelgenes:
-        print('will only use genes with one isoform')
+        logger.info('will only use genes with one isoform')
 
     if args.genetype:
-        print('will only consider genes of type', args.genetype)
+        logger.info('will only consider genes of type %s', args.genetype)
 
     GeneDict = get_gene_dict(args.gtf, args.sourcetype, args.genetype)
-    print('finished inputting annotation')
 
     CoverageDict = build_coverage_dict(GeneDict, args.singlemodelgenes)
     score_wiggle(args.wig, CoverageDict)
-    print('finished inputting wiggle')
-
-    print('genes passed type filters', len(GeneDict))
 
     if args.printlist:
         outfile = open(args.outputfilename + '.geneList', 'wt')
@@ -110,6 +119,7 @@ def get_gene_dict(filename, source, gene_type_filter=None):
             GeneDict[geneID][transcriptID]=[]
         GeneDict[geneID][transcriptID].append((chromosome,left,right,strand))
 
+    logger.info('finished inputting annotation %s', len(geneDict.keys()))
     return GeneDict
 
 def get_gff_attribute_value_by_key(field, name):
@@ -159,6 +169,8 @@ def score_wiggle(wigglename, CoverageDict):
             if j in CoverageDict[chromosome]:
                 CoverageDict[chromosome][j]=score
 
+    logger.info('finished inputting wiggle')
+    logger.info('genes passed type filters %s', len(geneDict))
 
 def compute_coverage_array(GeneDict, CoverageDict, minGeneLength, maxGeneLength, geneStream=None):
     outputArray = numpy.zeros(shape=100)
@@ -197,7 +209,7 @@ def compute_coverage_array(GeneDict, CoverageDict, minGeneLength, maxGeneLength,
             geneStream.write(geneID)
             geneStream.write('\n')
 
-    print(geneNumber, 'genes considered')
+    logger.info('%s genes considered', geneNumber)
     return outputArray, geneNumber
 
 if __name__ == '__main__':
