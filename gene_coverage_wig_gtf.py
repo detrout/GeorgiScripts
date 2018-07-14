@@ -100,13 +100,13 @@ def readAnnotation(stream, source, doSingleModel, gene_type_filter=None):
         right=int(fields[4])
         if gene_type_filter is not None:
             try:
-                geneType = get_gff_attribute_value_by_key(fields[8], 'gene_type')
+                geneType = getGFFAttributeValueByKey(fields[8], 'gene_type')
             except ValueError:
                 continue
             if geneType != gene_type_filter:
                 continue
-        geneID = get_gff_attribute_value_by_key(fields[8], 'gene_id')
-        transcriptID = get_gff_attribute_value_by_key(fields[8], 'transcript_id')
+        geneID = getGFFAttributeValueByKey(fields[8], 'gene_id')
+        transcriptID = getGFFAttributeValueByKey(fields[8], 'transcript_id')
         if geneID in geneDict:
             pass
         else:
@@ -121,7 +121,7 @@ def readAnnotation(stream, source, doSingleModel, gene_type_filter=None):
     logger.info('finished inputting annotation %s', len(geneDict.keys()))
     return geneDict
 
-def get_gff_attribute_value_by_key(field, name):
+def getGFFAttributeValueByKey(field, name):
     start = field.index(name)
     start += len(name)
     start = field.index('"', start)
