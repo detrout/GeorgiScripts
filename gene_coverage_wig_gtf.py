@@ -17,14 +17,15 @@ logger = logging.getLogger('gene_coverage_wig_gtf')
 
 def main(cmdline=None):
     parser = ArgumentParser()
-    parser.add_argument('-field1', dest='sourcetype', help='sourcetype name')
+    parser.add_argument('-field1', dest='sourceType', help='sourcetype name')
     parser.add_argument('-normalize', action='store_true', default=False,
                         help='normalize scores')
     parser.add_argument('-maxGeneLength', default=None, type=int,
                         help='maximum gene length to consider')
     parser.add_argument('-singlemodelgenes', default=False, action='store_true',
+                        dest='singleModelGenes',
                         help='only consider genes with a single model')
-    parser.add_argument('-genetype', help='limit to specified gene type')
+    parser.add_argument('-genetype', dest='geneType', help='limit to specified gene type')
     parser.add_argument('-printlist', default=False, action='store_true',
                         help='write gene ids considered to <outfile>.geneList')
     parser.add_argument('-q', '--quiet', action='store_true',
@@ -40,7 +41,7 @@ def main(cmdline=None):
     else:
         logging.basicConfig(level=logging.INFO)
 
-    if args.sourcetype is not None:
+    if args.sourceType is not None:
         logger.info('will only consider %s genes', args.sourceType)
 
     if args.maxGeneLength is not None:
@@ -51,43 +52,41 @@ def main(cmdline=None):
     if args.normalize:
         logger.info('will normalize scores')
 
-    if args.singlemodelgenes:
+    if args.singleModelGenes:
         logger.info('will only use genes with one isoform')
 
-    if args.genetype:
+    if args.geneType:
         logger.info('will only consider genes of type %s', args.genetype)
 
-    GeneDict = get_gene_dict(args.gtf, args.sourcetype, args.genetype)
+    with open(args.gtf) as gtfStream:
+        geneDict = readAnnotation(
+            gtfStream,
+            args.sourceType,
+            args.geneType)
 
-    CoverageDict = build_coverage_dict(GeneDict, args.singlemodelgenes)
-    score_wiggle(args.wig, CoverageDict)
+    with open(args.wig) as wigStream:
+        coverageDict = readWiggle(wigStream, geneDict, args.singleModelGenes)
 
     if args.printlist:
-        outfile = open(args.outputfilename + '.geneList', 'wt')
+        geneListFilename = args.outputfilename + '.geneList'
     else:
-        outfile = None
+        geneListFilename = None
 
-    outputArray, geneNumber = compute_coverage_array(
-            GeneDict, CoverageDict,
-            args.minGeneLength, args.maxGeneLength,
-            outfile)
-    if args.printlist:
-        outfile.close()
+    outputArray = createCoverageArray(
+        geneDict, coverageDict,
+        args.minGeneLength, args.maxGeneLength,
+        geneListFilename,
+        args.normalize
+    )
 
-    outfile=open(args.outputfilename, 'wt')
-
-    for i in range(100):
-        if args.normalize:
-            outfile.write(str(i) + '\t' + str(outputArray[i]/geneNumber)+'\n')
-        else:
+    with open(args.outputfilename, 'wt') as outfile:
+        for i in range(100):
             outfile.write(str(i) + '\t' + str(outputArray[i])+'\n')
 
-    outfile.close()
-
-def get_gene_dict(filename, source, gene_type_filter=None):
-    listoflines = open(filename, 'rt')
-    GeneDict={}
-    for line in listoflines:
+def readAnnotation(stream, source, doSingleModel, gene_type_filter=None):
+    geneDict={}
+    entriesToDelete=set()
+    for line in stream:
         if line.startswith('#'):
             continue
         fields=line.strip().split('\t')
@@ -108,19 +107,19 @@ def get_gene_dict(filename, source, gene_type_filter=None):
                 continue
         geneID = get_gff_attribute_value_by_key(fields[8], 'gene_id')
         transcriptID = get_gff_attribute_value_by_key(fields[8], 'transcript_id')
-        if geneID in GeneDict:
+        if geneID in geneDict:
             pass
         else:
-            GeneDict[geneID]={}
-        if transcriptID in GeneDict[geneID]:
-            if chromosome != GeneDict[geneID][transcriptID][0][0]:
+            geneDict[geneID]={}
+        if transcriptID in geneDict[geneID]:
+            if chromosome != geneDict[geneID][transcriptID][0][0]:
                 continue
         else:
-            GeneDict[geneID][transcriptID]=[]
-        GeneDict[geneID][transcriptID].append((chromosome,left,right,strand))
+            geneDict[geneID][transcriptID]=[]
+        geneDict[geneID][transcriptID].append((chromosome,left,right,strand))
 
     logger.info('finished inputting annotation %s', len(geneDict.keys()))
-    return GeneDict
+    return geneDict
 
 def get_gff_attribute_value_by_key(field, name):
     start = field.index(name)
@@ -130,11 +129,11 @@ def get_gff_attribute_value_by_key(field, name):
     end = field.index('"', start)
     return field[start:end]
 
-def build_coverage_dict(GeneDict, singlemodelgenes):
+def initializeCoverageDict(GeneDict, singleModelGenes):
     CoverageDict = {}
     genesToRemove = set()
     for geneID in GeneDict:
-        if singlemodelgenes and len(GeneDict[geneID]) > 1:
+        if singleModelGenes and len(GeneDict[geneID]) > 1:
             genesToRemove.add(geneID)
             continue
         for transcriptID in GeneDict[geneID]:
@@ -149,9 +148,9 @@ def build_coverage_dict(GeneDict, singlemodelgenes):
         del GeneDict[geneID]
     return CoverageDict
 
-def score_wiggle(wigglename, CoverageDict):
-    listoflines = open(wigglename, 'rt')
-    for line in listoflines:
+def readWiggle(wiggle, geneDict, singleModelGenes):
+    coverageDict = initializeCoverageDict(geneDict, singleModelGenes)
+    for line in wiggle:
         if line.startswith('track'):
             continue
         if line.startswith('#'):
@@ -161,19 +160,25 @@ def score_wiggle(wigglename, CoverageDict):
         left=int(fields[1])
         right=int(fields[2])
         score=float(fields[3])
-        if chromosome in CoverageDict:
+        if chromosome in coverageDict:
             pass
         else:
             continue
         for j in range(left,right):
-            if j in CoverageDict[chromosome]:
-                CoverageDict[chromosome][j]=score
+            if j in coverageDict[chromosome]:
+                coverageDict[chromosome][j]=score
 
     logger.info('finished inputting wiggle')
     logger.info('genes passed type filters %s', len(geneDict))
+    return coverageDict
 
-def compute_coverage_array(GeneDict, CoverageDict, minGeneLength, maxGeneLength, geneStream=None):
+def createCoverageArray(GeneDict, coverageDict,
+                        minGeneLength, maxGeneLength=None,
+                        geneListFilename=None,
+                        doNormalize=False):
     outputArray = numpy.zeros(shape=100)
+
+    geneListStream = open(geneListFilename, 'wt') if geneListFilename else None
 
     geneNumber=0.0
     for geneID in GeneDict:
@@ -197,7 +202,7 @@ def compute_coverage_array(GeneDict, CoverageDict, minGeneLength, maxGeneLength,
             b=k+stepsize
             counts=[]
             for i in range(int(k),int(b)):
-                counts.append(CoverageDict[chromosome][NucleotideList[i]])
+                counts.append(coverageDict[chromosome][NucleotideList[i]])
             final_vector.append(numpy.mean(counts))
             k=b
         i=0
@@ -205,12 +210,20 @@ def compute_coverage_array(GeneDict, CoverageDict, minGeneLength, maxGeneLength,
             outputArray[i]+=v
             i+=1
         geneNumber+=1
-        if geneStream is not None:
-            geneStream.write(geneID)
-            geneStream.write('\n')
+        if geneListStream:
+            geneListStream.write(geneID)
+            geneListStream.write('\n')
 
     logger.info('%s genes considered', geneNumber)
-    return outputArray, geneNumber
+
+    if doNormalize:
+        outputArray /= geneNumber
+
+    if geneListStream:
+        geneListStream.close()
+
+    return outputArray
+
 
 if __name__ == '__main__':
     main()
