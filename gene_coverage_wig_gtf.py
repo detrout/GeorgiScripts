@@ -33,7 +33,7 @@ def main(cmdline=None):
     parser.add_argument('gtf', help='GTF file name')
     parser.add_argument('wig', help='wiggle file to score')
     parser.add_argument('minGeneLength', type=int, help='minimum gene length to consider')
-    parser.add_argument('outputfilename', help='filename to write coverage data to')
+    parser.add_argument('outputfilename', help='output file name')
     args = parser.parse_args(cmdline)
 
     if args.quiet:
