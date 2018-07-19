@@ -108,11 +108,7 @@ def readAnnotation(stream, source, doSingleModel, gene_type_filter=None):
                 continue
         geneID = getGFFAttributeValueByKey(fields[8], 'gene_id')
         transcriptID = getGFFAttributeValueByKey(fields[8], 'transcript_id')
-        if geneID in geneDict:
-            pass
-        else:
-            geneDict[geneID]={}
-        if transcriptID in geneDict[geneID]:
+        if transcriptID in geneDict.setdefault(geneID, {}):
             if chromosome != geneDict[geneID][transcriptID][0][0]:
                 continue
         else:
@@ -139,12 +135,8 @@ def initializeCoverageDict(GeneDict, singleModelGenes):
             continue
         for transcriptID in GeneDict[geneID]:
             for (chromosome,left,right,strand) in GeneDict[geneID][transcriptID]:
-                if chromosome in CoverageDict:
-                    pass
-                else:
-                    CoverageDict[chromosome]={}
                 for j in range(left,right):
-                    CoverageDict[chromosome][j]=0
+                    CoverageDict.setdefault(chromosome, {})[j]=0
     for geneID in genesToRemove:
         del GeneDict[geneID]
     return CoverageDict
@@ -161,9 +153,7 @@ def readWiggle(wiggle, geneDict, singleModelGenes):
         left=int(fields[1])
         right=int(fields[2])
         score=float(fields[3])
-        if chromosome in coverageDict:
-            pass
-        else:
+        if chromosome not in coverageDict:
             continue
         for j in range(left,right):
             if j in coverageDict[chromosome]:
