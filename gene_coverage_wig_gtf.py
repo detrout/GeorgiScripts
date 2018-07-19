@@ -196,6 +196,8 @@ def createCoverageArray(GeneDict, coverageDict,
         geneNumber+=1
         if geneListStream:
             geneListStream.write(geneID)
+            geneListStream.write('\t')
+            geneListStream.write('\t'.join([str(x) for x in final_vector]))
             geneListStream.write('\n')
 
     logger.info('%s genes considered', geneNumber)
