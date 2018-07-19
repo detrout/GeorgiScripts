@@ -173,14 +173,7 @@ def createCoverageArray(GeneDict, coverageDict,
 
     geneNumber=0.0
     for geneID in GeneDict:
-        NucleotideList=[]
-        for transcriptID in GeneDict[geneID]:
-            for (chromosome,left,right,strand) in GeneDict[geneID][transcriptID]:
-                for i in range(left,right):
-                    NucleotideList.append(i)
-        NucleotideList=sorted(set(NucleotideList))
-        if strand=='-' or strand=='R':
-            NucleotideList.reverse()
+        NucleotideList, chromosome = buildNucleotideList(GeneDict[geneID])
         geneLength=len(NucleotideList)
         if geneLength < minGeneLength:
             continue
@@ -214,6 +207,18 @@ def createCoverageArray(GeneDict, coverageDict,
         geneListStream.close()
 
     return outputArray
+
+
+def buildNucleotideList(geneModel):
+    NucleotideList=[]
+    for transcriptID in geneModel:
+        for (chromosome,left,right,strand) in geneModel[transcriptID]:
+            for i in range(left,right):
+                NucleotideList.append(i)
+    NucleotideList=sorted(set(NucleotideList))
+    if strand=='-' or strand=='R':
+        NucleotideList.reverse()
+    return NucleotideList, chromosome
 
 
 class GeneCoverageWigGtfTest(unittest.TestCase):
