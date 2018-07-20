@@ -14,7 +14,7 @@ import logging
 import unittest
 
 logger = logging.getLogger('gene_coverage_wig_gtf')
-
+version = '2.0'
 
 def main(cmdline=None):
     parser = make_parser()
@@ -24,6 +24,9 @@ def main(cmdline=None):
         logging.basicConfig(level=logging.WARN)
     else:
         logging.basicConfig(level=logging.INFO)
+
+    if args.version:
+        parser.exit(message="version {}\n".format(version))
 
     if args.source_type is not None:
         logger.info('will only consider genes from source %s', args.source_type)
