@@ -249,7 +249,7 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
         all_gene_models = True
         self.assertEqual(coverageDict, initializeCoverageDict(geneDict, all_gene_models))
 
-    def testInitializeCoverageDictMulti(self):
+    def testInitializeCoverageDictMultiAllModels(self):
         coverageDict = {"chr1": {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0,
                                  7: 0, 8: 0, 9: 0, 15: 0, 16: 0, 17: 0, 18: 0,
                                  19: 0},
@@ -259,6 +259,15 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
                               "transcript2": [("chr1", 15, 20, "+")]},
                     "gene2": {"transcript1": [("chr2", 20, 30, "+")]}}
         all_gene_models = True
+        self.assertEqual(coverageDict, initializeCoverageDict(geneDict, all_gene_models))
+
+    def testInitializeCoverageDictMultiSingleModel(self):
+        coverageDict = {"chr2": {20: 0, 21: 0, 22: 0, 23: 0, 24: 0, 25: 0,
+                                 26: 0, 27: 0, 28: 0, 29: 0}}
+        geneDict = {"gene1": {"transcript1": [("chr1", 0, 10, "+")],
+                              "transcript2": [("chr1", 15, 20, "+")]},
+                    "gene2": {"transcript1": [("chr2", 20, 30, "+")]}}
+        all_gene_models = False
         self.assertEqual(coverageDict, initializeCoverageDict(geneDict, all_gene_models))
 
     def testReadWiggleEmpty(self):
@@ -279,7 +288,7 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
         all_gene_models = True
         self.assertEqual(coverageDict, readWiggle(wig, geneDict, all_gene_models))
 
-    def testReadWiggleMulti(self):
+    def testReadWiggleMultiAllModels(self):
         coverageDict = {"chr1": {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 0, 6: 0,
                                  7: 0, 8: 0, 9: 0, 15: 0, 16: 0, 17: 0, 18: 0,
                                  19: 0},
@@ -296,6 +305,21 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
                     "gene2": {"transcript1": [("chr2", 20, 30, "+")]}
                     }
         all_gene_models = True
+        self.assertEqual(coverageDict, readWiggle(wig, geneDict, all_gene_models))
+
+    def testReadWiggleMultiSingleModels(self):
+        coverageDict = {"chr2": {20: 0, 21: 7, 22: 7, 23: 7, 24: 0, 25: 0,
+                                 26: 0, 27: 0, 28: 0, 29: 0}}
+        wig = ["#comment",
+               "track to skip",
+               "chr1 0 5 1",
+               "chr2\t21\t24 7",
+               "chr3 0 10 2"
+               ]
+        geneDict = {"gene1": {"transcript1": [("chr1", 0, 10, "+")],
+                              "transcript2": [("chr1", 15, 20, "+")]},
+                    "gene2": {"transcript1": [("chr2", 20, 30, "+")]}}
+        all_gene_models = False
         self.assertEqual(coverageDict, readWiggle(wig, geneDict, all_gene_models))
 
     def testReadAnnotationEmpty(self):
