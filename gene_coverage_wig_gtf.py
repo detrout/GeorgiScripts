@@ -25,45 +25,49 @@ def main(cmdline=None):
     else:
         logging.basicConfig(level=logging.INFO)
 
-    if args.sourceType is not None:
-        logger.info('will only consider %s genes', args.sourceType)
+    if args.source_type is not None:
+        logger.info('will only consider genes from source %s', args.source_type)
 
-    if args.maxGeneLength is not None:
+    if args.max_gene_length is not None:
         logger.info('will only consider genes longer than %s and shorter than %s',
-                    args.minGeneLength,
-                    args.maxGeneLength)
+                    args.min_gene_length,
+                    args.max_gene_length)
+    else:
+        logger.info('will only consder genes longer than %s', args.min_gene_length)
 
     if args.normalize:
         logger.info('will normalize scores')
 
-    if args.singleModelGenes:
+    if args.all_gene_models:
+        logger.info('will only all genes')
+    else:
         logger.info('will only use genes with one isoform')
 
-    if args.geneType:
-        logger.info('will only consider genes of type %s', args.genetype)
+    if args.gene_type:
+        logger.info('will only consider genes of type %s', args.gene_type)
 
     with open(args.gtf) as gtfStream:
         geneDict = readAnnotation(
             gtfStream,
-            args.sourceType,
-            args.geneType)
+            args.source_type,
+            args.gene_type)
 
     with open(args.wig) as wigStream:
-        coverageDict = readWiggle(wigStream, geneDict, args.singleModelGenes)
+        coverageDict = readWiggle(wigStream, geneDict, args.all_gene_models)
 
-    if args.printlist:
+    if args.print_list:
         geneListFilename = args.outputfilename + '.geneList'
     else:
         geneListFilename = None
 
     outputArray = createCoverageArray(
         geneDict, coverageDict,
-        args.minGeneLength, args.maxGeneLength,
+        args.min_gene_length, args.max_gene_length,
         geneListFilename,
         args.normalize
     )
 
-    with open(args.outputfilename, 'wt') as outfile:
+    with open(args.output, 'wt') as outfile:
         for i in range(100):
             outfile.write(str(i) + '\t' + str(outputArray[i])+'\n')
 
@@ -131,11 +135,11 @@ def getGFFAttributeValueByKey(field, name):
     end = field.index('"', start)
     return field[start:end]
 
-def initializeCoverageDict(GeneDict, singleModelGenes):
+def initializeCoverageDict(GeneDict, all_gene_models):
     CoverageDict = {}
     genesToRemove = set()
     for geneID in GeneDict:
-        if singleModelGenes and len(GeneDict[geneID]) > 1:
+        if all_gene_models == False and len(GeneDict[geneID]) > 1:
             genesToRemove.add(geneID)
             continue
         for transcriptID in GeneDict[geneID]:
@@ -146,8 +150,8 @@ def initializeCoverageDict(GeneDict, singleModelGenes):
         del GeneDict[geneID]
     return CoverageDict
 
-def readWiggle(wiggle, geneDict, singleModelGenes):
-    coverageDict = initializeCoverageDict(geneDict, singleModelGenes)
+def readWiggle(wiggle, geneDict, all_gene_models):
+    coverageDict = initializeCoverageDict(geneDict, all_gene_models)
     for line in wiggle:
         if line.startswith('track'):
             continue
@@ -232,15 +236,15 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
     def testInitializeCoverageDictEmpty(self):
         coverageDict = {}
         geneDict = {}
-        singleModelGenes = False
-        self.assertEqual(coverageDict, initializeCoverageDict(geneDict, singleModelGenes))
+        all_gene_models = True
+        self.assertEqual(coverageDict, initializeCoverageDict(geneDict, all_gene_models))
 
     def testInitializeCoverageDictSimple(self):
         coverageDict = {"chr1": {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0,
                                  7: 0, 8: 0, 9: 0}}
         geneDict = {"gene1": {"transcript1": [("chr1", 0, 10, "+")]}}
-        singleModelGenes = False
-        self.assertEqual(coverageDict, initializeCoverageDict(geneDict, singleModelGenes))
+        all_gene_models = True
+        self.assertEqual(coverageDict, initializeCoverageDict(geneDict, all_gene_models))
 
     def testInitializeCoverageDictMulti(self):
         coverageDict = {"chr1": {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0,
@@ -251,15 +255,15 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
         geneDict = {"gene1": {"transcript1": [("chr1", 0, 10, "+")],
                               "transcript2": [("chr1", 15, 20, "+")]},
                     "gene2": {"transcript1": [("chr2", 20, 30, "+")]}}
-        singleModelGenes = False
-        self.assertEqual(coverageDict, initializeCoverageDict(geneDict, singleModelGenes))
+        all_gene_models = True
+        self.assertEqual(coverageDict, initializeCoverageDict(geneDict, all_gene_models))
 
     def testReadWiggleEmpty(self):
         coverageDict = {}
         wig = []
         geneDict = {}
-        singleModelGenes = False
-        self.assertEqual(coverageDict, readWiggle(wig, geneDict, singleModelGenes))
+        all_gene_models = True
+        self.assertEqual(coverageDict, readWiggle(wig, geneDict, all_gene_models))
 
     def testReadWiggleSingle(self):
         coverageDict = {"chr1": {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 0, 6: 0,
@@ -269,8 +273,8 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
                "chr1 0 5 1"
                ]
         geneDict = {"gene1": {"transcript1": [("chr1", 0, 10, "+")]}}
-        singleModelGenes = False
-        self.assertEqual(coverageDict, readWiggle(wig, geneDict, singleModelGenes))
+        all_gene_models = True
+        self.assertEqual(coverageDict, readWiggle(wig, geneDict, all_gene_models))
 
     def testReadWiggleMulti(self):
         coverageDict = {"chr1": {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 0, 6: 0,
@@ -288,8 +292,8 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
                               "transcript2": [("chr1", 15, 20, "+")]},
                     "gene2": {"transcript1": [("chr2", 20, 30, "+")]}
                     }
-        singleModelGenes = False
-        self.assertEqual(coverageDict, readWiggle(wig, geneDict, singleModelGenes))
+        all_gene_models = True
+        self.assertEqual(coverageDict, readWiggle(wig, geneDict, all_gene_models))
 
     def testReadAnnotationEmpty(self):
         geneDict = {}
