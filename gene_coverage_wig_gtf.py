@@ -18,23 +18,24 @@ logger = logging.getLogger('gene_coverage_wig_gtf')
 
 def main(cmdline=None):
     parser = ArgumentParser()
-    parser.add_argument('-field1', dest='sourceType', help='sourcetype name')
-    parser.add_argument('-normalize', action='store_true', default=False,
+    parser.add_argument('--source-type', help='source type name')
+    parser.add_argument('--normalize', action='store_true', default=False,
                         help='normalize scores')
-    parser.add_argument('-maxGeneLength', default=None, type=int,
+    parser.add_argument('--max-gene-length', default=None, type=int,
                         help='maximum gene length to consider')
-    parser.add_argument('-singlemodelgenes', default=False, action='store_true',
-                        dest='singleModelGenes',
-                        help='only consider genes with a single model')
-    parser.add_argument('-genetype', dest='geneType', help='limit to specified gene type')
-    parser.add_argument('-printlist', default=False, action='store_true',
+    parser-add_argument('--all-gene-models', default=False, action='store_true',
+                        help='use all gene models, not just the ones with a single model')
+    parser.add_argument('--gene-type', help='limit to specified gene type')
+    parser.add_argument('--print-list', default=False, action='store_true',
                         help='write gene ids considered to <outfile>.geneList')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='only report errors')
-    parser.add_argument('gtf', help='GTF file name')
+    parser.add_argument('--gtf', help='GTF file name')
     parser.add_argument('wig', help='wiggle file to score')
-    parser.add_argument('minGeneLength', type=int, help='minimum gene length to consider')
-    parser.add_argument('outputfilename', help='output file name')
+    parser.add_argument('--min-gene-length', type=int, default=1000,
+                        help='minimum gene length to consider')
+    parser.add_argument('output-filename', help='output file name')
+
     args = parser.parse_args(cmdline)
 
     if args.quiet:
