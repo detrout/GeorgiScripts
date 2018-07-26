@@ -183,7 +183,7 @@ def createCoverageArray(GeneDict, coverageDict,
 
     geneListStream = open(geneListFilename, 'wt') if geneListFilename else None
 
-    geneNumber=0.0
+    geneNumber=0
     for geneID in GeneDict:
         NucleotideList, chromosome = buildNucleotideList(GeneDict[geneID])
         geneLength=len(NucleotideList)
@@ -210,7 +210,7 @@ def createCoverageArray(GeneDict, coverageDict,
     logger.info('%s genes considered', geneNumber)
 
     if doNormalize:
-        outputArray /= geneNumber
+        outputArray /= float(geneNumber)
 
     if geneListStream:
         geneListStream.close()
