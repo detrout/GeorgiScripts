@@ -59,7 +59,7 @@ def main(cmdline=None):
         coverageDict = readWiggle(wigStream, geneDict, args.all_gene_models)
 
     if args.print_list:
-        geneListFilename = args.outputfilename + '.geneList'
+        geneListFilename = args.output + '.geneList'
     else:
         geneListFilename = None
 
