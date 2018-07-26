@@ -191,20 +191,15 @@ def createCoverageArray(GeneDict, coverageDict,
             continue
         if maxGeneLength is not None and geneLength > maxGeneLength:
             continue
-        stepsize = geneLength/100.0
-        k=0
-        final_vector=[]
-        while k < geneLength-stepsize:
-            b=k+stepsize
-            counts=[]
-            for i in range(int(k),int(b)):
-                counts.append(coverageDict[chromosome][NucleotideList[i]])
-            final_vector.append(numpy.mean(counts))
-            k=b
-        i=0
-        for v in final_vector:
-            outputArray[i]+=v
-            i+=1
+        final_vector = numpy.zeros(shape=100)
+        bins = numpy.linspace(0, geneLength, num = 101, dtype=int)
+        start = bins[0]
+        for i, end in enumerate(bins[1:]):
+            counts = [coverageDict[chromosome][pos] for pos in NucleotideList[start:end]]
+            final_vector[i] = numpy.mean(counts)
+            start = end
+        assert len(final_vector) == 100
+        outputArray += final_vector
         geneNumber+=1
         if geneListStream:
             geneListStream.write(geneID)
