@@ -16,6 +16,13 @@ import unittest
 logger = logging.getLogger('gene_coverage_wig_gtf')
 version = '2.0'
 
+NORMALIZATIONS = {
+    'sum': numpy.mean,
+    'max': numpy.max,
+    'mean': numpy.mean,
+    'median': numpy.median,
+}
+
 def main(cmdline=None):
     parser = make_parser()
     args = parser.parse_args(cmdline)
@@ -40,6 +47,9 @@ def main(cmdline=None):
 
     if args.normalize:
         logger.info('will normalize scores')
+
+    if args.gene_normalization in NORMALIZATIONS:
+        logger.info('Will normalize gene bins by %s', args.gene_normalization)
 
     if args.all_gene_models:
         logger.info('will only all genes')
@@ -67,7 +77,8 @@ def main(cmdline=None):
         geneDict, coverageDict,
         args.min_gene_length, args.max_gene_length,
         geneListFilename,
-        args.normalize
+        args.normalize,
+        args.gene_normalization,
     )
 
     with open(args.output, 'wt') as outfile:
@@ -90,7 +101,13 @@ def make_parser():
     parser.add_argument('--print-list', default=False, action='store_true',
                         help='write gene ids considered to <outfile>.geneList')
     parser.add_argument('--normalize', action='store_true', default=False,
-                        help='normalize scores')
+                        help='normalize scores by number of genes')
+    parser.add_argument('--gene-normalization',
+                        choices=['none'] + sorted(NORMALIZATIONS.keys()),
+                        default='none',
+                        help='Per gene model normalization. sum is total number of reads assigned to gene. '\
+                        'max is the maximum gene bin size.')
+
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='only report errors')
     parser.add_argument('--version', action='store_true', help='report version number')
@@ -182,7 +199,8 @@ def readWiggle(wiggle, geneDict, all_gene_models):
 def createCoverageArray(GeneDict, coverageDict,
                         minGeneLength, maxGeneLength=None,
                         geneListFilename=None,
-                        doNormalize=False):
+                        doNormalize=False,
+                        gene_normalization=None):
     outputArray = numpy.zeros(shape=100)
 
     geneListStream = open(geneListFilename, 'wt') if geneListFilename else None
@@ -203,13 +221,18 @@ def createCoverageArray(GeneDict, coverageDict,
             final_vector[i] = numpy.mean(counts)
             start = end
         assert len(final_vector) == 100
-        outputArray += final_vector
-        geneNumber+=1
-        if geneListStream:
-            geneListStream.write(geneID)
-            geneListStream.write('\t')
-            geneListStream.write('\t'.join([str(x) for x in final_vector]))
-            geneListStream.write('\n')
+        final_vector_sum = numpy.sum(final_vector)
+        if final_vector_sum > 0:
+            final_vector /= NORMALIZATIONS[gene_normalization](final_vector)
+
+            outputArray += final_vector
+            geneNumber+=1
+
+            if geneListStream:
+                geneListStream.write(geneID)
+                geneListStream.write('\t')
+                geneListStream.write('\t'.join([str(x) for x in final_vector]))
+                geneListStream.write('\n')
 
     logger.info('%s genes considered', geneNumber)
 
