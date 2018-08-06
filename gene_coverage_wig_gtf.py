@@ -131,9 +131,13 @@ def readAnnotation(stream, source, doSingleModel, gene_type_filter=None):
     return geneDict
 
 def getGFFAttributeValueByKey(field, name):
-    start = field.index(name)
+    start = field.find(name)
+    if start == -1:
+        return None
     start += len(name)
-    start = field.index('"', start)
+    start = field.find('"', start)
+    if start == -1:
+        return None
     start += 1
     end = field.index('"', start)
     return field[start:end]
