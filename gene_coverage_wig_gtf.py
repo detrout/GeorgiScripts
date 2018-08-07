@@ -129,6 +129,7 @@ def make_parser():
     return parser
 
 def parseAnnotation(stream, source, doSingleModel, gene_type_filter=None):
+def parseAnnotation(stream, source_type, gene_type_filter):
     geneDict={}
     entriesToDelete=set()
     for line in stream:
@@ -137,7 +138,7 @@ def parseAnnotation(stream, source, doSingleModel, gene_type_filter=None):
         fields=line.strip().split('\t')
         if fields[2]!='exon':
             continue
-        if source is not None and fields[1] != source:
+        if source_type is not None and fields[1] != source_type:
             continue
         chromosome=fields[0]
         strand=fields[6]
