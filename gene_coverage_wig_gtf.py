@@ -196,6 +196,7 @@ def readWiggle(wiggle, geneDict, all_gene_models):
     logger.info('genes passed type filters %s', len(geneDict))
     return coverageDict
 
+
 def createCoverageArray(GeneDict, coverageDict,
                         minGeneLength, maxGeneLength=None,
                         geneListFilename=None,
