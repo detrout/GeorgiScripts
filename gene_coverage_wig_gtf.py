@@ -67,11 +67,7 @@ def main(cmdline=None):
     if args.gene_type:
         logger.info('will only consider genes of type %s', args.gene_type)
 
-    with open(args.gtf) as gtfStream:
-        geneDict = parseAnnotation(
-            gtfStream,
-            args.source_type,
-            args.gene_type)
+    geneDict = loadAnnotation(args.gtf, args.source_type, args.gene_type)
 
     instream = guessFileOpen(args.filename)
     if instream is None:
@@ -128,7 +124,13 @@ def make_parser():
     parser.add_argument('--version', action='store_true', help='report version number')
     return parser
 
-def parseAnnotation(stream, source, doSingleModel, gene_type_filter=None):
+def loadAnnotation(filename, source_type, gene_type_filter):
+    with open(filename, 'rt') as gtfStream:
+        return parseAnnotation(
+            gtfStream,
+            source_type,
+            gene_type_filter)
+
 def parseAnnotation(stream, source_type, gene_type_filter):
     geneDict={}
     entriesToDelete=set()
