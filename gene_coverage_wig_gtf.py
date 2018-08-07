@@ -68,7 +68,7 @@ def main(cmdline=None):
         logger.info('will only consider genes of type %s', args.gene_type)
 
     with open(args.gtf) as gtfStream:
-        geneDict = readAnnotation(
+        geneDict = parseAnnotation(
             gtfStream,
             args.source_type,
             args.gene_type)
@@ -128,7 +128,7 @@ def make_parser():
     parser.add_argument('--version', action='store_true', help='report version number')
     return parser
 
-def readAnnotation(stream, source, doSingleModel, gene_type_filter=None):
+def parseAnnotation(stream, source, doSingleModel, gene_type_filter=None):
     geneDict={}
     entriesToDelete=set()
     for line in stream:
@@ -407,17 +407,17 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
         gtf = []
         bioType = None
         geneType = None
-        self.assertEqual(geneDict, readAnnotation(gtf, bioType, geneType))
+        self.assertEqual(geneDict, parseAnnotation(gtf, bioType, geneType))
         gtf = ["# comment",
                "chr1\t\tnot_exon"
                ]
-        self.assertEqual(geneDict, readAnnotation(gtf, bioType, geneType)),
+        self.assertEqual(geneDict, parseAnnotation(gtf, bioType, geneType)),
         bioType = "good_bio"
         gtf = ["# comment",
                "chr1\t\tnot_exon",
                "chr1\tbad_bio\texon"
                ]
-        self.assertEqual(geneDict, readAnnotation(gtf, bioType, geneType))
+        self.assertEqual(geneDict, parseAnnotation(gtf, bioType, geneType))
 
     def testReadAnnotationSingle(self):
         geneDict = {"gene1": {"tr1": [("chr2", 0, 10, "+")]}}
@@ -427,7 +427,7 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
                ]
         bioType = None
         geneType = None
-        self.assertEqual(geneDict, readAnnotation(gtf, bioType, geneType))
+        self.assertEqual(geneDict, parseAnnotation(gtf, bioType, geneType))
 
     def testReadAnnotationMulti(self):
         geneDict = {"gene1": {"tr1": [("chr2", 0, 10, "+"),
@@ -442,7 +442,7 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
                ]
         bioType = None
         geneType = None
-        self.assertEqual(geneDict, readAnnotation(gtf, bioType, geneType))
+        self.assertEqual(geneDict, parseAnnotation(gtf, bioType, geneType))
 
     def testReadAnnotationBioType(self):
         geneDict = {"gene1": {"tr1": [("chr2", 0, 10, "+"),
@@ -456,7 +456,7 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
                ]
         bioType = "goodType"
         geneType = None
-        self.assertEqual(geneDict, readAnnotation(gtf, bioType, geneType))
+        self.assertEqual(geneDict, parseAnnotation(gtf, bioType, geneType))
 
     def testGenerateOutputArrayEmpty(self):
         outputArray = numpy.zeros(shape=100)
