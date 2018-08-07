@@ -84,7 +84,7 @@ def main(cmdline=None):
     else:
         geneListFilename = None
 
-    outputArray = createCoverageArray(
+    outputArray = createCoveragePercentiles(
         geneDict, coverageDict,
         args.min_gene_length, args.max_gene_length,
         geneListFilename,
@@ -256,7 +256,7 @@ def readWiggle(wiggle, geneDict, all_gene_models):
     return coverageDict
 
 
-def createCoverageArray(GeneDict, coverageDict,
+def createCoveragePercentiles(GeneDict, coverageDict,
                         minGeneLength, maxGeneLength=None,
                         geneListFilename=None,
                         doNormalize=False,
@@ -469,7 +469,7 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
         outputfilename = None
         maxGeneLength = None
         doPrintList = False
-        generatedArray  = createCoverageArray(
+        generatedArray  = createCoveragePercentiles(
             geneDict, coverageDict,
             minGeneLength, maxGeneLength,
             outputfilename,
@@ -491,14 +491,14 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
         outputfilename = None
         maxGeneLength = None
         doPrintList = False
-        generatedArray = createCoverageArray(geneDict, coverageDict,
+        generatedArray = createCoveragePercentiles(geneDict, coverageDict,
                                              minGeneLength, maxGeneLength,
                                              outputfilename,
                                              doPrintList)
         numpy.testing.assert_array_equal(outputArray, generatedArray)
         minGeneLength = 0
         maxGeneLength = 5
-        generatedArray = createCoverageArray(geneDict, coverageDict,
+        generatedArray = createCoveragePercentiles(geneDict, coverageDict,
                                              minGeneLength, maxGeneLength,
                                              outputfilename,
                                              doPrintList)
