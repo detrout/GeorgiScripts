@@ -224,7 +224,8 @@ def createCoverageArray(GeneDict, coverageDict,
         assert len(final_vector) == 100
         final_vector_sum = numpy.sum(final_vector)
         if final_vector_sum > 0:
-            final_vector /= NORMALIZATIONS[gene_normalization](final_vector)
+            if gene_normalization in NORMALIZATIONS:
+                final_vector /= NORMALIZATIONS[gene_normalization](final_vector)
 
             outputArray += final_vector
             geneNumber+=1
