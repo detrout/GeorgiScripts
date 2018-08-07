@@ -195,13 +195,6 @@ def guessFileOpen(filename):
 
     returns the opened object
     """
-    if pyBigWig:
-        try:
-            stream = pyBigWig.open(filename)
-            return stream
-        except RuntimeError as e:
-            logger.debug('%s is not a bam file. %s', filename, str(e))
-
     try:
         stream = open(filename, 'rt')
         header = stream.read(100)
@@ -212,6 +205,13 @@ def guessFileOpen(filename):
         return stream
     except Exception as e:
         logger.debug('%s is not a text file. %s', filename, str(e))
+
+    if pyBigWig:
+        try:
+            stream = pyBigWig.open(filename)
+            return stream
+        except RuntimeError as e:
+            logger.debug('%s is not a bam file. %s', filename, str(e))
 
     if not os.path.exists(filename):
         logger.error('%s is not a local file', filename)
