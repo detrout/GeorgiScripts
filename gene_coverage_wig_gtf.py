@@ -11,9 +11,17 @@ from argparse import ArgumentParser
 import sys
 import numpy
 import logging
+import os
 import unittest
 
 logger = logging.getLogger('gene_coverage_wig_gtf')
+
+try:
+    import pyBigWig
+except ImportError:
+    logger.warn('pyBigWig is not available, no direct bigwig support')
+    pyBigWig = None
+
 version = '2.0'
 
 NORMALIZATIONS = {
@@ -65,8 +73,15 @@ def main(cmdline=None):
             args.source_type,
             args.gene_type)
 
-    with open(args.wig) as wigStream:
-        coverageDict = readWiggle(wigStream, geneDict, args.all_gene_models)
+    instream = guessFileOpen(args.filename)
+    if instream is None:
+        logger.error('Unable to open %s. Not a supported file-type', args.filename)
+        raise RuntimeError('Unsupported file type')
+
+    if pyBigWig and isinstance(instream, pyBigWig.pyBigWig) and instream.isBigWig():
+        coverageDict = readBigwig(instream, geneDict, args.all_gene_models)
+    else:
+        coverageDict = readWiggle(instream, geneDict, args.all_gene_models)
 
     if args.print_list:
         geneListFilename = args.output + '.geneList'
@@ -88,7 +103,7 @@ def main(cmdline=None):
 def make_parser():
     parser = ArgumentParser()
     parser.add_argument('--gtf', required=True, help='GTF file name')
-    parser.add_argument('wig', help='wiggle file to score')
+    parser.add_argument('filename', help='file of type gedgraph or bigwig to compute coverage of')
     parser.add_argument('-o', '--output', required=True, help='output file name')
     parser.add_argument('--source-type', help='source type name')
     parser.add_argument('--max-gene-length', default=None, type=int,
@@ -173,6 +188,47 @@ def initializeCoverageDict(GeneDict, all_gene_models):
     for geneID in genesToRemove:
         del GeneDict[geneID]
     return CoverageDict
+
+def guessFileOpen(filename):
+    """Try opening the file with supported file readers
+
+    returns the opened object
+    """
+    if pyBigWig:
+        try:
+            stream = pyBigWig.open(filename)
+            return stream
+        except RuntimeError as e:
+            logger.debug('%s is not a bam file. %s', filename, str(e))
+
+    try:
+        stream = open(filename, 'rt')
+        header = stream.read(100)
+        for c in header:
+            if not (c.isprintable() or c.isspace()):
+                raise ValueError('Not a text file %s %s', c, ord(c))
+        stream.seek(0)
+        return stream
+    except Exception as e:
+        logger.debug('%s is not a text file. %s', filename, str(e))
+
+    if not os.path.exists(filename):
+        logger.error('%s is not a local file', filename)
+
+    return None
+
+def readBigwig(bigwig, geneDict, all_gene_models):
+    coverageDict = initializeCoverageDict(geneDict, all_gene_models)
+    chromosomes = set(coverageDict).intersection(set(bigwig.chroms()))
+    for chromosome in chromosomes:
+        for left, right, score in bigwig.intervals(chromosome):
+            for j in range(left, right):
+                if j in coverageDict[chromosome]:
+                    coverageDict[chromosome][j]=score
+
+    logger.info('finished inputting bigwig')
+    logger.info('genes passed type filters %s', len(geneDict))
+    return coverageDict
 
 def readWiggle(wiggle, geneDict, all_gene_models):
     coverageDict = initializeCoverageDict(geneDict, all_gene_models)
