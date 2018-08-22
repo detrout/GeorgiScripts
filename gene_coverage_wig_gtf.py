@@ -68,6 +68,7 @@ def main(cmdline=None):
         logger.info('will only consider genes of type %s', args.gene_type)
 
     geneDict = loadAnnotation(args.gtf, args.source_type, args.gene_type)
+    logger.info('genes passed type filters %s', len(geneDict))
 
     instream = guessFileOpen(args.filename)
     if instream is None:
@@ -252,7 +253,6 @@ def readWiggle(wiggle, geneDict, all_gene_models):
                 coverageDict[chromosome][j]=score
 
     logger.info('finished inputting wiggle')
-    logger.info('genes passed type filters %s', len(geneDict))
     return coverageDict
 
 
