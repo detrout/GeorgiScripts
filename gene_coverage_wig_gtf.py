@@ -51,7 +51,7 @@ def main(cmdline=None):
                     args.min_gene_length,
                     args.max_gene_length)
     else:
-        logger.info('will only consder genes longer than %s', args.min_gene_length)
+        logger.info('will only consider genes longer than %s', args.min_gene_length)
 
     if args.normalize:
         logger.info('will normalize scores')
