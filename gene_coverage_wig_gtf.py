@@ -524,6 +524,40 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
         numpy.testing.assert_array_equal(outputArray, generatedArray)
 
 
+    def testComputeCoverageWithIntrons(self):
+        outputArray = numpy.asarray([8 for x in range(100)])
+        outputArray[50:60] = 4
+        coverageDict = {"chr1": {}}
+        # add exon coverage for two equally expressed transcripts, one
+        # of which has an extra exon.
+        coverageDict["chr1"].update({x: 8 for x in range(0, 500)})
+        coverageDict["chr1"].update({x: 4 for x in range(600, 700)})
+        coverageDict["chr1"].update({x: 8 for x in range(1600, 2000)})
+
+        # add an express intron
+        coverageDict["chr1"].update({x: 10 for x in range(900, 1100)})
+
+        geneDict = {"gene1":
+                    {"transcript1": [
+                        ("chr1", 0, 500, "+"),
+                        ("chr1", 1600, 2000, "+"),
+                    ],
+                     "transcript2": [
+                         ("chr1", 0, 500, "+"),
+                         ("chr1", 600, 700, "+"),
+                         ("chr1", 1600, 2000, "+"),
+                    ]}}
+        minGeneLength = 100
+        verbose = False
+        outputfilename = None
+        maxGeneLength = None
+        doPrintList = False
+        generatedArray = createCoveragePercentiles(
+            geneDict, coverageDict,
+            minGeneLength, maxGeneLength,
+            outputfilename,
+            doPrintList)
+        numpy.testing.assert_array_equal(outputArray, generatedArray)
 
 if __name__ == '__main__':
     main()
