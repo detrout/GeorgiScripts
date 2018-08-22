@@ -70,15 +70,7 @@ def main(cmdline=None):
     geneDict = loadAnnotation(args.gtf, args.source_type, args.gene_type)
     logger.info('genes passed type filters %s', len(geneDict))
 
-    instream = guessFileOpen(args.filename)
-    if instream is None:
-        logger.error('Unable to open %s. Not a supported file-type', args.filename)
-        raise RuntimeError('Unsupported file type')
-
-    if pyBigWig and isinstance(instream, pyBigWig.pyBigWig) and instream.isBigWig():
-        coverageDict = readBigwig(instream, geneDict, args.all_gene_models)
-    else:
-        coverageDict = readWiggle(instream, geneDict, args.all_gene_models)
+    gene_coverage = loadGeneCoverage(args.filename, geneDict, args.all_gene_models)
 
     if args.print_list:
         geneListFilename = args.output + '.geneList'
@@ -86,7 +78,7 @@ def main(cmdline=None):
         geneListFilename = None
 
     outputArray = createCoveragePercentiles(
-        geneDict, coverageDict,
+        geneDict, gene_coverage,
         args.min_gene_length, args.max_gene_length,
         geneListFilename,
         args.normalize,
@@ -179,6 +171,27 @@ def getGFFAttributeValueByKey(field, name):
     end = field.index('"', start)
     return field[start:end]
 
+
+def loadGeneCoverage(filename, geneDict, all_gene_models):
+    """Read coverage data for genes of interest
+
+    :Parameters:
+      - filename: source file to read
+      - geneDict: GTF annotations
+      - all_gene_models: flag if we should use all gene models instead
+        of just single gene models
+    """
+    instream = guessFileOpen(filename)
+    if instream is None:
+        logger.error('Unable to open %s. Not a supported file-type', os.path.abspath(filename))
+        raise RuntimeError('Unsupported file type')
+
+    if pyBigWig and isinstance(instream, pyBigWig.pyBigWig) and instream.isBigWig():
+        gene_coverage = readBigwig(instream, geneDict, all_gene_models)
+    else:
+        gene_coverage = readWiggle(instream, geneDict, all_gene_models)
+
+    return gene_coverage
 
 def guessFileOpen(filename):
     """Try opening the file with supported file readers
