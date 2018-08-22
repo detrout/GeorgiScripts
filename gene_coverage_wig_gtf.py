@@ -166,6 +166,7 @@ def parseAnnotation(stream, source_type, gene_type_filter):
     logger.info('finished inputting annotation %s', len(geneDict.keys()))
     return geneDict
 
+
 def getGFFAttributeValueByKey(field, name):
     start = field.find(name)
     if start == -1:
@@ -221,6 +222,7 @@ def guessFileOpen(filename):
 
     return None
 
+
 def readBigwig(bigwig, geneDict, all_gene_models):
     coverageDict = initializeCoverageDict(geneDict, all_gene_models)
     chromosomes = set(coverageDict).intersection(set(bigwig.chroms()))
@@ -233,6 +235,7 @@ def readBigwig(bigwig, geneDict, all_gene_models):
     logger.info('finished inputting bigwig')
     logger.info('genes passed type filters %s', len(geneDict))
     return coverageDict
+
 
 def readWiggle(wiggle, geneDict, all_gene_models):
     coverageDict = initializeCoverageDict(geneDict, all_gene_models)
