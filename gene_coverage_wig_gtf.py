@@ -179,20 +179,6 @@ def getGFFAttributeValueByKey(field, name):
     end = field.index('"', start)
     return field[start:end]
 
-def initializeCoverageDict(GeneDict, all_gene_models):
-    CoverageDict = {}
-    genesToRemove = set()
-    for geneID in GeneDict:
-        if all_gene_models == False and len(GeneDict[geneID]) > 1:
-            genesToRemove.add(geneID)
-            continue
-        for transcriptID in GeneDict[geneID]:
-            for (chromosome,left,right,strand) in GeneDict[geneID][transcriptID]:
-                for j in range(left,right):
-                    CoverageDict.setdefault(chromosome, {})[j]=0
-    for geneID in genesToRemove:
-        del GeneDict[geneID]
-    return CoverageDict
 
 def guessFileOpen(filename):
     """Try opening the file with supported file readers
@@ -258,6 +244,22 @@ def readWiggle(wiggle, geneDict, all_gene_models):
 
     logger.info('finished inputting wiggle')
     return coverageDict
+
+
+def initializeCoverageDict(GeneDict, all_gene_models):
+    CoverageDict = {}
+    genesToRemove = set()
+    for geneID in GeneDict:
+        if all_gene_models == False and len(GeneDict[geneID]) > 1:
+            genesToRemove.add(geneID)
+            continue
+        for transcriptID in GeneDict[geneID]:
+            for (chromosome,left,right,strand) in GeneDict[geneID][transcriptID]:
+                for j in range(left,right):
+                    CoverageDict.setdefault(chromosome, {})[j]=0
+    for geneID in genesToRemove:
+        del GeneDict[geneID]
+    return CoverageDict
 
 
 def createCoveragePercentiles(GeneDict, coverageDict,
