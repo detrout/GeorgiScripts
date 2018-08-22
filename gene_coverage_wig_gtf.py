@@ -204,11 +204,12 @@ def guessFileOpen(filename):
         header = stream.read(100)
         for c in header:
             if not (c.isprintable() or c.isspace()):
+                logger.error('Not a text file %s %s', c, ord(c))
                 raise ValueError('Not a text file %s %s', c, ord(c))
         stream.seek(0)
         return stream
-    except Exception as e:
-        logger.debug('%s is not a text file. %s', filename, str(e))
+    except ValueError as e:
+        logger.warning('%s is not a text file. %s', os.path.abspath(filename), str(e))
 
     if pyBigWig:
         try:
