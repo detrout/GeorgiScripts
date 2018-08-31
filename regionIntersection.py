@@ -11,11 +11,6 @@ import sys
 import string
 import math
 
-try:
-    import psyco
-    psyco.full()
-except:
-    print('psyco not running')
 
 def run():
 

@@ -10,12 +10,6 @@ from __future__ import print_function
 import sys
 import os
 
-try:
-	import psyco
-	psyco.full()
-except:
-	pass
-
 def run():
 
     if len(sys.argv) < 2:

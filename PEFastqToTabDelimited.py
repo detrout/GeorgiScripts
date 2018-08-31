@@ -11,11 +11,6 @@ import sys
 import os
 import random
 
-try:
-	import psyco
-	psyco.full()
-except:
-	pass
 
 def run():
 
