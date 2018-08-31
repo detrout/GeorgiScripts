@@ -37,7 +37,7 @@ def FLAG(FLAG):
   
     return FLAGList
 
-def run():
+def main():
 
     if len(sys.argv) < 5:
         print('usage: python %s bedfilename chrField BAMfilename chrom.sizes outputfilename [-nomulti] [-RPM] [-stranded +|-] [-readLength min max] [-printSum] [-uniqueBAM] [-mappabilityNormalize mappability.wig readLength] [-noNH samtools]' % sys.argv[0])
@@ -333,4 +333,5 @@ def run():
 
     outfile.close()
    
-run()
+if __name__ == '__main__':
+    main()

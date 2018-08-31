@@ -13,7 +13,7 @@ import random
 import pysam
 import string
 
-def run():
+def main():
 
     if len(sys.argv) < 2:
         print('usage: python %s BAM' % sys.argv[0])
@@ -39,5 +39,5 @@ def run():
     outfile1.close()
     outfile2.close()
 
-run()
-
+if __name__ == '__main__':
+    main()

@@ -49,7 +49,7 @@ def FLAG(FLAG):
   
     return FLAGList
 
-def run():
+def main():
 
     if len(sys.argv) < 4:
         print('usage: python %s title BAMfilename chrom.sizes outputfilename [-stranded + | -] [-fragments first-read-strand | second-read-strand] [-shift bp] [-nomulti] [-RPM] [-notitle] [-singlebasepair] [-mismatchesMD M] [-mismatches M] [-end2only] [-end1only] [-readLength min max] [-chr chrN1(,chrN2....)] [-uniqueBAM] [-noNH samtools]' % sys.argv[0])
@@ -411,4 +411,5 @@ def run():
 
     outfile.close()
             
-run()
+if __name__ == '__main__':
+    main()

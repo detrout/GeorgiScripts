@@ -11,7 +11,7 @@ import sys
 import string
 import os
 
-def run():
+def main():
 
     if len(sys.argv) < 5:
         print('usage: python %s config SPP_location samtools BAMPseudoReps.py N_cpus' % sys.argv[0])
@@ -218,4 +218,5 @@ def run():
     print('\n# compress peak call files:')
     print('gzip SPP-300K*/*eak')
 
-run()
+if __name__ == '__main__':
+    main()

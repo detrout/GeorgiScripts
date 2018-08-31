@@ -10,7 +10,7 @@ from __future__ import print_function
 import sys
 import os
 
-def run():
+def main():
 
     if len(sys.argv) < 2:
         print('usage: python %s <inputfilename> <bpToKeep | max> [-trim5 bp] [-flowcellID flowcell] [-addEnd 1 | 2] [-replace string newstring | blank] [-renameIDs prefix] [-stdout]' % sys.argv[0])
@@ -238,5 +238,6 @@ def run():
 
     if shorter>0:
         print(shorter, 'sequences shorter than desired length')
-run()
 
+if __name__ == '__main__':
+    main()

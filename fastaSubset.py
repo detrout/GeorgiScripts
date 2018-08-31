@@ -10,7 +10,7 @@ from __future__ import print_function
 import sys
 import string
 
-def run():
+def main():
 
     if len(sys.argv) < 4:
         print('usage: python %s wanted fieldID fasta outputfilename' % sys.argv[0])
@@ -45,4 +45,5 @@ def run():
 
     outfile.close()
    
-run()
+if __name__ == '__main__':
+    main()

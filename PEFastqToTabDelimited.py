@@ -12,7 +12,7 @@ import os
 import random
 
 
-def run():
+def main():
 
     if len(sys.argv) < 2:
         print('usage: python %s end1 end2 [-renameReads prefix] [-shuffle]' % sys.argv[0])
@@ -86,4 +86,5 @@ def run():
         for outline in DataList:
             print(outline)
 
-run()
+if __name__ == '__main__':
+    main()

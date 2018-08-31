@@ -12,7 +12,7 @@ import string
 import math
 
 
-def run():
+def main():
 
     if len(sys.argv) < 5:
         print('usage: python %s file1 chromField1 file2 chromField2 outfilenameprefix [-minOverlap fraction-of-2nd-file-region] [-minOverlapBP bp] [-combinedOutput]' % sys.argv[0])
@@ -122,4 +122,5 @@ def run():
     outfilename_outersection1.close()
     outfilename_outersection2.close()
 
-run()
+if __name__ == '__main__':
+    main()

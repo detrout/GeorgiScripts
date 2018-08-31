@@ -12,7 +12,7 @@ import string
 import math
 import pysam
 
-def run():
+def main():
 
     if len(sys.argv) < 4:
         print('usage: python %s gtf BAM chrom.sizes outputfilename [-nomulti] [-nounique] [-noNH] ' % sys.argv[0])
@@ -197,4 +197,5 @@ def run():
     outfile.write(outline+'\n')
     outfile.close()
    
-run()
+if __name__ == '__main__':
+    main()

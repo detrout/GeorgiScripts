@@ -9,7 +9,7 @@ from __future__ import print_function
 
 import sys
 
-def run():
+def main():
 
     if len(sys.argv) < 4:
         print('usage: python %s genome_fasta readlength outifle' % sys.argv[0])
@@ -72,5 +72,5 @@ def run():
     else:
         outfile.close()
 
-run()
-
+if __name__ == '__main__':
+    main()

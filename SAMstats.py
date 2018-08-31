@@ -37,7 +37,7 @@ def FLAG(FLAG):
   
     return FLAGList
 
-def run():
+def main():
 
     if len(sys.argv) < 2:
         print('usage: python %s SAMfilename outputfilename [-bam chrom.sizes samtools] [-paired]' % sys.argv[0])
@@ -304,4 +304,5 @@ def run():
              
     outfile.close()
 
-run()
+if __name__ == '__main__':
+    main()
