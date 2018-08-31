@@ -302,17 +302,17 @@ def createCoveragePercentiles(GeneDict, coverageDict,
         assert len(final_vector) == 100
         final_vector_sum = numpy.sum(final_vector)
         if final_vector_sum > 0:
-            if gene_normalization in NORMALIZATIONS:
-                final_vector /= NORMALIZATIONS[gene_normalization](final_vector)
-
-            outputArray += final_vector
-            geneNumber+=1
-
             if geneListStream:
                 geneListStream.write(geneID)
                 geneListStream.write('\t')
                 geneListStream.write('\t'.join([str(x) for x in final_vector]))
                 geneListStream.write('\n')
+
+            if gene_normalization in NORMALIZATIONS:
+                final_vector /= NORMALIZATIONS[gene_normalization](final_vector)
+
+            outputArray += final_vector
+            geneNumber+=1
 
     logger.info('%s genes considered', geneNumber)
 
