@@ -5,14 +5,15 @@
 # Georgi Marinov                 #
 #                                # 
 ##################################
+from __future__ import print_function
 
 import sys
 
 def run():
 
     if len(sys.argv) < 4:
-        print 'usage: python %s genome_fasta readlength outifle' % sys.argv[0]
-        print '\tuse - instead of a filename to indicated printing to stdout'
+        print('usage: python %s genome_fasta readlength outifle' % sys.argv[0])
+        print('\tuse - instead of a filename to indicated printing to stdout')
         sys.exit(1)
 
     genome = sys.argv[1]
@@ -33,7 +34,7 @@ def run():
             if doStdOut:
                 pass
             else:
-                print i, 'lines processed'
+                print(i, 'lines processed')
         if line.startswith('>'):
             if currentChr != '':
                 SeqDict[currentChr]=sequence
@@ -56,12 +57,12 @@ def run():
         if doStdOut:
             pass
         else:
-            print chr
+            print(chr)
         for i in range(len(SeqDict[chr])-readlength+1):
             read=SeqDict[chr][i:i+readlength]
             if doStdOut:
-                print '>' + chr + ':' + str(i) + '-' + str(i+readlength)
-                print read
+                print('>' + chr + ':' + str(i) + '-' + str(i+readlength))
+                print(read)
             else:
                 outfile.write('>'+chr+':'+str(i)+'-'+str(i+readlength)+'\n')
                 outfile.write(read+'\n')

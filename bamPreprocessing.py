@@ -8,6 +8,8 @@ User specs:
 the file with one that has that information in the same manner, it will save the need to count all the reads every time.
 It will have to be several numbers - total reads, unique reads, multi reads, reads mapping on the plus and minus strand.
 '''
+from __future__ import print_function
+
 import sys
 import pysam
 
@@ -16,8 +18,8 @@ def main(argv=None):
 
 
     if len(sys.argv) < 3:
-        print 'usage: python %s BAMfilename outputfilename' % sys.argv[0]
-        print '       BAM file has to be indexed'
+        print('usage: python %s BAMfilename outputfilename' % sys.argv[0])
+        print('       BAM file has to be indexed')
         sys.exit(1)
 
     BAM = sys.argv[1]
@@ -45,7 +47,7 @@ def getReadMultiplicity(samfile):
     for alignedread in samfile.fetch(until_eof=True):
         processedReads += 1
         if processedReads % 5000000 == 0:
-                print str(processedReads/1000000) + 'M alignments processed in multiplicity examination'
+                print(str(processedReads/1000000) + 'M alignments processed in multiplicity examination')
 
         ID = getReadID(alignedread)
         try:

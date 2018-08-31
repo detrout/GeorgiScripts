@@ -5,6 +5,7 @@
 # Georgi Marinov                 #
 #                                # 
 ##################################
+from __future__ import print_function
 
 import sys
 import string
@@ -14,8 +15,8 @@ import pysam
 def run():
 
     if len(sys.argv) < 4:
-        print 'usage: python %s gtf BAM chrom.sizes outputfilename [-nomulti] [-nounique] [-noNH] ' % sys.argv[0]
-        print '  by default, the script is not designed to deal with multi reads unless the NH: field is present; use the [-noNH] option if it is not; multi reads will be weighed by their multiplicity' 
+        print('usage: python %s gtf BAM chrom.sizes outputfilename [-nomulti] [-nounique] [-noNH] ' % sys.argv[0])
+        print('  by default, the script is not designed to deal with multi reads unless the NH: field is present; use the [-noNH] option if it is not; multi reads will be weighed by their multiplicity')
         sys.exit(1)
     
     gtf = sys.argv[1]
@@ -26,11 +27,11 @@ def run():
     noMulti=False
     if '-nomulti' in sys.argv:
         noMulti=True
-        print 'will discard multi reads'
+        print('will discard multi reads')
     noUnique=False
     if '-nounique' in sys.argv:
         noUnique=True
-        print 'will discard unique reads'
+        print('will discard unique reads')
 
     PosCountsDict={}
 
@@ -58,12 +59,12 @@ def run():
                     if jj==1:
                         break
             except:
-                print chr, start, end, 'not found in BAM file, skipping'
+                print(chr, start, end, 'not found in BAM file, skipping')
                 continue
             for alignedread in samfile.fetch(chr, start, end):
                 i+=1
                 if i % 5000000 == 0:
-                        print str(i/1000000) + 'M alignments processed in multiplicity examination', chr,start,alignedread.pos,end
+                        print(str(i/1000000) + 'M alignments processed in multiplicity examination', chr,start,alignedread.pos,end)
                 fields=str(alignedread).split('\t')
                 ID=fields[0]
                 if alignedread.is_read1:
@@ -85,7 +86,7 @@ def run():
                 if jj==1:
                     break
         except:
-            print chr, start, end, 'not found in BAM file, skipping'
+            print(chr, start, end, 'not found in BAM file, skipping')
             continue
         if PosCountsDict.has_key(chr):
             pass
@@ -94,7 +95,7 @@ def run():
         for alignedread in samfile.fetch(chr, start, end):
             i+=1
             if i % 5000000 == 0:
-                print str(i/1000000) + 'M alignments processed'
+                print(str(i/1000000) + 'M alignments processed')
             fields=str(alignedread).split('\t')
             ID=fields[0]
             if alignedread.is_read1:
@@ -107,7 +108,7 @@ def run():
                 try:
                     scaleby = alignedread.opt('NH')
                 except:
-                    print 'multireads not specified with the NH tag, exiting'
+                    print('multireads not specified with the NH tag, exiting')
                     sys.exit(1)
             if noMulti and scaleby > 1:
                 continue
@@ -118,13 +119,13 @@ def run():
             else:
                 PosCountsDict[chr][pos]=weight
             if chr == 'PDF1':
-                print fields
+                print(fields)
 
-    print '....................................'
+    print('....................................')
 
     TotalReads = 0
     for chr in PosCountsDict.keys():
-        print chr
+        print(chr)
         for pos in PosCountsDict[chr].keys():
             TotalReads += PosCountsDict[chr][pos]
 
@@ -158,13 +159,13 @@ def run():
         for i in range(start,stop):
             ExonicPosDict[chr][i]=''
 
-    print 'finished inputting annotation'
+    print('finished inputting annotation')
 
     keys=GeneDict.keys()
     keys.sort()
 
     for chr in keys:
-        print chr
+        print(chr)
         for geneID in GeneDict[chr].keys():
             coordinates=[]
             for (start,stop) in GeneDict[chr][geneID]:

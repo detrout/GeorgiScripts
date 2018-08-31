@@ -5,6 +5,7 @@
 # Georgi Marinov                 #
 #                                # 
 ##################################
+from __future__ import print_function
 
 import sys
 import string
@@ -51,9 +52,9 @@ def FLAG(FLAG):
 def run():
 
     if len(sys.argv) < 4:
-        print 'usage: python %s title BAMfilename chrom.sizes outputfilename [-stranded + | -] [-fragments first-read-strand | second-read-strand] [-shift bp] [-nomulti] [-RPM] [-notitle] [-singlebasepair] [-mismatchesMD M] [-mismatches M] [-end2only] [-end1only] [-readLength min max] [-chr chrN1(,chrN2....)] [-uniqueBAM] [-noNH samtools]' % sys.argv[0]
-        print '\tUse the -mismatches option to specify the maximum number of mismatches allowed for an alignment to be considered; use the -mimatchesMD option is mismatches are specified with the MD special tag'
-        print '\tuse the -noNH option and supply a path to samtools in order to have the file converted to one that has NH tags'
+        print('usage: python %s title BAMfilename chrom.sizes outputfilename [-stranded + | -] [-fragments first-read-strand | second-read-strand] [-shift bp] [-nomulti] [-RPM] [-notitle] [-singlebasepair] [-mismatchesMD M] [-mismatches M] [-end2only] [-end1only] [-readLength min max] [-chr chrN1(,chrN2....)] [-uniqueBAM] [-noNH samtools]' % sys.argv[0])
+        print('\tUse the -mismatches option to specify the maximum number of mismatches allowed for an alignment to be considered; use the -mimatchesMD option is mismatches are specified with the MD special tag')
+        print('\tuse the -noNH option and supply a path to samtools in order to have the file converted to one that has NH tags')
         sys.exit(1)
 
     title = sys.argv[1]
@@ -72,16 +73,16 @@ def run():
     doEnd1Only = False
     doEnd2Only = False
     if '-end1only' in sys.argv and '-end2only' in sys.argv:
-        print 'both -end1only and -end2only option specified, a logical impossiblity, exiting'
+        print('both -end1only and -end2only option specified, a logical impossiblity, exiting')
         sys,exit(1)
 
     if '-end1only' in sys.argv:
         doEnd1Only = True
-        print 'will only consider the first end of read pairs'
+        print('will only consider the first end of read pairs')
 
     if '-end2only' in sys.argv:
         doEnd2Only = True 
-        print 'will only consider the second end of read pairs'
+        print('will only consider the second end of read pairs')
     
     doSingleBP=False
     if '-singlebasepair' in sys.argv:
@@ -93,21 +94,21 @@ def run():
 
     doUniqueBAM = False
     if '-uniqueBAM' in sys.argv:
-        print 'will treat all alignments as unique'
+        print('will treat all alignments as unique')
         doUniqueBAM = True
         TotalReads = 0
         pass
 
     samfile = pysam.Samfile(BAM, "rb" )
     try:
-        print 'testing for NH tags presence'
+        print('testing for NH tags presence')
         for alignedread in samfile.fetch():
             multiplicity = alignedread.opt('NH')
-            print 'file has NH tags'
+            print('file has NH tags')
             break
     except:
         if '-noNH' in sys.argv:
-            print 'no NH: tags in BAM file, will replace with a new BAM file with NH tags'
+            print('no NH: tags in BAM file, will replace with a new BAM file with NH tags')
             samtools = sys.argv[sys.argv.index('-noNH')+1]
             BAMpreporcessingScript = sys.argv[0].rpartition('/')[0] + '/bamPreprocessing.py'
             cmd = 'python ' + BAMpreporcessingScript + ' ' + BAM + ' ' + BAM + '.NH'
@@ -121,7 +122,7 @@ def run():
         elif doUniqueBAM:
             pass
         else:
-            print 'no NH: tags in BAM file, exiting'
+            print('no NH: tags in BAM file, exiting')
             sys.exit(1)
 
     doReadLength=False
@@ -129,24 +130,24 @@ def run():
         doReadLength=True
         minRL = int(sys.argv[sys.argv.index('-readLength')+1])
         maxRL = int(sys.argv[sys.argv.index('-readLength')+2])
-        print 'will only consider reads between', minRL, 'and', maxRL, 'bp length'
+        print('will only consider reads between', minRL, 'and', maxRL, 'bp length')
 
     doMaxMMMD=False
     if '-mismatchesMD' in sys.argv:
         doMaxMMMD=True
         maxMM = int(sys.argv[sys.argv.index('-mismatchesMD')+1])
-        print 'Will only consider alignments with', maxMM, 'or less mismatches'
+        print('Will only consider alignments with', maxMM, 'or less mismatches')
 
     doMaxMM=False
     if '-mismatches' in sys.argv:
         doMaxMM=True
         maxMM = int(sys.argv[sys.argv.index('-mismatches')+1])
-        print 'Will only consider alignments with', maxMM, 'or less mismatches'
+        print('Will only consider alignments with', maxMM, 'or less mismatches')
 
     shift = 0
     if '-shift' in sys.argv:
         shift = int(sys.argv[sys.argv.index('-shift')+1])
-        print 'Will shfit reads by ', shift, 'bp'
+        print('Will shfit reads by ', shift, 'bp')
 
     doChrSubset=False
     if '-chr' in sys.argv:
@@ -157,7 +158,7 @@ def run():
 
     noMulti=False
     if '-nomulti' in sys.argv:
-        print 'will only consider unique alignments'
+        print('will only consider unique alignments')
         noMulti=True
 
     doRPM=False
@@ -168,13 +169,13 @@ def run():
     if '-stranded' in sys.argv:
         doStranded=True
         strand=sys.argv[sys.argv.index('-stranded')+1]
-        print 'will only consider', strand, 'strand reads'
+        print('will only consider', strand, 'strand reads')
 
     doFragments=False
     if '-fragments' in sys.argv:
         doFragments=True
         FragmentStrandAssignment = sys.argv[sys.argv.index('-fragments')+1]
-        print 'will assign strand for both reads based on', FragmentStrandAssignment
+        print('will assign strand for both reads based on', FragmentStrandAssignment)
 
     TotalNumberRead=0
 
@@ -194,13 +195,13 @@ def run():
                 for alignedread in samfile.fetch(chr, 0, 100):
                     a='b'
             except:
-                print 'region', chr,start,end, 'not found in bam file, skipping'
+                print('region', chr,start,end, 'not found in bam file, skipping')
                 continue
             currentPos=0
             for alignedread in samfile.fetch(chr, start, end):
                 RN+=1
                 if RN % 5000000 == 0:
-                    print 'counting total number of reads', str(RN/1000000) + 'M alignments processed', chr, currentPos, end
+                    print('counting total number of reads', str(RN/1000000) + 'M alignments processed', chr, currentPos, end)
                 fields=str(alignedread).split('\t')
                 FLAGfields = FLAG(int(fields[1]))
                 if doEnd1Only:
@@ -240,9 +241,9 @@ def run():
 
         TotalNumberRead = round(TotalNumberRead)
 
-    print 'found', TotalNumberRead, 'reads'
+    print('found', TotalNumberRead, 'reads')
     normFactor = TotalNumberRead/1000000.
-    print 'RPM normalization Factor =', normFactor
+    print('RPM normalization Factor =', normFactor)
 
     outfile = open(outfilename, 'w')
     if doTitle:
@@ -262,13 +263,13 @@ def run():
             for alignedread in samfile.fetch(chr, 0, 100):
                 a='b'
         except:
-            print 'region', chr,start,end, 'not found in bam file, skipping'
+            print('region', chr,start,end, 'not found in bam file, skipping')
             continue
         currentPos=0
         for alignedread in samfile.fetch(chr, start, end):
             RN+=1
             if RN % 5000000 == 0:
-                print str(RN/1000000) + 'M alignments processed', chr, currentPos, end
+                print(str(RN/1000000) + 'M alignments processed', chr, currentPos, end)
             if doReadLength:
                 if len(alignedread.seq) > maxRL or len(alignedread.seq) < minRL:
                     continue
@@ -373,7 +374,7 @@ def run():
                      previous=(i,coverageDict[i])
                 else:
                      if written[0]==initial[0]:
-                         print '####', written, initial, previous
+                         print('####', written, initial, previous)
                      try:
                          if doStranded and strand == '-':
                              if doRPM:
@@ -386,12 +387,12 @@ def run():
                              else:
                                  outline=chr+'\t'+str(initial[0]-1)+'\t'+str(previous[0]+1-1)+'\t'+str('{0:.10f}'.format(initial[1])).split('.')[0] + '.' + str('{0:.10f}'.format(initial[1])).split('.')[1][0:4]
                      except:
-                         print initial[0]-1
-                         print previous[0]+1-1
-                         print initial[1]
-                         print str(initial[1]).split('.')[0]
-                         print str(initial[1]).split('.')[1]
-                         print str(initial[1]).split('.')[1][0:4]
+                         print(initial[0]-1)
+                         print(previous[0]+1-1)
+                         print(initial[1])
+                         print(str(initial[1]).split('.')[0])
+                         print(str(initial[1]).split('.')[1])
+                         print(str(initial[1]).split('.')[1][0:4])
                          sys.exit(1)
 #                     if doStranded and strand == '-':
 #                         if doRPM:

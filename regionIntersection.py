@@ -5,6 +5,7 @@
 # Georgi Marinov                 #
 #                                # 
 ##################################
+from __future__ import print_function
 
 import sys
 import string
@@ -15,16 +16,16 @@ try:
     import psyco
     psyco.full()
 except:
-    print 'psyco not running'
+    print('psyco not running')
 
 def run():
 
     if len(sys.argv) < 5:
-        print 'usage: python %s file1 chromField1 file2 chromField2 outfilenameprefix [-minOverlap fraction-of-2nd-file-region] [-minOverlapBP bp] [-combinedOutput]' % sys.argv[0]
-        print "       Note: have file1 be the smaller file; the script will store its coordinates in the memory in a dictionary and check against the other file as it goes over its entries"
-        print "       Note: works with 0bp-sized regions"
-        print "       Note: this script does not work with overlapping regions in the first file!!!"
-        print "       Note: if you use the minimal overlap option, only the regions from the second files will be intersected under that criteria, i.e. what is in the intersection2 files; regions in intersection1 will be intersected using the 1bp overlap crtieria"
+        print('usage: python %s file1 chromField1 file2 chromField2 outfilenameprefix [-minOverlap fraction-of-2nd-file-region] [-minOverlapBP bp] [-combinedOutput]' % sys.argv[0])
+        print("       Note: have file1 be the smaller file; the script will store its coordinates in the memory in a dictionary and check against the other file as it goes over its entries")
+        print("       Note: works with 0bp-sized regions")
+        print("       Note: this script does not work with overlapping regions in the first file!!!")
+        print("       Note: if you use the minimal overlap option, only the regions from the second files will be intersected under that criteria, i.e. what is in the intersection2 files; regions in intersection1 will be intersected using the 1bp overlap crtieria")
         sys.exit(1)
 
     file1 = sys.argv[1]
@@ -33,7 +34,7 @@ def run():
     minOverlap=0
     if '-minOverlap' in sys.argv:
         minOverlap=float(sys.argv[sys.argv.index('-minOverlap') + 1])
-        print 'will require overlap of', minOverlap, 'fraction of entries in the second file'
+        print('will require overlap of', minOverlap, 'fraction of entries in the second file')
     chromField1 = int(sys.argv[2])
     chromField2 = int(sys.argv[4])
 
@@ -41,7 +42,7 @@ def run():
     if '-minOverlapBP' in sys.argv:
         doMinBasePairOverlap = True
         minOverlapBP = int(sys.argv[sys.argv.index('-minOverlapBP') + 1])
-        print 'will require overlap of', minOverlapBP, 'bp of entries in the second file'
+        print('will require overlap of', minOverlapBP, 'bp of entries in the second file')
 
     File1DictCoverage={}
     File1Dict={}
@@ -64,8 +65,8 @@ def run():
         start = int(fields[chromField1+1])
         end = int(fields[chromField1+2])
         if end < start:
-            print 'region of negative length, skipping'
-            print line.strip()
+            print('region of negative length, skipping')
+            print(line.strip())
             continue
         for j in range(start,end):
             File1DictCoverage[chr][j]=i
@@ -74,7 +75,7 @@ def run():
             File1DictCoverage[chr][start]=i
         File1Dict[i]=line
 
-    print 'total bases covered:', p
+    print('total bases covered:', p)
 
     OverlappedListDict={}
 
@@ -88,7 +89,7 @@ def run():
     for line in listoflines:
         k+=1
         if k % 100000 == 0:
-            print k, 'lines in file2 processed'
+            print(k, 'lines in file2 processed')
         if line.startswith('#') or line.startswith('track ') or line.strip() == '':
             continue
         fields=line.strip().split('\t')

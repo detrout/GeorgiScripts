@@ -5,6 +5,7 @@
 # Georgi Marinov                 #
 #                                # 
 ##################################
+from __future__ import print_function
 
 import sys
 import os
@@ -19,10 +20,10 @@ except:
 def run():
 
     if len(sys.argv) < 2:
-        print 'usage: python %s end1 end2 [-renameReads prefix] [-shuffle]' % sys.argv[0]
-        print '\tThe script can read compressed files as long as they have the correct suffix - .bz2 or .gz'
-        print '\tYou can have multiple files in each end1 or end2 argument, they have to be comma-separated'
-        print '\tit will print to standard output'
+        print('usage: python %s end1 end2 [-renameReads prefix] [-shuffle]' % sys.argv[0])
+        print('\tThe script can read compressed files as long as they have the correct suffix - .bz2 or .gz')
+        print('\tYou can have multiple files in each end1 or end2 argument, they have to be comma-separated')
+        print('\tit will print to standard output')
         sys.exit(1)
 
     fastq1files = sys.argv[1].split(',')
@@ -39,7 +40,7 @@ def run():
         prefix = sys.argv[sys.argv.index('-renameReads') + 1]
 
     if len(fastq1files) != len(fastq1files):
-        print 'incorrect number of input files'
+        print('incorrect number of input files')
         sys.exit(1)
 
     i=0
@@ -82,12 +83,12 @@ def run():
                if doShuffle:
                    DataList.append(outline) 
                else:
-                   print outline
+                   print(outline)
                lines = []
 
     if doShuffle:
         random.shuffle(DataList)
         for outline in DataList:
-            print outline
+            print(outline)
 
 run()

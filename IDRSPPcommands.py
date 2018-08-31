@@ -5,6 +5,7 @@
 # Georgi Marinov                 #
 #                                # 
 ##################################
+from __future__ import print_function
 
 import sys
 import string
@@ -13,10 +14,10 @@ import os
 def run():
 
     if len(sys.argv) < 5:
-        print 'usage: python %s config SPP_location samtools BAMPseudoReps.py N_cpus' % sys.argv[0]
-        print '\tconfig format:'
-        print '\tlabel\tChIP-Rep1.bam\tInput-Rep1.bam\tChIP-Rep2.bam\tInput-Rep2.bam'
-        print '\tThe script will print to stdout'
+        print('usage: python %s config SPP_location samtools BAMPseudoReps.py N_cpus' % sys.argv[0])
+        print('\tconfig format:')
+        print('\tlabel\tChIP-Rep1.bam\tInput-Rep1.bam\tChIP-Rep2.bam\tInput-Rep2.bam')
+        print('\tThe script will print to stdout')
         sys.exit(1)
 
     config = sys.argv[1]
@@ -150,71 +151,71 @@ def run():
         CommandDict['PlotsIndividualPseudoRep'].append('Rscript batch-consistency-plot.r 1 ' + 'IDR-SPP-'  + label + '-Rep1PseudoReps' + ' IDR-SPP-'  + label + '-Rep1PseudoReps')
         CommandDict['PlotsIndividualPseudoRep'].append('Rscript batch-consistency-plot.r 1 ' + 'IDR-SPP-'  + label + '-Rep2PseudoReps' + ' IDR-SPP-'  + label + '-Rep2PseudoReps')
 
-    print '# make SPP output folders for individual replicates:'
+    print('# make SPP output folders for individual replicates:')
     for command in CommandDict['mkdirRep']:
-        print command
-    print '\n# make SPP output folders for pooled runs:'
+        print(command)
+    print('\n# make SPP output folders for pooled runs:')
     for command in CommandDict['mkdirPooled']:
-        print command
-    print '\n# make SPP output folders for pooled pseudoreplicates:'
+        print(command)
+    print('\n# make SPP output folders for pooled pseudoreplicates:')
     for command in CommandDict['mkdirPooledPseudoRep']:
-        print command
-    print '\n# make SPP output folders for individual pseudoreplicates:'
+        print(command)
+    print('\n# make SPP output folders for individual pseudoreplicates:')
     for command in CommandDict['mkdirIndidividualPseudoRep']:
-        print command
-    print '\n# merge replicate BAM files:'
+        print(command)
+    print('\n# merge replicate BAM files:')
     for command in CommandDict['merge']:
-        print command
-    print '\n# sort merged BAM files:'
+        print(command)
+    print('\n# sort merged BAM files:')
     for command in CommandDict['sort']:
-        print command
-    print '\n# index sorted BAM files:'
+        print(command)
+    print('\n# index sorted BAM files:')
     for command in CommandDict['index']:
-        print command
-    print '\n# Generate pseudoreplicates:'
+        print(command)
+    print('\n# Generate pseudoreplicates:')
     for command in CommandDict['BAMPseudoRep']:
-        print command
-    print '\n# Peak calls for individual replicates:'
+        print(command)
+    print('\n# Peak calls for individual replicates:')
     for command in CommandDict['PeakCallRep12']:
-        print command
-    print '\n# Peak calls for for pooled datasets:'
+        print(command)
+    print('\n# Peak calls for for pooled datasets:')
     for command in CommandDict['PeakCallPooled']:
-        print command
-    print '\n# Peak calls for for pooled pseudoreplicates:'
+        print(command)
+    print('\n# Peak calls for for pooled pseudoreplicates:')
     for command in CommandDict['PeakCallPooledPseudoRep']:
-        print command
-    print '\n# Peak calls for for individual pseudoreplicates:'
+        print(command)
+    print('\n# Peak calls for for individual pseudoreplicates:')
     for command in CommandDict['PeakCallIndividualPseudoRep']:
-        print command
-    print '\n# Clean up pseudoreplicate BAM files:'
-    print 'rm *.pooled.bam'
-    print 'rm *.sorted.bam'
-    print 'rm *.pseudoRep1.bam'
-    print 'rm *.pseudoRep2.bam'
-    print 'rm *.sorted.bamb.bai'
-    print 'rm *.pseudoRep1.bam.bai'
-    print 'rm *.pseudoRep2.bam.bai'
-    print '\n# unzip peak call files:'
-    print 'gunzip SPP-300K*/*gz'
-    print '\n# IDR for individual replicates:'
+        print(command)
+    print('\n# Clean up pseudoreplicate BAM files:')
+    print('rm *.pooled.bam')
+    print('rm *.sorted.bam')
+    print('rm *.pseudoRep1.bam')
+    print('rm *.pseudoRep2.bam')
+    print('rm *.sorted.bamb.bai')
+    print('rm *.pseudoRep1.bam.bai')
+    print('rm *.pseudoRep2.bam.bai')
+    print('\n# unzip peak call files:')
+    print('gunzip SPP-300K*/*gz')
+    print('\n# IDR for individual replicates:')
     for command in CommandDict['IDRRep12']:
-        print command
-    print '\n# IDR for pooled pseudoreplicates:'
+        print(command)
+    print('\n# IDR for pooled pseudoreplicates:')
     for command in CommandDict['IDRPooledPseudoRep']:
-        print command
-    print '\n# IDR for individual pseudoreplicates:'
+        print(command)
+    print('\n# IDR for individual pseudoreplicates:')
     for command in CommandDict['IDRIndividualPseudoRep']:
-        print command
-    print '\n# IDR plots for individual replicates:'
+        print(command)
+    print('\n# IDR plots for individual replicates:')
     for command in CommandDict['PlotsRep12']:
-        print command
-    print '\n# IDR plots for pooled pseudoreplicates:'
+        print(command)
+    print('\n# IDR plots for pooled pseudoreplicates:')
     for command in CommandDict['PlotsPooledPseudoRep']:
-        print command
-    print '\n# IDR plots individual pseudoreplicates:'
+        print(command)
+    print('\n# IDR plots individual pseudoreplicates:')
     for command in CommandDict['PlotsIndividualPseudoRep']:
-        print command
-    print '\n# compress peak call files:'
-    print 'gzip SPP-300K*/*eak'
+        print(command)
+    print('\n# compress peak call files:')
+    print('gzip SPP-300K*/*eak')
 
 run()

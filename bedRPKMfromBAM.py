@@ -5,6 +5,7 @@
 # Georgi Marinov                 #
 #                                # 
 ##################################
+from __future__ import print_function
 
 import sys
 import string
@@ -40,13 +41,13 @@ def FLAG(FLAG):
 def run():
 
     if len(sys.argv) < 5:
-        print 'usage: python %s bedfilename chrField BAMfilename chrom.sizes outputfilename [-nomulti] [-RPM] [-stranded +|-] [-readLength min max] [-printSum] [-uniqueBAM] [-mappabilityNormalize mappability.wig readLength] [-noNH samtools]' % sys.argv[0]
-        print 'Note: the script will divide multireads by their multiplicity'
-        print '\t-printSum option only working together with the RPM option'
-        print '\tuse the uniqueBAM option if the BAM file contains only unique alignments; this will save a lot of memory'
-        print '\tuse the -mappabilityNormalize option to get mappability normalized RPKMs (it will not do anything to the RPMs; not that a mappability track that goes from 0 to the read length is assumed'
-        print '\tuse the -noNH option and supply a path to samtools in order to have the file converted to one that has NH tags'
-        print '\tthe stranded option will normalized against all reads, not just reads on the indicated strand'
+        print('usage: python %s bedfilename chrField BAMfilename chrom.sizes outputfilename [-nomulti] [-RPM] [-stranded +|-] [-readLength min max] [-printSum] [-uniqueBAM] [-mappabilityNormalize mappability.wig readLength] [-noNH samtools]' % sys.argv[0])
+        print('Note: the script will divide multireads by their multiplicity')
+        print('\t-printSum option only working together with the RPM option')
+        print('\tuse the uniqueBAM option if the BAM file contains only unique alignments; this will save a lot of memory')
+        print('\tuse the -mappabilityNormalize option to get mappability normalized RPKMs (it will not do anything to the RPMs; not that a mappability track that goes from 0 to the read length is assumed')
+        print('\tuse the -noNH option and supply a path to samtools in order to have the file converted to one that has NH tags')
+        print('\tthe stranded option will normalized against all reads, not just reads on the indicated strand')
         sys.exit(1)
     
     bed = sys.argv[1]
@@ -67,14 +68,14 @@ def run():
     noMulti=False
     if '-nomulti' in sys.argv:
         noMulti=True
-        print 'will discard multi-read alignments'
+        print('will discard multi-read alignments')
 
     doReadLength=False
     if '-readLength' in sys.argv:
         doReadLength=True
         minRL = int(sys.argv[sys.argv.index('-readLength')+1])
         maxRL = int(sys.argv[sys.argv.index('-readLength')+2])
-        print 'will only consider reads between', minRL, 'and', maxRL, 'bp length'
+        print('will only consider reads between', minRL, 'and', maxRL, 'bp length')
         ORLL = 0
 
     doPrintSum=False
@@ -83,33 +84,33 @@ def run():
     if '-stranded' in sys.argv:
         doStranded=True
         thestrand = sys.argv[sys.argv.index('-stranded')+1]
-        print 'will only consider', thestrand, 'strand reads'
+        print('will only consider', thestrand, 'strand reads')
 
     doRPM=False
     if '-RPM' in sys.argv:
         doRPM=True
-        print 'will output RPMs'
+        print('will output RPMs')
         if '-printSum' in sys.argv:
             doPrintSum=True
             RPMSum=0
 
     doUniqueBAM = False
     if '-uniqueBAM' in sys.argv:
-        print 'will treat all alignments as unique'
+        print('will treat all alignments as unique')
         doUniqueBAM = True
         TotalReads = 0
         pass
 
     samfile = pysam.Samfile(SAM, "rb" )
     try:
-        print 'testing for NH tags presence'
+        print('testing for NH tags presence')
         for alignedread in samfile.fetch():
             multiplicity = alignedread.opt('NH')
-            print 'file has NH tags'
+            print('file has NH tags')
             break
     except:
         if '-noNH' in sys.argv:
-            print 'no NH: tags in BAM file, will replace with a new BAM file with NH tags'
+            print('no NH: tags in BAM file, will replace with a new BAM file with NH tags')
             samtools = sys.argv[sys.argv.index('-noNH')+1]
             BAMpreporcessingScript = sys.argv[0].rpartition('/')[0] + '/bamPreprocessing.py'
             cmd = 'python ' + BAMpreporcessingScript + ' ' + SAM + ' ' + SAM + '.NH'
@@ -124,26 +125,26 @@ def run():
             if doUniqueBAM:
                 pass
             else:
-                print 'no NH: tags in BAM file, exiting'
+                print('no NH: tags in BAM file, exiting')
                 sys.exit(1)
 
     doMappabilityCorrection = False
     if not doRPM and '-mappabilityNormalize' in sys.argv:
         doMappabilityCorrection = True
-        print 'will correct for mappability'
+        print('will correct for mappability')
         mappability = sys.argv[sys.argv.index('-mappabilityNormalize')+1]
         readLength = int(sys.argv[sys.argv.index('-mappabilityNormalize')+2])
         WantedDict = {}
         MappabilityRegionDict = {}
         lineslist = open(bed)
         i=0
-        print 'inputting regions'
+        print('inputting regions')
         for line in lineslist:
             if line[0]=='#':
                 continue
             i+=1
             if i % 1000 == 0:
-                print i, 'regions inputted'
+                print(i, 'regions inputted')
             fields = line.strip().split('\t')
             if len(fields) < fieldID+2:
                 continue
@@ -152,9 +153,9 @@ def run():
                 left = int(fields[fieldID+1])
                 right = int(fields[fieldID+2])
             except:
-                print 'problem with region, skipping:', line.strip()
+                print('problem with region, skipping:', line.strip())
             if left >= right:
-                print 'problem with region, skipping:', chr, left, right
+                print('problem with region, skipping:', chr, left, right)
                 continue
             if MappabilityRegionDict.has_key(chr):
                 pass
@@ -165,14 +166,14 @@ def run():
             for j in range(left,right):
                 WantedDict[chr][j]=0
         lineslist = open(mappability)
-        print 'inputting mappability'
+        print('inputting mappability')
         i=0
         for line in lineslist:
             if line.startswith('#'):
                 continue
             i+=1
             if i % 1000000 == 0:
-                print str(i/1000000) + 'M lines processed'
+                print(str(i/1000000) + 'M lines processed')
             fields = line.strip().split('\t')
             if len(fields) == 1:
                 fields = line.strip().split(' ')
@@ -187,7 +188,7 @@ def run():
             for j in range(left,right):
                 if WantedDict[chr].has_key(j):
                     WantedDict[chr][j] = score
-        print 'calculating mappable fractions'
+        print('calculating mappable fractions')
         for chr in MappabilityRegionDict.keys():
             for (left,right) in MappabilityRegionDict[chr].keys():
                 TotalScore = 0.0
@@ -223,7 +224,7 @@ def run():
                 for alignedread in samfile.fetch(chr, start, end):
                     i+=1
                     if i % 5000000 == 0:
-                        print str(i/1000000) + 'M alignments processed', chr,start,end
+                        print(str(i/1000000) + 'M alignments processed', chr,start,end)
                     fields=str(alignedread).split('\t')
                     if doReadLength:
                         if len(alignedread.seq) > maxRL or len(alignedread.seq) < minRL:
@@ -245,15 +246,15 @@ def run():
                     else:
                         MultiplicityDict[ID]=1
             except:
-                print 'problem with region:', chr, start, end, 'skipping'
+                print('problem with region:', chr, start, end, 'skipping')
         if doReadLength:
-            print ORLL, 'alignments outside of read length limits'
+            print(ORLL, 'alignments outside of read length limits')
         if doUniqueBAM:
             pass
         else:
             TotalReads = UniqueReads + len(MultiplicityDict.keys())
 
-    print TotalReads, UniqueReads
+    print(TotalReads, UniqueReads)
 
     normalizeBy = TotalReads/1000000.
 
@@ -264,7 +265,7 @@ def run():
     for line in lineslist:
         i+=1
         if i % 10000 == 0:
-            print i, 'regions processed'
+            print(i, 'regions processed')
         if line[0]=='#':
             continue
         fields = line.strip().split('\t')
@@ -275,9 +276,9 @@ def run():
             left = int(fields[fieldID+1])
             right = int(fields[fieldID+2])
         except:
-            print 'problem with region, skipping:', line.strip()
+            print('problem with region, skipping:', line.strip())
         if left >= right:
-            print 'problem with region, skipping:', chr, left, right
+            print('problem with region, skipping:', chr, left, right)
             continue
         reads=0
         try:
@@ -304,18 +305,18 @@ def run():
                     if noMulti and alignedread.opt('NH') > 1:
                         continue
                     reads += 1./alignedread.opt('NH')
-#                    print 'NH, weight:', alignedread.opt('NH'), 1./alignedread.opt('NH')
+#                    print('NH, weight:', alignedread.opt('NH'), 1./alignedread.opt('NH'))
         except:
-            print 'problem with region:', chr, left, right, 'assigning 0 value'
+            print('problem with region:', chr, left, right, 'assigning 0 value')
             reads=0
         if doRPM:
             score = reads / normalizeBy
-#            print chr, right - left, normalizeBy
+#            print(chr, right - left, normalizeBy)
         else:
             try:
                 score = reads / (((right-left)/1000.)*normalizeBy)
             except:
-                print 'region of size 0, skipping:', line.strip()
+                print('region of size 0, skipping:', line.strip())
                 continue
         if doPrintSum:
             RPMSum+=score

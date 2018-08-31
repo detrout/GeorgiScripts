@@ -5,6 +5,7 @@
 # Georgi Marinov                 #
 #                                # 
 ##################################
+from __future__ import print_function
 
 import sys
 import gc
@@ -40,9 +41,9 @@ def FLAG(FLAG):
 def run():
 
     if len(sys.argv) < 2:
-        print 'usage: python %s SAMfilename outputfilename [-bam chrom.sizes samtools] [-paired]' % sys.argv[0]
-        print '       BAM file has to be indexed'
-        print '       Complexity will be calculated only for BAM files'
+        print('usage: python %s SAMfilename outputfilename [-bam chrom.sizes samtools] [-paired]' % sys.argv[0])
+        print('       BAM file has to be indexed')
+        print('       Complexity will be calculated only for BAM files')
         sys.exit(1)
 
     SAM = sys.argv[1]
@@ -63,13 +64,13 @@ def run():
             chromInfoList.append((chr,start,end))
         samfile = pysam.Samfile(SAM, "rb" )
         try:
-            print 'testing for NH tags presence'
+            print('testing for NH tags presence')
             for alignedread in samfile.fetch():
                 multiplicity = alignedread.opt('NH')
-                print 'file has NH tags'
+                print('file has NH tags')
                 break
         except:
-            print 'no NH: tags in BAM file, will replace with a new BAM file with NH tags'
+            print('no NH: tags in BAM file, will replace with a new BAM file with NH tags')
             BAMpreporcessingScript = sys.argv[0].rpartition('/')[0] + '/bamPreprocessing.py'
             cmd = 'python ' + BAMpreporcessingScript + ' ' + SAM + ' ' + SAM + '.NH'
             os.system(cmd)
@@ -92,11 +93,11 @@ def run():
     doPaired=False
     if '-paired' in sys.argv:
         doPaired=True
-        print 'will treat reads as paired'
+        print('will treat reads as paired')
         SeenDictPaired={}
         SeenDictPairedSpliced={}
 
-    print 'examining read multiplicty'
+    print('examining read multiplicty')
 
     ReadLengthDict={}
 
@@ -111,12 +112,12 @@ def run():
                    if jj==1:
                        break
             except:
-                print 'problem with region:', chr, start, end, 'skipping'
+                print('problem with region:', chr, start, end, 'skipping')
                 continue
             for alignedread in samfile.fetch(chr, start, end):
                 i+=1
                 if i % 5000000 == 0:
-                    print str(i/1000000) + 'M alignments processed', chr,start,alignedread.pos,end
+                    print(str(i/1000000) + 'M alignments processed', chr,start,alignedread.pos,end)
                 fields=str(alignedread).split('\t')
                 ID=fields[0]
                 length=len(alignedread.seq)
@@ -167,7 +168,7 @@ def run():
                 continue
             i+=1
             if i % 5000000 == 0:
-                print str(i/1000000) + 'M alignments processed'
+                print(str(i/1000000) + 'M alignments processed')
             fields = line.strip().split('\t')
             length=len(fields[6])
             if ReadLengthDict.has_key(length):
@@ -183,7 +184,7 @@ def run():
             elif 128 in FLAGfields:
                 ID = ID + '/2'
             else:
-                 print 'paired information incorrectly specified, exiting'
+                 print('paired information incorrectly specified, exiting')
                  sys.exit(1)
             if SeenDict.has_key(ID):
                 if SeenTwiceDict.has_key(ID):
@@ -225,7 +226,7 @@ def run():
             for alignedread in samfile.fetch(chr, start, end):
                 i+=1
                 if i % 5000000 == 0:
-                    print str(i/1000000) + 'M alignments processed in complexity calculation', chr,start,alignedread.pos,end
+                    print(str(i/1000000) + 'M alignments processed in complexity calculation', chr,start,alignedread.pos,end)
                     gc.collect()
                 fields=str(alignedread).split('\t')
                 if 16 in FLAG(alignedread.flag):
@@ -265,31 +266,31 @@ def run():
     outfile=open(outputfilename, 'w')
 
     outline='Unique:\t'+str(Unique)
-    print outline
+    print(outline)
     outfile.write(outline+'\n')
 
     outline='Unique Splices:\t'+str(UniqueSplices)
-    print outline
+    print(outline)
     outfile.write(outline+'\n')
 
     outline='Multi:\t'+str(Multi)
-    print outline
+    print(outline)
     outfile.write(outline+'\n')
 
     outline='Multi Splices:\t'+str(MultiSplices)
-    print outline
+    print(outline)
     outfile.write(outline+'\n')
 
     outline='Complexity:\t'+str(Complexity)[0:4]
-    print outline
+    print(outline)
     outfile.write(outline+'\n')
 
     outline='Read Length, Minimum:\t'+str(min(ReadLengthDict.keys()))
-    print outline
+    print(outline)
     outfile.write(outline+'\n')
 
     outline='Read Length, Maximum:\t'+str(max(ReadLengthDict.keys()))
-    print outline
+    print(outline)
     outfile.write(outline+'\n')
 
     TotalReads=0.0
@@ -299,7 +300,7 @@ def run():
         TotalLength += length*ReadLengthDict[length]
 
     outline='Read Length, Average:\t'+str(TotalLength/TotalReads)
-    print outline
+    print(outline)
     outfile.write(outline+'\n')
              
     outfile.close()
