@@ -257,7 +257,7 @@ def main():
                     CurrentPosDictMinus.append(str(alignedread.cigar))
                     if doPaired:
                          CurrentPosDictMinus.append((str(alignedread.cigar),alignedread.mpos))
-        Complexity = DistinctUniqueReads/float(TotalUniqueReads) 
+        Complexity = DistinctUniqueReads/float(TotalUniqueReads)
 
     SeenDict=''
     SeenTwiceDict=''
