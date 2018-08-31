@@ -11,7 +11,6 @@ import sys
 import string
 import pysam
 import math
-from sets import Set
 import os
 
 def FLAG(FLAG):

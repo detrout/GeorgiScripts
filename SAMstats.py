@@ -11,7 +11,6 @@ import sys
 import gc
 import pysam
 import string
-from sets import Set
 import os
 
 def FLAG(FLAG):
@@ -244,9 +243,9 @@ def run():
                 start = alignedread.pos
                 if start != currentPos:
                     TotalUniqueReads += len(CurrentPosDictPlus)
-                    DistinctUniqueReads += len(Set(CurrentPosDictPlus))
+                    DistinctUniqueReads += len(set(CurrentPosDictPlus))
                     TotalUniqueReads += len(CurrentPosDictMinus)
-                    DistinctUniqueReads += len(list(Set(CurrentPosDictMinus)))
+                    DistinctUniqueReads += len(list(set(CurrentPosDictMinus)))
                     CurrentPosDictPlus=[]
                     CurrentPosDictMinus=[]
                     currentPos=start

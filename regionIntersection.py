@@ -10,7 +10,6 @@ from __future__ import print_function
 import sys
 import string
 import math
-from sets import Set
 
 try:
     import psyco
