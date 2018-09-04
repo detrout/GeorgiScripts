@@ -26,24 +26,24 @@ def main():
     BAMpseudoreps = sys.argv[4]
     P = sys.argv[5]
 
-    CommandDict = {'mkdirRep':[],
-                   'mkdirPooled':[],
-                   'mkdirPooledPseudoRep':[],
-                   'mkdirIndidividualPseudoRep':[],
-                   'PeakCallRep12':[],
-                   'PeakCallPooled':[],
-                   'PeakCallPooledPseudoRep':[],
-                   'PeakCallIndividualPseudoRep':[],
-                   'IDRRep12':[],
-                   'IDRPooledPseudoRep':[],
-                   'IDRIndividualPseudoRep':[],
-                   'merge':[],
-                   'sort':[],
-                   'index':[],
-                   'BAMPseudoRep':[],
-                   'PlotsRep12':[],
-                   'PlotsPooledPseudoRep':[],
-                   'PlotsIndividualPseudoRep':[]
+    CommandDict = {'mkdirRep': [],
+                   'mkdirPooled': [],
+                   'mkdirPooledPseudoRep': [],
+                   'mkdirIndidividualPseudoRep': [],
+                   'PeakCallRep12': [],
+                   'PeakCallPooled': [],
+                   'PeakCallPooledPseudoRep': [],
+                   'PeakCallIndividualPseudoRep': [],
+                   'IDRRep12': [],
+                   'IDRPooledPseudoRep': [],
+                   'IDRIndividualPseudoRep': [],
+                   'merge': [],
+                   'sort': [],
+                   'index': [],
+                   'BAMPseudoRep': [],
+                   'PlotsRep12': [],
+                   'PlotsPooledPseudoRep': [],
+                   'PlotsIndividualPseudoRep': []
                     }
     DataList = []
 
@@ -57,9 +57,9 @@ def main():
         InputRep1 = fields[2]
         ChIPRep2 = fields[3]
         InputRep2 = fields[4]
-        DataList.append((label,ChIPRep1,InputRep1,ChIPRep2,InputRep2))
+        DataList.append((label, ChIPRep1, InputRep1, ChIPRep2, InputRep2))
 
-    for (label,ChIPRep1,InputRep1,ChIPRep2,InputRep2) in DataList:
+    for (label, ChIPRep1, InputRep1, ChIPRep2, InputRep2) in DataList:
         Rep1Dir = 'SPP-300K-' + label + '-Rep1'
         Rep2Dir = 'SPP-300K-' + label + '-Rep2'
         CommandDict['mkdirRep'].append('mkdir ' + Rep1Dir)

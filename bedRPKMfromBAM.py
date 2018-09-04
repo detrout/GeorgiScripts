@@ -15,25 +15,25 @@ import os
 
 def FLAG(FLAG):
 
-    Numbers = [0,1,2,4,8,16,32,64,128,256,512,1024]
+    Numbers = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
 
-    FLAGList=[]
+    FLAGList = []
 
-    MaxNumberList=[]
+    MaxNumberList = []
     for i in Numbers:
         if i <= FLAG:
             MaxNumberList.append(i)
 
-    Residual=FLAG
+    Residual = FLAG
     maxPos = len(MaxNumberList)-1
 
     while Residual > 0:
         if MaxNumberList[maxPos] <= Residual:
             Residual = Residual - MaxNumberList[maxPos]
             FLAGList.append(MaxNumberList[maxPos])
-            maxPos-=1
+            maxPos -= 1
         else:
-            maxPos-=1
+            maxPos -= 1
 
     return FLAGList
 
@@ -55,43 +55,43 @@ def main():
     chromSize = sys.argv[4]
     outfilename = sys.argv[5]
 
-    chromInfoList=[]
-    linelist=open(chromSize)
+    chromInfoList = []
+    linelist = open(chromSize)
     for line in linelist:
-        fields=line.strip().split('\t')
-        chr=fields[0]
-        start=0
-        end=int(fields[1])
-        chromInfoList.append((chr,start,end))
+        fields = line.strip().split('\t')
+        chr = fields[0]
+        start = 0
+        end = int(fields[1])
+        chromInfoList.append((chr, start, end))
 
-    noMulti=False
+    noMulti = False
     if '-nomulti' in sys.argv:
-        noMulti=True
+        noMulti = True
         print('will discard multi-read alignments')
 
-    doReadLength=False
+    doReadLength = False
     if '-readLength' in sys.argv:
-        doReadLength=True
+        doReadLength = True
         minRL = int(sys.argv[sys.argv.index('-readLength')+1])
         maxRL = int(sys.argv[sys.argv.index('-readLength')+2])
         print('will only consider reads between', minRL, 'and', maxRL, 'bp length')
         ORLL = 0
 
-    doPrintSum=False
+    doPrintSum = False
 
-    doStranded=False
+    doStranded = False
     if '-stranded' in sys.argv:
-        doStranded=True
+        doStranded = True
         thestrand = sys.argv[sys.argv.index('-stranded')+1]
         print('will only consider', thestrand, 'strand reads')
 
-    doRPM=False
+    doRPM = False
     if '-RPM' in sys.argv:
-        doRPM=True
+        doRPM = True
         print('will output RPMs')
         if '-printSum' in sys.argv:
-            doPrintSum=True
-            RPMSum=0
+            doPrintSum = True
+            RPMSum = 0
 
     doUniqueBAM = False
     if '-uniqueBAM' in sys.argv:
@@ -136,12 +136,12 @@ def main():
         WantedDict = {}
         MappabilityRegionDict = {}
         lineslist = open(bed)
-        i=0
+        i = 0
         print('inputting regions')
         for line in lineslist:
-            if line[0]=='#':
+            if line[0] == '#':
                 continue
-            i+=1
+            i += 1
             if i % 1000 == 0:
                 print(i, 'regions inputted')
             fields = line.strip().split('\t')
@@ -159,18 +159,18 @@ def main():
             if MappabilityRegionDict.has_key(chr):
                 pass
             else:
-                MappabilityRegionDict[chr]={}
-                WantedDict[chr]={}
-            MappabilityRegionDict[chr][(left,right)]=0
-            for j in range(left,right):
-                WantedDict[chr][j]=0
+                MappabilityRegionDict[chr] = {}
+                WantedDict[chr] = {}
+            MappabilityRegionDict[chr][(left, right)] = 0
+            for j in range(left, right):
+                WantedDict[chr][j] = 0
         lineslist = open(mappability)
         print('inputting mappability')
-        i=0
+        i = 0
         for line in lineslist:
             if line.startswith('#'):
                 continue
-            i+=1
+            i += 1
             if i % 1000000 == 0:
                 print(str(i/1000000) + 'M lines processed')
             fields = line.strip().split('\t')
@@ -184,25 +184,25 @@ def main():
                 pass
             else:
                 continue
-            for j in range(left,right):
+            for j in range(left, right):
                 if WantedDict[chr].has_key(j):
                     WantedDict[chr][j] = score
         print('calculating mappable fractions')
         for chr in MappabilityRegionDict.keys():
-            for (left,right) in MappabilityRegionDict[chr].keys():
+            for (left, right) in MappabilityRegionDict[chr].keys():
                 TotalScore = 0.0
-                for j in range(left,right):
+                for j in range(left, right):
                     TotalScore += WantedDict[chr][j]
                 Score = TotalScore / (right-left)
-                MappabilityRegionDict[chr][(left,right)] = Score/readLength
+                MappabilityRegionDict[chr][(left, right)] = Score/readLength
         WantedDict = {}
 
-    regionDict={}
+    regionDict = {}
 
-    Unique=0
-    UniqueSplices=0
-    Multi=0
-    MultiSplices=0
+    Unique = 0
+    UniqueSplices = 0
+    Multi = 0
+    MultiSplices = 0
 
     if doUniqueBAM and not doReadLength:
         TotalReads = 0
@@ -214,36 +214,36 @@ def main():
                 TotalReads += reads
         UniqueReads = TotalReads
     else:
-        MultiplicityDict={}
+        MultiplicityDict = {}
         UniqueReads = 0
-        i=0
+        i = 0
         samfile = pysam.Samfile(SAM, "rb" )
-        for (chr,start,end) in chromInfoList:
+        for (chr, start, end) in chromInfoList:
             try:
                 for alignedread in samfile.fetch(chr, start, end):
-                    i+=1
+                    i += 1
                     if i % 5000000 == 0:
-                        print(str(i/1000000) + 'M alignments processed', chr,start,end)
-                    fields=str(alignedread).split('\t')
+                        print(str(i/1000000) + 'M alignments processed', chr, start, end)
+                    fields = str(alignedread).split('\t')
                     if doReadLength:
                         if len(alignedread.seq) > maxRL or len(alignedread.seq) < minRL:
                             ORLL += 1
                             continue
                     if doUniqueBAM:
-                        TotalReads+=1
+                        TotalReads += 1
                         continue
                     if alignedread.opt('NH') == 1:
                         UniqueReads += 1
                         continue
-                    ID=fields[0]
+                    ID = fields[0]
                     if alignedread.is_read1:
                         ID = ID + '/1'
                     if alignedread.is_read2:
                         ID = ID + '/2'
                     if MultiplicityDict.has_key(ID):
-                        MultiplicityDict[ID]+=1
+                        MultiplicityDict[ID] += 1
                     else:
-                        MultiplicityDict[ID]=1
+                        MultiplicityDict[ID] = 1
             except:
                 print('problem with region:', chr, start, end, 'skipping')
         if doReadLength:
@@ -260,12 +260,12 @@ def main():
     outfile = open(outfilename, 'w')
 
     lineslist = open(bed)
-    i=0
+    i = 0
     for line in lineslist:
-        i+=1
+        i += 1
         if i % 10000 == 0:
             print(i, 'regions processed')
-        if line[0]=='#':
+        if line[0] == '#':
             continue
         fields = line.strip().split('\t')
         if len(fields) < fieldID+2:
@@ -279,14 +279,14 @@ def main():
         if left >= right:
             print('problem with region, skipping:', chr, left, right)
             continue
-        reads=0
+        reads = 0
         try:
             for alignedread in samfile.fetch(chr, left, right):
-                fields2=str(alignedread).split('\t')
+                fields2 = str(alignedread).split('\t')
                 if doReadLength:
                     if len(alignedread.seq) > maxRL or len(alignedread.seq) < minRL:
                         continue
-                ID=fields2[0]
+                ID = fields2[0]
                 if doStranded:
                     if alignedread.is_reverse:
                         s = '-'
@@ -307,7 +307,7 @@ def main():
 #                    print('NH, weight:', alignedread.opt('NH'), 1./alignedread.opt('NH'))
         except:
             print('problem with region:', chr, left, right, 'assigning 0 value')
-            reads=0
+            reads = 0
         if doRPM:
             score = reads / normalizeBy
 #            print(chr, right - left, normalizeBy)
@@ -318,14 +318,14 @@ def main():
                 print('region of size 0, skipping:', line.strip())
                 continue
         if doPrintSum:
-            RPMSum+=score
-        outline = line.strip() +'\t' + str(score)
+            RPMSum += score
+        outline = line.strip() + '\t' + str(score)
         if doMappabilityCorrection:
-            outline = outline + '\t' + str(MappabilityRegionDict[chr][(left,right)])
-            if MappabilityRegionDict[chr][(left,right)] == 0:
+            outline = outline + '\t' + str(MappabilityRegionDict[chr][(left, right)])
+            if MappabilityRegionDict[chr][(left, right)] == 0:
                 outline = outline + '\t0'
             else:
-                outline = outline + '\t' + str(score/MappabilityRegionDict[chr][(left,right)])
+                outline = outline + '\t' + str(score/MappabilityRegionDict[chr][(left, right)])
         outfile.write(outline + '\n')
 
     if doPrintSum:

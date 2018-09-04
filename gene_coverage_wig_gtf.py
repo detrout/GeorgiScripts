@@ -124,20 +124,20 @@ def loadAnnotation(filename, source_type, gene_type_filter):
             gene_type_filter)
 
 def parseAnnotation(stream, source_type, gene_type_filter):
-    geneDict={}
-    entriesToDelete=set()
+    geneDict = {}
+    entriesToDelete = set()
     for line in stream:
         if line.startswith('#'):
             continue
-        fields=line.strip().split('\t')
-        if fields[2]!='exon':
+        fields = line.strip().split('\t')
+        if fields[2] != 'exon':
             continue
         if source_type is not None and fields[1] != source_type:
             continue
-        chromosome=fields[0]
-        strand=fields[6]
-        left=int(fields[3])
-        right=int(fields[4])
+        chromosome = fields[0]
+        strand = fields[6]
+        left = int(fields[3])
+        right = int(fields[4])
         if gene_type_filter is not None:
             try:
                 geneType = getGFFAttributeValueByKey(fields[8], 'gene_type')
@@ -151,8 +151,8 @@ def parseAnnotation(stream, source_type, gene_type_filter):
             if chromosome != geneDict[geneID][transcriptID][0][0]:
                 continue
         else:
-            geneDict[geneID][transcriptID]=[]
-        geneDict[geneID][transcriptID].append((chromosome,left,right,strand))
+            geneDict[geneID][transcriptID] = []
+        geneDict[geneID][transcriptID].append((chromosome, left, right, strand))
 
     logger.info('finished inputting annotation %s', len(geneDict.keys()))
     return geneDict
@@ -229,7 +229,7 @@ def readBigwig(bigwig, geneDict, all_gene_models):
         for left, right, score in bigwig.intervals(chromosome):
             for j in range(left, right):
                 if j in coverageDict[chromosome]:
-                    coverageDict[chromosome][j]=score
+                    coverageDict[chromosome][j] = score
 
     logger.info('finished inputting bigwig')
     logger.info('genes passed type filters %s', len(geneDict))
@@ -243,16 +243,16 @@ def readWiggle(wiggle, geneDict, all_gene_models):
             continue
         if line.startswith('#'):
             continue
-        fields=line.replace(' ','\t').strip().split('\t')
-        chromosome=fields[0]
-        left=int(fields[1])
-        right=int(fields[2])
-        score=float(fields[3])
+        fields = line.replace(' ', '\t').strip().split('\t')
+        chromosome = fields[0]
+        left = int(fields[1])
+        right = int(fields[2])
+        score = float(fields[3])
         if chromosome not in coverageDict:
             continue
-        for j in range(left,right):
+        for j in range(left, right):
             if j in coverageDict[chromosome]:
-                coverageDict[chromosome][j]=score
+                coverageDict[chromosome][j] = score
 
     logger.info('finished inputting wiggle')
     return coverageDict
@@ -266,9 +266,9 @@ def initializeCoverageDict(GeneDict, all_gene_models):
             genesToRemove.add(geneID)
             continue
         for transcriptID in GeneDict[geneID]:
-            for (chromosome,left,right,strand) in GeneDict[geneID][transcriptID]:
-                for j in range(left,right):
-                    CoverageDict.setdefault(chromosome, {})[j]=0
+            for (chromosome, left, right, strand) in GeneDict[geneID][transcriptID]:
+                for j in range(left, right):
+                    CoverageDict.setdefault(chromosome, {})[j] = 0
     for geneID in genesToRemove:
         del GeneDict[geneID]
     return CoverageDict
@@ -283,10 +283,10 @@ def createCoveragePercentiles(GeneDict, coverageDict,
 
     geneListStream = open(geneListFilename, 'wt') if geneListFilename else None
 
-    geneNumber=0
+    geneNumber = 0
     for geneID in GeneDict:
         NucleotideList, chromosome = buildNucleotideList(GeneDict[geneID])
-        geneLength=len(NucleotideList)
+        geneLength = len(NucleotideList)
         if geneLength < minGeneLength:
             continue
         if maxGeneLength is not None and geneLength > maxGeneLength:
@@ -311,7 +311,7 @@ def createCoveragePercentiles(GeneDict, coverageDict,
                 final_vector /= NORMALIZATIONS[gene_normalization](final_vector)
 
             outputArray += final_vector
-            geneNumber+=1
+            geneNumber += 1
 
     logger.info('%s genes considered', geneNumber)
 
@@ -325,13 +325,13 @@ def createCoveragePercentiles(GeneDict, coverageDict,
 
 
 def buildNucleotideList(geneModel):
-    NucleotideList=[]
+    NucleotideList = []
     for transcriptID in geneModel:
-        for (chromosome,left,right,strand) in geneModel[transcriptID]:
-            for i in range(left,right):
+        for (chromosome, left, right, strand) in geneModel[transcriptID]:
+            for i in range(left, right):
                 NucleotideList.append(i)
-    NucleotideList=sorted(set(NucleotideList))
-    if strand=='-' or strand=='R':
+    NucleotideList = sorted(set(NucleotideList))
+    if strand == '-' or strand == 'R':
         NucleotideList.reverse()
     return NucleotideList, chromosome
 

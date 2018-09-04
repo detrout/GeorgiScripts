@@ -91,7 +91,7 @@ def getReadMultiplicity(chromInfoList, samfile, verbose=False):
             if verbose:
                 i += 1
                 if i % 5000000 == 0:
-                    print(str(i/1000000) + 'M alignments processed in multiplicity examination', chrom,start,alignedread.pos,end)
+                    print(str(i/1000000) + 'M alignments processed in multiplicity examination', chrom, start, alignedread.pos, end)
 
             fields = str(alignedread).split('\t')
             ID = fields[0]
@@ -181,7 +181,7 @@ def getCounts(posCountsDict, geneDict, verbose=False):
             for (start, stop) in geneDict[chrom][geneID]:
                 coordinates.append(start)
                 coordinates.append(stop)
-                for i in range(start,stop):
+                for i in range(start, stop):
                     try:
                         exonicReads += posCountsDict[chrom][i]
                         # delete entry so that it is not counted multiple times either because of multiple models or the next intron pass

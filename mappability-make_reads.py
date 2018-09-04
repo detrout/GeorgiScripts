@@ -24,12 +24,12 @@ def main():
     if outputfilename == '-':
         doStdOut = True
 
-    SeqDict={}
+    SeqDict = {}
     lineslist = open(genome)
-    currentChr=''
-    i=0
+    currentChr = ''
+    i = 0
     for line in lineslist:
-        i+=1
+        i += 1
         if i % 1000000 == 0:
             if doStdOut:
                 pass
@@ -37,15 +37,15 @@ def main():
                 print(i, 'lines processed')
         if line.startswith('>'):
             if currentChr != '':
-                SeqDict[currentChr]=sequence
-            currentChr=line.strip().split('>')[1]
-            sequence=''
+                SeqDict[currentChr] = sequence
+            currentChr = line.strip().split('>')[1]
+            sequence = ''
         else:
-            sequence+=line.strip()
+            sequence += line.strip()
 
-    SeqDict[currentChr]=sequence
+    SeqDict[currentChr] = sequence
 
-    keys=SeqDict.keys()
+    keys = SeqDict.keys()
     keys.sort()
 
     if doStdOut:
@@ -59,7 +59,7 @@ def main():
         else:
             print(chr)
         for i in range(len(SeqDict[chr])-readlength+1):
-            read=SeqDict[chr][i:i+readlength]
+            read = SeqDict[chr][i:i+readlength]
             if doStdOut:
                 print('>' + chr + ':' + str(i) + '-' + str(i+readlength))
                 print(read)

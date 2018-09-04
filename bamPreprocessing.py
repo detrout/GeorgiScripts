@@ -128,14 +128,14 @@ def getReadID(alignedread):
 
 def writeBAMEntry(outfile, originalRead, multiplicity):
     newAlignedRead = originalRead
-    newAlignedRead.tags = newAlignedRead.tags + [("NH",multiplicity)]
+    newAlignedRead.tags = newAlignedRead.tags + [("NH", multiplicity)]
     outfile.write(newAlignedRead)
 
 
 def readIsASplice(cigar):
     isSplice = False
     if cigar is not None:
-        for (m,bp) in cigar:
+        for (m, bp) in cigar:
             if m == 3:
                 isSplice = True
                 break

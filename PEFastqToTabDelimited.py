@@ -38,7 +38,7 @@ def main():
         print('incorrect number of input files')
         sys.exit(1)
 
-    i=0
+    i = 0
     for f in range(len(fastq1files)):
         fastq1 = fastq1files[f]
         fastq2 = fastq2files[f]
@@ -65,7 +65,7 @@ def main():
             lines.append(line)
             if line == '':
                 break
-            i+=1
+            i += 1
             if i % 4 == 0:
                 line1 = p2.readline().strip()
                 line2 = p2.readline().strip()
