@@ -74,7 +74,7 @@ def main():
     doEnd2Only = False
     if '-end1only' in sys.argv and '-end2only' in sys.argv:
         print('both -end1only and -end2only option specified, a logical impossiblity, exiting')
-        sys,exit(1)
+        sys.exit(1)
 
     if '-end1only' in sys.argv:
         doEnd1Only = True
