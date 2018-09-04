@@ -222,4 +222,3 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
             outputfilename,
             doPrintList)
         numpy.testing.assert_array_equal(outputArray, generatedArray)
-

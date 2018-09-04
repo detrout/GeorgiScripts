@@ -1,9 +1,9 @@
 ##################################
 #                                #
-# Last modified 05/19/2012       # 
+# Last modified 05/19/2012       #
 #                                #
 # Georgi Marinov                 #
-#                                # 
+#                                #
 ##################################
 from __future__ import print_function
 
@@ -18,7 +18,7 @@ def main():
         print('usage: python %s gtf BAM chrom.sizes outputfilename [-nomulti] [-nounique] [-noNH] ' % sys.argv[0])
         print('  by default, the script is not designed to deal with multi reads unless the NH: field is present; use the [-noNH] option if it is not; multi reads will be weighed by their multiplicity')
         sys.exit(1)
-    
+
     gtf = sys.argv[1]
     SAM = sys.argv[2]
     chrominfo = sys.argv[3]
@@ -186,7 +186,7 @@ def main():
     IntergenicReads = TotalReads - ExonicReads - IntronicReads
 
     outfile=open(outfilename,'w')
-        
+
     outline='#Class\tFraction'
     outfile.write(outline+'\n')
     outline='Exonic:' +'\t'+str(ExonicReads/TotalReads)
@@ -196,6 +196,6 @@ def main():
     outline='Intergenic:' +'\t'+str(IntergenicReads/TotalReads)
     outfile.write(outline+'\n')
     outfile.close()
-   
+
 if __name__ == '__main__':
     main()

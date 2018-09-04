@@ -1,9 +1,9 @@
 ##################################
 #                                #
-# Last modified 03/21/2015       # 
+# Last modified 03/21/2015       #
 #                                #
 # Georgi Marinov                 #
-#                                # 
+#                                #
 ##################################
 from __future__ import print_function
 
@@ -34,7 +34,7 @@ def FLAG(FLAG):
             maxPos-=1
         else:
             maxPos-=1
-  
+
     return FLAGList
 
 def main():
@@ -301,7 +301,7 @@ def main():
     outline='Read Length, Average:\t'+str(TotalLength/TotalReads)
     print(outline)
     outfile.write(outline+'\n')
-             
+
     outfile.close()
 
 if __name__ == '__main__':

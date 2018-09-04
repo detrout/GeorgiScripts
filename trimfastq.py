@@ -1,9 +1,9 @@
 ##################################
 #                                #
-# Last modified 12/06/2012       # 
+# Last modified 12/06/2012       #
 #                                #
 # Georgi Marinov                 #
-#                                # 
+#                                #
 ##################################
 from __future__ import print_function
 
@@ -25,7 +25,7 @@ def main():
     if sys.argv[2] == 'max':
         doMax=True
         trim='max'
-    else: 
+    else:
         trim = int(sys.argv[2])
     outputfilename = inputfilename.split('/')[-1].split('.fastq')[0] + '.' +str(trim)+'mers.fastq'
     doFlowcellID=False
@@ -78,7 +78,7 @@ def main():
         else:
             print('will replace',  oldstring, 'with', newstring, 'in read IDs')
 
-    i=0 
+    i=0
     shorter=0
 
     if doStdOut:
@@ -142,7 +142,7 @@ def main():
                         pass
                     else:
                         print(str(j/1000000) + 'M reads processed')
-                if doMax: 
+                if doMax:
                     sequence=sequence.replace('.','N')
                 else:
                     sequence=sequence[0:trim].replace('.','N')+'\n'
@@ -188,7 +188,7 @@ def main():
                         pass
                     else:
                         print(str(j/1000000) + 'M reads processed')
-                if doMax: 
+                if doMax:
                     sequence=line
                 else:
                     if len(line.strip())<trim:
@@ -203,7 +203,7 @@ def main():
                 continue
             if i==4:
                 i=1
-                if doMax: 
+                if doMax:
                     scores=line
                     if doStdOut:
                         print(ID.strip())

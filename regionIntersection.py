@@ -1,9 +1,9 @@
 ##################################
 #                                #
-# Last modified 09/19/2013       # 
+# Last modified 09/19/2013       #
 #                                #
 # Georgi Marinov                 #
-#                                # 
+#                                #
 ##################################
 from __future__ import print_function
 
@@ -118,7 +118,7 @@ def main():
             outfilename_outersection1.write(File1Dict[i])
 
     outfilename_intersection1.close()
-    outfilename_intersection2.close()    
+    outfilename_intersection2.close()
     outfilename_outersection1.close()
     outfilename_outersection2.close()
 

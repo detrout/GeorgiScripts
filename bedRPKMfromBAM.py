@@ -1,9 +1,9 @@
 ##################################
 #                                #
-# Last modified 06/09/2014       # 
+# Last modified 06/09/2014       #
 #                                #
 # Georgi Marinov                 #
-#                                # 
+#                                #
 ##################################
 from __future__ import print_function
 
@@ -34,7 +34,7 @@ def FLAG(FLAG):
             maxPos-=1
         else:
             maxPos-=1
-  
+
     return FLAGList
 
 def main():
@@ -48,7 +48,7 @@ def main():
         print('\tuse the -noNH option and supply a path to samtools in order to have the file converted to one that has NH tags')
         print('\tthe stranded option will normalized against all reads, not just reads on the indicated strand')
         sys.exit(1)
-    
+
     bed = sys.argv[1]
     fieldID = int(sys.argv[2])
     SAM = sys.argv[3]
@@ -196,7 +196,7 @@ def main():
                 Score = TotalScore / (right-left)
                 MappabilityRegionDict[chr][(left,right)] = Score/readLength
         WantedDict = {}
-     
+
     regionDict={}
 
     Unique=0
@@ -327,11 +327,11 @@ def main():
             else:
                 outline = outline + '\t' + str(score/MappabilityRegionDict[chr][(left,right)])
         outfile.write(outline + '\n')
-         
+
     if doPrintSum:
         outfile.write('#Total RPM:' + str(RPMSum) + '\n')
 
     outfile.close()
-   
+
 if __name__ == '__main__':
     main()

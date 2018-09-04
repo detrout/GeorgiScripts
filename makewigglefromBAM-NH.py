@@ -1,9 +1,9 @@
 ##################################
 #                                #
-# Last modified 09/06/2013       # 
+# Last modified 09/06/2013       #
 #                                #
 # Georgi Marinov                 #
-#                                # 
+#                                #
 ##################################
 from __future__ import print_function
 
@@ -46,7 +46,7 @@ def FLAG(FLAG):
             maxPos-=1
         else:
             maxPos-=1
-  
+
     return FLAGList
 
 def main():
@@ -81,9 +81,9 @@ def main():
         print('will only consider the first end of read pairs')
 
     if '-end2only' in sys.argv:
-        doEnd2Only = True 
+        doEnd2Only = True
         print('will only consider the second end of read pairs')
-    
+
     doSingleBP=False
     if '-singlebasepair' in sys.argv:
         doSingleBP=True
@@ -410,6 +410,6 @@ def main():
                      previous=(i,coverageDict[i])
 
     outfile.close()
-            
+
 if __name__ == '__main__':
     main()

@@ -1,9 +1,9 @@
 ##################################
 #                                #
-# Last modified 11/11/2015       # 
+# Last modified 11/11/2015       #
 #                                #
 # Georgi Marinov                 #
-#                                # 
+#                                #
 ##################################
 from __future__ import print_function
 
@@ -128,19 +128,19 @@ def main():
         CommandDict['PeakCallIndividualPseudoRep'].append('Rscript ' + SPP + ' -c=' + Rep2ChIPIndividualPseudoRep1 + ' -i=' + Rep2InputIndividualPseudoRep1 + ' -p=' + P + ' -npeak=300000 -savr -savp -rf -odir=' + Rep2IndividualPseudoRep1Dir)
         CommandDict['PeakCallIndividualPseudoRep'].append('Rscript ' + SPP + ' -c=' + Rep2ChIPIndividualPseudoRep2 + ' -i=' + Rep2InputIndividualPseudoRep2 + ' -p=' + P + ' -npeak=300000 -savr -savp -rf -odir=' + Rep2IndividualPseudoRep2Dir)
 
-        CommandDict['IDRRep12'].append('Rscript batch-consistency-analysis.r' + ' ' + Rep1Dir + '/' + ChIPRep1.split('/')[-1][0:-4] + '_VS_' + InputRep1.split('/')[-1][0:-4] + '.regionPeak' + 
-                                                                                ' ' + Rep2Dir + '/' + ChIPRep2.split('/')[-1][0:-4] + '_VS_' + InputRep2.split('/')[-1][0:-4] + '.regionPeak' + 
+        CommandDict['IDRRep12'].append('Rscript batch-consistency-analysis.r' + ' ' + Rep1Dir + '/' + ChIPRep1.split('/')[-1][0:-4] + '_VS_' + InputRep1.split('/')[-1][0:-4] + '.regionPeak' +
+                                                                                ' ' + Rep2Dir + '/' + ChIPRep2.split('/')[-1][0:-4] + '_VS_' + InputRep2.split('/')[-1][0:-4] + '.regionPeak' +
                                                                             ' -1 IDR-SPP-'  + label + ' 0 F signal.value')
 
-        CommandDict['IDRPooledPseudoRep'].append('Rscript batch-consistency-analysis.r' + ' ' + PooledPseudoRep1Dir + '/' + PooledChIPBAMPseudoRep1[0:-4] + '_VS_' + PooledInputBAMPseudoRep1[0:-4] + '.regionPeak' + 
-                                                                                          ' ' + PooledPseudoRep2Dir + '/' + PooledChIPBAMPseudoRep2[0:-4] + '_VS_' + PooledInputBAMPseudoRep2[0:-4] + '.regionPeak' + 
+        CommandDict['IDRPooledPseudoRep'].append('Rscript batch-consistency-analysis.r' + ' ' + PooledPseudoRep1Dir + '/' + PooledChIPBAMPseudoRep1[0:-4] + '_VS_' + PooledInputBAMPseudoRep1[0:-4] + '.regionPeak' +
+                                                                                          ' ' + PooledPseudoRep2Dir + '/' + PooledChIPBAMPseudoRep2[0:-4] + '_VS_' + PooledInputBAMPseudoRep2[0:-4] + '.regionPeak' +
                                                                             ' -1 IDR-SPP-'  + label + '-PooledPseudoReps 0 F signal.value')
 
-        CommandDict['IDRIndividualPseudoRep'].append('Rscript batch-consistency-analysis.r' + ' ' + Rep1IndividualPseudoRep1Dir + '/' + Rep1ChIPIndividualPseudoRep1[0:-4] + '_VS_' + Rep1InputIndividualPseudoRep1[0:-4] + '.regionPeak' + 
-                                                                                              ' ' + Rep1IndividualPseudoRep2Dir + '/' + Rep1ChIPIndividualPseudoRep2[0:-4] + '_VS_' + Rep1InputIndividualPseudoRep2[0:-4] + '.regionPeak' + 
+        CommandDict['IDRIndividualPseudoRep'].append('Rscript batch-consistency-analysis.r' + ' ' + Rep1IndividualPseudoRep1Dir + '/' + Rep1ChIPIndividualPseudoRep1[0:-4] + '_VS_' + Rep1InputIndividualPseudoRep1[0:-4] + '.regionPeak' +
+                                                                                              ' ' + Rep1IndividualPseudoRep2Dir + '/' + Rep1ChIPIndividualPseudoRep2[0:-4] + '_VS_' + Rep1InputIndividualPseudoRep2[0:-4] + '.regionPeak' +
                                                                             ' -1 IDR-SPP-'  + label + '-Rep1PseudoReps 0 F signal.value')
-        CommandDict['IDRIndividualPseudoRep'].append('Rscript batch-consistency-analysis.r' + ' ' + Rep2IndividualPseudoRep1Dir + '/' + Rep2ChIPIndividualPseudoRep1[0:-4] + '_VS_' + Rep2InputIndividualPseudoRep1[0:-4] + '.regionPeak' + 
-                                                                                              ' ' + Rep2IndividualPseudoRep2Dir + '/' + Rep2ChIPIndividualPseudoRep2[0:-4] + '_VS_' + Rep2InputIndividualPseudoRep2[0:-4] + '.regionPeak' + 
+        CommandDict['IDRIndividualPseudoRep'].append('Rscript batch-consistency-analysis.r' + ' ' + Rep2IndividualPseudoRep1Dir + '/' + Rep2ChIPIndividualPseudoRep1[0:-4] + '_VS_' + Rep2InputIndividualPseudoRep1[0:-4] + '.regionPeak' +
+                                                                                              ' ' + Rep2IndividualPseudoRep2Dir + '/' + Rep2ChIPIndividualPseudoRep2[0:-4] + '_VS_' + Rep2InputIndividualPseudoRep2[0:-4] + '.regionPeak' +
                                                                             ' -1 IDR-SPP-'  + label + '-Rep2PseudoReps 0 F signal.value')
 
 

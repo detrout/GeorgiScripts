@@ -1,9 +1,9 @@
 ##################################
 #                                #
-# Last modified 03/09/2015       # 
+# Last modified 03/09/2015       #
 #                                #
 # Georgi Marinov                 #
-#                                # 
+#                                #
 ##################################
 from __future__ import print_function
 

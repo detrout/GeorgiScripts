@@ -1,9 +1,9 @@
 ##################################
 #                                #
-# Last modified 05/26/2014       # 
+# Last modified 05/26/2014       #
 #                                #
 # Georgi Marinov                 #
-#                                # 
+#                                #
 ##################################
 from __future__ import print_function
 
@@ -76,7 +76,7 @@ def main():
                else:
                    outline = lines[0][1:len(lines[0])].split('/')[0].split(' ')[0] + '\t' + lines[1] + '\t' + lines[3] + '\t' + line2 + '\t' + line4
                if doShuffle:
-                   DataList.append(outline) 
+                   DataList.append(outline)
                else:
                    print(outline)
                lines = []

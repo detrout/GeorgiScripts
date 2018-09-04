@@ -1,9 +1,9 @@
 ##################################
 #                                #
-# Last modified 11/04/2012       # 
+# Last modified 11/04/2012       #
 #                                #
 # Georgi Marinov                 #
-#                                # 
+#                                #
 ##################################
 from __future__ import print_function
 
@@ -28,7 +28,7 @@ def main():
         WantedDict[fields[fieldID]] = 1
 
     outfile = open(outfilename, 'w')
-    
+
     inputdatafile = open(fasta)
     Keep = False
     for line in inputdatafile:
@@ -41,9 +41,9 @@ def main():
         else:
             pass
         if Keep:
-            outfile.write(line)   
+            outfile.write(line)
 
     outfile.close()
-   
+
 if __name__ == '__main__':
     main()
