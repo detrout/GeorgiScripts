@@ -22,7 +22,7 @@ def main():
 
     BAM = sys.argv[1]
 
-    samfile = pysam.Samfile(BAM, "rb" )
+    samfile = pysam.Samfile(BAM, "rb")
 
     outfile1 = pysam.Samfile(BAM.split('.bam')[0] + '.pseudoRep1.bam', "wb", template=samfile)
     outfile2 = pysam.Samfile(BAM.split('.bam')[0] + '.pseudoRep2.bam', "wb", template=samfile)

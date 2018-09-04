@@ -25,7 +25,7 @@ def main(argv=None):
     BAM = sys.argv[1]
     outputfilename = sys.argv[2]
 
-    samfile = pysam.Samfile(BAM, "rb" )
+    samfile = pysam.Samfile(BAM, "rb")
     readMultiplicityDict = getReadMultiplicity(samfile)
 
     counts = getReadCounts(samfile, readMultiplicityDict)

@@ -38,7 +38,7 @@ def main(cmdline=None):
     with open(args.chrominfo) as chromData:
         chromInfoList = getChromInfo(chromData)
 
-    samfile = pysam.Samfile(args.SAM, "rb" )
+    samfile = pysam.Samfile(args.SAM, "rb")
     if args.noNH:
         ReadMultiplicityDict = getReadMultiplicity(chromInfoList, samfile, verbose=args.verbose)
     else:

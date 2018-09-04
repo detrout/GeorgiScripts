@@ -61,7 +61,7 @@ def main():
             start = 0
             end = int(fields[1])
             chromInfoList.append((chr, start, end))
-        samfile = pysam.Samfile(SAM, "rb" )
+        samfile = pysam.Samfile(SAM, "rb")
         try:
             print('testing for NH tags presence')
             for alignedread in samfile.fetch():
@@ -102,7 +102,7 @@ def main():
 
     if doBAM:
         i = 0
-        samfile = pysam.Samfile(SAM, "rb" )
+        samfile = pysam.Samfile(SAM, "rb")
         for (chr, start, end) in chromInfoList:
             try:
                 jj = 0

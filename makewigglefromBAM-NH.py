@@ -99,7 +99,7 @@ def main():
         TotalReads = 0
         pass
 
-    samfile = pysam.Samfile(BAM, "rb" )
+    samfile = pysam.Samfile(BAM, "rb")
     try:
         print('testing for NH tags presence')
         for alignedread in samfile.fetch():
@@ -188,7 +188,7 @@ def main():
             if chr != '*':
                 TotalNumberRead += reads
     else:
-        samfile = pysam.Samfile(BAM, "rb" )
+        samfile = pysam.Samfile(BAM, "rb")
         RN = 0
         for (chr, start, end) in chromInfoList:
             try:

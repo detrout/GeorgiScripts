@@ -100,7 +100,7 @@ def main():
         TotalReads = 0
         pass
 
-    samfile = pysam.Samfile(SAM, "rb" )
+    samfile = pysam.Samfile(SAM, "rb")
     try:
         print('testing for NH tags presence')
         for alignedread in samfile.fetch():
@@ -217,7 +217,7 @@ def main():
         MultiplicityDict = {}
         UniqueReads = 0
         i = 0
-        samfile = pysam.Samfile(SAM, "rb" )
+        samfile = pysam.Samfile(SAM, "rb")
         for (chr, start, end) in chromInfoList:
             try:
                 for alignedread in samfile.fetch(chr, start, end):
