@@ -1,201 +1,259 @@
-##################################
-#                                #
-# Last modified 05/19/2012       #
-#                                #
-# Georgi Marinov                 #
-#                                #
-##################################
+# Initial Code By:
+# Georgi Marinov 05/19/2012
+#
+# Version 1.0.1
 from __future__ import print_function
 
 import sys
-import string
-import math
 import pysam
+import argparse
 
-def main():
 
-    if len(sys.argv) < 4:
-        print('usage: python %s gtf BAM chrom.sizes outputfilename [-nomulti] [-nounique] [-noNH] ' % sys.argv[0])
-        print('  by default, the script is not designed to deal with multi reads unless the NH: field is present; use the [-noNH] option if it is not; multi reads will be weighed by their multiplicity')
-        sys.exit(1)
+def make_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("gtf", help="gtf file")
+    parser.add_argument("SAM", help="SAM file")
+    parser.add_argument("chrominfo", help="chrominfo file")
+    parser.add_argument("outputfilename", help="output file name")
+    parser.add_argument("--nomulti", help="discard multireads", action="store_true", dest="noMulti")
+    parser.add_argument("--nounique", action="store_true", help="discard unique reads", dest="noUnique")
+    parser.add_argument("--noNH", help="use if multi reads do not have NH tags", action="store_true", dest="noNH")
+    parser.add_argument("--verbose", help="verbose output", action="store_true")
 
-    gtf = sys.argv[1]
-    SAM = sys.argv[2]
-    chrominfo = sys.argv[3]
-    outfilename = sys.argv[4]
+    return parser
 
-    noMulti=False
-    if '-nomulti' in sys.argv:
-        noMulti=True
-        print('will discard multi reads')
-    noUnique=False
-    if '-nounique' in sys.argv:
-        noUnique=True
-        print('will discard unique reads')
 
-    PosCountsDict={}
+def main(cmdline=None):
+    # maybe bedtools can just replace all of this
+    # also see samtools idx stats
+    parser = make_parser()
+    args = parser.parse_args(cmdline)
 
-    chromInfoList=[]
-    linelist=open(chrominfo)
-    for line in linelist:
-        fields=line.strip().split('\t')
-        chr=fields[0]
-        start=0
-        end=int(fields[1])
-        chromInfoList.append((chr,start,end))
+    if args.verbose:
+        if args.noMulti:
+            print('will discard multi reads')
+        if args.noUnique:
+            print('will discard unique reads')
 
-    samfile = pysam.Samfile(SAM, "rb" )
+    with open(args.chrominfo) as chromData:
+        chromInfoList = getChromInfo(chromData)
 
-    noNH=False
-    if '-noNH' in sys.argv:
-        noNH=True
-        i=0
-        ReadMultiplcityDict={}
-        for (chr,start,end) in chromInfoList:
-            try:
-                jj=0
-                for alignedread in samfile.fetch(chr, start, end):
-                    jj+=1
-                    if jj==1:
-                        break
-            except:
-                print(chr, start, end, 'not found in BAM file, skipping')
-                continue
-            for alignedread in samfile.fetch(chr, start, end):
-                i+=1
-                if i % 5000000 == 0:
-                        print(str(i/1000000) + 'M alignments processed in multiplicity examination', chr,start,alignedread.pos,end)
-                fields=str(alignedread).split('\t')
-                ID=fields[0]
-                if alignedread.is_read1:
-                    ID = ID + '/1'
-                if alignedread.is_read2:
-                    ID = ID + '/2'
-                if ReadMultiplcityDict.has_key(ID):
-                    pass
-                else:
-                    ReadMultiplcityDict[ID]=0
-                ReadMultiplcityDict[ID]+=1
+    samfile = pysam.Samfile(args.SAM, "rb" )
+    if args.noNH:
+        ReadMultiplicityDict = getReadMultiplicity(chromInfoList, samfile, verbose=args.verbose)
+    else:
+        ReadMultiplicityDict = {}
 
-    i=0
-    for (chr,start,end) in chromInfoList:
+    PosCountsDict, TotalReads = pileUpReads(chromInfoList, samfile, ReadMultiplicityDict, noNH=False, noMulti=False, verbose=args.verbos)
+    if args.verbose:
+        print('....................................')
+
+    with open(args.gtf) as gtfData:
+        geneDict = readGtf(gtfData)
+    if args.verbose:
+        print('finished inputting annotation')
+
+    ExonicReads, IntronicReads = getCounts(PosCountsDict, geneDict)
+    with open(args.outfilename, 'w') as outfile:
+        writeOutput(outfile, TotalReads, ExonicReads, IntronicReads)
+
+
+def getChromInfo(chrominfo):
+    chromInfoList = []
+    for line in chrominfo:
+        fields = line.strip().split('\t')
+        chrom = fields[0]
+        start = 0
+        end = int(fields[1])
+        chromInfoList.append((chrom, start, end))
+
+    return chromInfoList
+
+
+def getReadMultiplicity(chromInfoList, samfile, verbose=False):
+    readMultiplicityDict = {}
+    i = 0
+    for (chrom, start, end) in chromInfoList:
+        # this just checks to see if there is an entry by looking instead of error handling
         try:
-            jj=0
-            for alignedread in samfile.fetch(chr, start, end):
-                jj+=1
-                if jj==1:
+            jj = 0
+            for alignedread in samfile.fetch(chrom, start, end):
+                jj += 1
+                if jj == 1:
                     break
-        except:
-            print(chr, start, end, 'not found in BAM file, skipping')
+        except ValueError:
+            if verbose:
+                print(chrom, start, end, 'not found in BAM file, skipping')
             continue
-        if PosCountsDict.has_key(chr):
-            pass
-        else:
-            PosCountsDict[chr]={}
-        for alignedread in samfile.fetch(chr, start, end):
-            i+=1
-            if i % 5000000 == 0:
-                print(str(i/1000000) + 'M alignments processed')
-            fields=str(alignedread).split('\t')
-            ID=fields[0]
+
+        # here is where the work begins
+        for alignedread in samfile.fetch(chrom, start, end):
+            if verbose:
+                i += 1
+                if i % 5000000 == 0:
+                    print(str(i/1000000) + 'M alignments processed in multiplicity examination', chrom,start,alignedread.pos,end)
+
+            fields = str(alignedread).split('\t')
+            ID = fields[0]
             if alignedread.is_read1:
                 ID = ID + '/1'
+
             if alignedread.is_read2:
                 ID = ID + '/2'
+
+            try:
+                readMultiplicityDict[ID] += 1
+            except KeyError:
+                readMultiplicityDict[ID] = 1
+
+    return readMultiplicityDict
+
+
+def pileUpReads(chromInfoList, samfile, readMultiplicityDict, noNH=False, noMulti=False, verbose=False):
+    posCountsDict = {}
+    i = 0
+    totalReads = 0.0
+    for (chrom, start, end) in chromInfoList:
+        # same checking code here
+        try:
+            jj = 0
+            for alignedread in samfile.fetch(chrom, start, end):
+                jj += 1
+                if jj == 1:
+                    break
+        except ValueError:
+            if verbose:
+                print('{} {} {} not found in BAM file, skipping'.format(chrom, start, end))
+            continue
+
+        if posCountsDict.has_key(chrom):
+            pass
+        else:
+            posCountsDict[chrom] = {}
+
+        for alignedread in samfile.fetch(chrom, start, end):
+            if verbose:
+                i += 1
+                if i % 5000000 == 0:
+                    print('{} M alignments processed'.format(i/1000000))
+
             if noNH:
-                scaleby = ReadMultiplcityDict[ID]
+                fields = str(alignedread).split('\t')
+                ID = fields[0]
+                if alignedread.is_read1:
+                    ID = ID + '/1'
+
+                if alignedread.is_read2:
+                    ID = ID + '/2'
+
+                scaleby = readMultiplicityDict[ID]
             else:
                 try:
-                    scaleby = alignedread.opt('NH')
-                except:
+                    scaleby = alignedread.get_tag('NH')
+                except KeyError:
                     print('multireads not specified with the NH tag, exiting')
                     sys.exit(1)
+
             if noMulti and scaleby > 1:
                 continue
+
             weight = 1.0/scaleby
-            pos=alignedread.pos
-            if PosCountsDict[chr].has_key(pos):
-                PosCountsDict[chr][pos]+=weight
-            else:
-                PosCountsDict[chr][pos]=weight
-            if chr == 'PDF1':
-                print(fields)
+            totalReads += weight
+            pos = alignedread.pos
+            try:
+                posCountsDict[chrom][pos] += weight
+            except KeyError:
+                posCountsDict[chrom][pos] = weight
 
-    print('....................................')
+    return posCountsDict, totalReads
 
-    TotalReads = 0
-    for chr in PosCountsDict.keys():
-        print(chr)
-        for pos in PosCountsDict[chr].keys():
-            TotalReads += PosCountsDict[chr][pos]
 
-    ExonicReads=0
-    IntronicReads=0
+def getCounts(posCountsDict, geneDict, verbose=False):
+    exonicReads = 0
+    intronicReads = 0
+    keys = sorted(geneDict.keys())
+    for chrom in keys:
+        if verbose:
+            print(chrom)
 
-    ExonicPosDict={}
-
-    GeneDict={}
-    lineslist = open(gtf)
-    for line in lineslist:
-        if line[0]=='#':
-            continue
-        fields=line.strip().split('\t')
-        if fields[2]!='exon':
-            continue
-        chr=fields[0]
-        if GeneDict.has_key(chr):
-            pass
-        else:
-            ExonicPosDict[chr]={}
-            GeneDict[chr]={}
-        start=int(fields[3])
-        stop=int(fields[4])
-        geneID=fields[8].split('gene_id "')[1].split('";')[0]
-        if GeneDict[chr].has_key(geneID):
-            pass
-        else:
-            GeneDict[chr][geneID]=[]
-        GeneDict[chr][geneID].append((start,stop))
-        for i in range(start,stop):
-            ExonicPosDict[chr][i]=''
-
-    print('finished inputting annotation')
-
-    keys=GeneDict.keys()
-    keys.sort()
-
-    for chr in keys:
-        print(chr)
-        for geneID in GeneDict[chr].keys():
-            coordinates=[]
-            for (start,stop) in GeneDict[chr][geneID]:
+        for geneID in geneDict[chrom].keys():
+            coordinates = []
+            for (start, stop) in geneDict[chrom][geneID]:
                 coordinates.append(start)
                 coordinates.append(stop)
                 for i in range(start,stop):
-                    ExonicPosDict[chr][i]=''
-            for i in range(min(coordinates),max(coordinates)):
-                if ExonicPosDict[chr].has_key(i):
-                    if PosCountsDict.has_key(chr) and PosCountsDict[chr].has_key(i):
-                        ExonicReads+=PosCountsDict[chr][i]
-                        del PosCountsDict[chr][i]
-                else:
-                    if PosCountsDict.has_key(chr) and PosCountsDict[chr].has_key(i):
-                        IntronicReads+=PosCountsDict[chr][i]
-                        del PosCountsDict[chr][i]
+                    try:
+                        exonicReads += posCountsDict[chrom][i]
+                        # delete entry so that it is not counted multiple times either because of multiple models or the next intron pass
+                        del posCountsDict[chrom][i]
+                    except KeyError:
+                        pass
 
-    IntergenicReads = TotalReads - ExonicReads - IntronicReads
+            # all the exonic reads have been counted and removed so the remainder in the rage is intronic
+            for i in range(min(coordinates), max(coordinates)):
+                try:
+                    intronicReads += posCountsDict[chrom][i]
+                    del posCountsDict[chrom][i]
+                except KeyError:
+                    pass
 
-    outfile=open(outfilename,'w')
+    return exonicReads, intronicReads
 
-    outline='#Class\tFraction'
-    outfile.write(outline+'\n')
-    outline='Exonic:' +'\t'+str(ExonicReads/TotalReads)
-    outfile.write(outline+'\n')
-    outline='Intronic:' +'\t'+str(IntronicReads/TotalReads)
-    outfile.write(outline+'\n')
-    outline='Intergenic:' +'\t'+str(IntergenicReads/TotalReads)
-    outfile.write(outline+'\n')
-    outfile.close()
+
+def readGtf(gtf):
+    geneDict = {}
+    for line in gtf:
+        if line[0] == '#':
+            continue
+
+        fields = line.strip().split('\t')
+        if fields[2] != 'exon':
+            continue
+
+        chrom = fields[0]
+        if chrom in geneDict:
+            pass
+        else:
+            geneDict[chrom] = {}
+
+        start = int(fields[3])
+        stop = int(fields[4])
+        geneID = fields[8].split('gene_id "')[1].split('";')[0]
+
+        try:
+            geneDict[chrom][geneID].add((start, stop))
+        except KeyError:
+            geneDict[chrom][geneID] = set([(start, stop)])
+
+    return geneDict
+
+
+def writeOutput(outfile, totalReads, exonicReads, intronicReads):
+    outfile.write('#Class\tFraction\n')
+    outfile.write('Exonic:{}\t\n'.format(exonicReads/totalReads))
+    outfile.write('Intronic:{}\t\n'.format(intronicReads/totalReads))
+    intergenicReads = totalReads - exonicReads - intronicReads
+    outfile.write('Intergenic:{}\t\n'.format(intergenicReads/totalReads))
+
+
+class pseudoSAM():
+    def __init__(self, readData):
+        self.reads = []
+
+    def fetch(self, chrom, start, stop):
+        return self.reads
+
+
+class pseudoFile():
+    def __init__(self, readLineData):
+        self.readLineEntries = readLineData
+
+    def write(self, dataEntry):
+        self.readLineEntries.append(dataEntry)
+
+    def read(self):
+        return self.readLineEntries.pop()
+
 
 if __name__ == '__main__':
     main()
