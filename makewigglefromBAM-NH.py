@@ -371,29 +371,29 @@ def main():
         else:
             for i in posKeys[1:len(posKeys)]:
                 if previous[0]+1 == i and previous[1] = =coverageDict[i]:
-                     previous = (i, coverageDict[i])
+                    previous = (i, coverageDict[i])
                 else:
-                     if written[0] == initial[0]:
-                         print('####', written, initial, previous)
-                     try:
-                         if doStranded and strand == '-':
-                             if doRPM:
-                                 outline = chr + '\t' + str(initial[0]-1) + '\t' + str(previous[0]+1-1) + '\t-' + str('{0:.10f}'.format(initial[1]/normFactor)).split('.')[0] + '.' + str('{0:.10f}'.format(initial[1]/normFactor)).split('.')[1][0:4]
-                             else:
-                                 outline = chr + '\t' + str(initial[0]-1) + '\t' + str(previous[0]+1-1)+'\t-' + str('{0:.10f}'.format(initial[1])).split('.')[0] + '.' + str('{0:.10f}'.format(initial[1])).split('.')[1][0:4]
-                         else:
-                             if doRPM:
-                                 outline = chr + '\t'+str(initial[0]-1) + '\t' + str(previous[0]+1-1) + '\t' + str('{0:.10f}'.format(initial[1]/normFactor)).split('.')[0] + '.' + str('{0:.10f}'.format(initial[1]/normFactor)).split('.')[1][0:4]
-                             else:
-                                 outline = chr + '\t' + str(initial[0]-1) + '\t' + str(previous[0]+1-1) + '\t' + str('{0:.10f}'.format(initial[1])).split('.')[0] + '.' + str('{0:.10f}'.format(initial[1])).split('.')[1][0:4]
-                     except:
-                         print(initial[0]-1)
-                         print(previous[0]+1-1)
-                         print(initial[1])
-                         print(str(initial[1]).split('.')[0])
-                         print(str(initial[1]).split('.')[1])
-                         print(str(initial[1]).split('.')[1][0:4])
-                         sys.exit(1)
+                    if written[0] == initial[0]:
+                        print('####', written, initial, previous)
+                    try:
+                        if doStranded and strand == '-':
+                            if doRPM:
+                                outline = chr + '\t' + str(initial[0]-1) + '\t' + str(previous[0]+1-1) + '\t-' + str('{0:.10f}'.format(initial[1]/normFactor)).split('.')[0] + '.' + str('{0:.10f}'.format(initial[1]/normFactor)).split('.')[1][0:4]
+                            else:
+                                outline = chr + '\t' + str(initial[0]-1) + '\t' + str(previous[0]+1-1)+'\t-' + str('{0:.10f}'.format(initial[1])).split('.')[0] + '.' + str('{0:.10f}'.format(initial[1])).split('.')[1][0:4]
+                        else:
+                            if doRPM:
+                                outline = chr + '\t'+str(initial[0]-1) + '\t' + str(previous[0]+1-1) + '\t' + str('{0:.10f}'.format(initial[1]/normFactor)).split('.')[0] + '.' + str('{0:.10f}'.format(initial[1]/normFactor)).split('.')[1][0:4]
+                            else:
+                                outline = chr + '\t' + str(initial[0]-1) + '\t' + str(previous[0]+1-1) + '\t' + str('{0:.10f}'.format(initial[1])).split('.')[0] + '.' + str('{0:.10f}'.format(initial[1])).split('.')[1][0:4]
+                    except:
+                        print(initial[0]-1)
+                        print(previous[0]+1-1)
+                        print(initial[1])
+                        print(str(initial[1]).split('.')[0])
+                        print(str(initial[1]).split('.')[1])
+                        print(str(initial[1]).split('.')[1][0:4])
+                        sys.exit(1)
 #                     if doStranded and strand == '-':
 #                         if doRPM:
 #                             outline=chr+'\t'+str(initial[0]-1)+'\t'+str(previous[0]+1-1)+'\t-'+str(initial[1]/normFactor).split('.')[0] + '.' + str(initial[1]/normFactor).split('.')[1][0:4]
@@ -404,10 +404,10 @@ def main():
 #                             outline=chr+'\t'+str(initial[0]-1)+'\t'+str(previous[0]+1-1)+'\t'+str(initial[1]/normFactor).split('.')[0] + '.' + str(initial[1]/normFactor).split('.')[1][0:4]
 #                         else:
 #                             outline=chr+'\t'+str(initial[0]-1)+'\t'+str(previous[0]+1-1)+'\t'+str(initial[1]).split('.')[0] + '.' + str(initial[1]).split('.')[1][0:4]
-                     written = (initial[0], previous[0]+1)
-                     outfile.write(outline + '\n')
-                     initial = (i, coverageDict[i])
-                     previous = (i, coverageDict[i])
+                    written = (initial[0], previous[0]+1)
+                    outfile.write(outline + '\n')
+                    initial = (i, coverageDict[i])
+                    previous = (i, coverageDict[i])
 
     outfile.close()
 
