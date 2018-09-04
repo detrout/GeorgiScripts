@@ -52,7 +52,7 @@ def main():
             continue
         fields = line.strip().split('\t')
         chr = fields[chromField1]
-        if File1DictCoverage.has_key(chr):
+        if chr in File1DictCoverage:
             pass
         else:
             File1DictCoverage[chr] = {}
@@ -90,14 +90,14 @@ def main():
         chr = fields[chromField2].split(':')[0]
         start = int(fields[chromField2+1])
         end = int(fields[chromField2+2])
-        if File1DictCoverage.has_key(chr):
+        if chr in File1DictCoverage:
             pass
         else:
             outfilename_outersection2.write(line)
             continue
         overlapBP = 0
         for i in range(start, end):
-            if File1DictCoverage[chr].has_key(i):
+            if i in File1DictCoverage[chr]:
                 OverlappedListDict[File1DictCoverage[chr][i]] = 0
                 overlapBP += 1
         if doMinBasePairOverlap:
@@ -112,7 +112,7 @@ def main():
                 outfilename_outersection2.write(line)
 
     for i in File1Dict.keys():
-        if OverlappedListDict.has_key(i):
+        if i in OverlappedListDict:
             outfilename_intersection1.write(File1Dict[i])
         else:
             outfilename_outersection1.write(File1Dict[i])

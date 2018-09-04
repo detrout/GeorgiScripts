@@ -126,7 +126,7 @@ def pileUpReads(chromInfoList, samfile, readMultiplicityDict, noNH=False, noMult
                 print('{} {} {} not found in BAM file, skipping'.format(chrom, start, end))
             continue
 
-        if posCountsDict.has_key(chrom):
+        if chrom in posCountsDict:
             pass
         else:
             posCountsDict[chrom] = {}

@@ -156,7 +156,7 @@ def main():
             if left >= right:
                 print('problem with region, skipping:', chr, left, right)
                 continue
-            if MappabilityRegionDict.has_key(chr):
+            if chr in MappabilityRegionDict:
                 pass
             else:
                 MappabilityRegionDict[chr] = {}
@@ -180,12 +180,12 @@ def main():
             left = int(fields[1])
             right = int(fields[2])
             score = float(fields[3])
-            if WantedDict.has_key(chr):
+            if chr in WantedDict:
                 pass
             else:
                 continue
             for j in range(left, right):
-                if WantedDict[chr].has_key(j):
+                if j in WantedDict[chr]:
                     WantedDict[chr][j] = score
         print('calculating mappable fractions')
         for chr in MappabilityRegionDict.keys():
@@ -240,7 +240,7 @@ def main():
                         ID = ID + '/1'
                     if alignedread.is_read2:
                         ID = ID + '/2'
-                    if MultiplicityDict.has_key(ID):
+                    if ID in MultiplicityDict:
                         MultiplicityDict[ID] += 1
                     else:
                         MultiplicityDict[ID] = 1

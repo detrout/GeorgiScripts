@@ -34,7 +34,7 @@ def main():
     for line in inputdatafile:
         if line[0] == '>':
             ID = line.strip().split('>')[1]
-            if WantedDict.has_key(ID):
+            if ID in WantedDict:
                 Keep = True
             else:
                 Keep = False

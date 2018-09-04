@@ -255,7 +255,7 @@ def main():
     for (chr, start, end) in chromInfoList:
         coverageDict = {}
         if doChrSubset:
-            if WantedChrDict.has_key(chr):
+            if chr in WantedChrDict:
                 pass
             else:
                 continue
@@ -333,7 +333,7 @@ def main():
             for (m, bp) in alignedread.cigar:
                 if m == 0:
                     for j in range(currentPos, currentPos+bp):
-                        if coverageDict.has_key(j+1 + shift):
+                        if (j+1 + shift) in coverageDict:
                             coverageDict[j+1 + shift] += scaleby
                         else:
                             coverageDict[j+1 + shift] = scaleby
@@ -353,7 +353,7 @@ def main():
         written = ['']
         if doSingleBP:
             for i in range(1, max(posKeys)+1):
-                if coverageDict.has_key(i):
+                if i in coverageDict:
                     if doStranded and strand == '-':
                         if doRPM:
                             outline = chr + '\t' + str(i-1) + '\t' + str(i+1-1) + '\t-' + str(coverageDict[i]/normFactor)

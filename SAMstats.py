@@ -120,7 +120,7 @@ def main():
                 fields = str(alignedread).split('\t')
                 ID = fields[0]
                 length = len(alignedread.seq)
-                if ReadLengthDict.has_key(length):
+                if length in ReadLengthDict:
                     ReadLengthDict[length] += 1
                 else:
                     ReadLengthDict[length] = 1
@@ -130,7 +130,7 @@ def main():
                     ID = ID + '/2'
                 multiplicity = alignedread.opt('NH')
                 if multiplicity > 1:
-                    if SeenTwiceDict.has_key(ID):
+                    if ID in SeenTwiceDict:
                         continue
                     SeenTwiceDict[ID] = ''
                     if len(alignedread.cigar) > 1:
@@ -170,7 +170,7 @@ def main():
                 print(str(i/1000000) + 'M alignments processed')
             fields = line.strip().split('\t')
             length = len(fields[6])
-            if ReadLengthDict.has_key(length):
+            if length in ReadLengthDict:
                 ReadLengthDict[length] += 1
             else:
                 ReadLengthDict[length] = 1
@@ -185,8 +185,8 @@ def main():
             else:
                 print('paired information incorrectly specified, exiting')
                 sys.exit(1)
-            if SeenDict.has_key(ID):
-                if SeenTwiceDict.has_key(ID):
+            if ID in SeenDict:
+                if ID in SeenTwiceDict:
                     continue
                 SeenTwiceDict[ID] = ''
                 if 'N' in fields[5]:
