@@ -28,13 +28,13 @@ def main():
     outfile2 = pysam.Samfile(BAM.split('.bam')[0] + '.pseudoRep2.bam', "wb", template=samfile)
 
     for alignedread in samfile.fetch():
-         chr = samfile.getrname(alignedread.tid)
-         if chr == '*':
-             continue
-         if random.random() >= 0.5:
-             outfile1.write(alignedread)
-         else:
-             outfile2.write(alignedread)
+        chr = samfile.getrname(alignedread.tid)
+        if chr == '*':
+            continue
+        if random.random() >= 0.5:
+            outfile1.write(alignedread)
+        else:
+            outfile2.write(alignedread)
 
     outfile1.close()
     outfile2.close()

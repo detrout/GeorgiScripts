@@ -107,9 +107,9 @@ def main():
             try:
                 jj=0
                 for alignedread in samfile.fetch(chr, start, end):
-                   jj+=1
-                   if jj==1:
-                       break
+                    jj+=1
+                    if jj==1:
+                        break
             except:
                 print('problem with region:', chr, start, end, 'skipping')
                 continue
@@ -137,9 +137,9 @@ def main():
                         Splice=False
                         for (m,bp) in alignedread.cigar:
                             if m == 3:
-                               MultiSplices+=1
-                               Splice=True
-                               break
+                                MultiSplices+=1
+                                Splice=True
+                                break
                         if not Splice:
                             Multi+=1
                     else:
@@ -183,8 +183,8 @@ def main():
             elif 128 in FLAGfields:
                 ID = ID + '/2'
             else:
-                 print('paired information incorrectly specified, exiting')
-                 sys.exit(1)
+                print('paired information incorrectly specified, exiting')
+                sys.exit(1)
             if SeenDict.has_key(ID):
                 if SeenTwiceDict.has_key(ID):
                     continue
@@ -252,11 +252,11 @@ def main():
                 if strand == '+':
                     CurrentPosDictPlus.append(str(alignedread.cigar))
                     if doPaired:
-                         CurrentPosDictPlus.append((str(alignedread.cigar),alignedread.mpos))
+                        CurrentPosDictPlus.append((str(alignedread.cigar),alignedread.mpos))
                 if strand == '-':
                     CurrentPosDictMinus.append(str(alignedread.cigar))
                     if doPaired:
-                         CurrentPosDictMinus.append((str(alignedread.cigar),alignedread.mpos))
+                        CurrentPosDictMinus.append((str(alignedread.cigar),alignedread.mpos))
         Complexity = DistinctUniqueReads/float(TotalUniqueReads)
 
     SeenDict=''

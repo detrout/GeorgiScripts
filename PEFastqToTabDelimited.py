@@ -67,19 +67,19 @@ def main():
                 break
             i+=1
             if i % 4 == 0:
-               line1 = p2.readline().strip()
-               line2 = p2.readline().strip()
-               line3 = p2.readline().strip()
-               line4 = p2.readline().strip()
-               if doRename:
-                   outline = prefix + str(i/4) + '\t' + lines[1] + '\t' + lines[3] + '\t' + line2 + '\t' + line4
-               else:
-                   outline = lines[0][1:len(lines[0])].split('/')[0].split(' ')[0] + '\t' + lines[1] + '\t' + lines[3] + '\t' + line2 + '\t' + line4
-               if doShuffle:
-                   DataList.append(outline)
-               else:
-                   print(outline)
-               lines = []
+                line1 = p2.readline().strip()
+                line2 = p2.readline().strip()
+                line3 = p2.readline().strip()
+                line4 = p2.readline().strip()
+                if doRename:
+                    outline = prefix + str(i/4) + '\t' + lines[1] + '\t' + lines[3] + '\t' + line2 + '\t' + line4
+                else:
+                    outline = lines[0][1:len(lines[0])].split('/')[0].split(' ')[0] + '\t' + lines[1] + '\t' + lines[3] + '\t' + line2 + '\t' + line4
+                if doShuffle:
+                    DataList.append(outline)
+                else:
+                    print(outline)
+                lines = []
 
     if doShuffle:
         random.shuffle(DataList)
