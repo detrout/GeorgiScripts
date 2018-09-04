@@ -152,7 +152,7 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
         outputfilename = None
         maxGeneLength = None
         doPrintList = False
-        generatedArray  = createCoveragePercentiles(
+        generatedArray = createCoveragePercentiles(
             geneDict, coverageDict,
             minGeneLength, maxGeneLength,
             outputfilename,
