@@ -14,9 +14,11 @@ import os
 def main():
 
     if len(sys.argv) < 5:
-        print('usage: python %s config SPP_location samtools BAMPseudoReps.py N_cpus' % sys.argv[0])
+        print('usage: python %s config SPP_location '
+              'samtools BAMPseudoReps.py N_cpus' % sys.argv[0])
         print('\tconfig format:')
-        print('\tlabel\tChIP-Rep1.bam\tInput-Rep1.bam\tChIP-Rep2.bam\tInput-Rep2.bam')
+        print('\tlabel\tChIP-Rep1.bam\tInput-Rep1.bam'
+              '\tChIP-Rep2.bam\tInput-Rep2.bam')
         print('\tThe script will print to stdout')
         sys.exit(1)
 
@@ -70,50 +72,89 @@ def main():
 
         PooledPseudoRep1Dir = 'SPP-300K-' + label + '-PooledPseudoRep1'
         PooledPseudoRep2Dir = 'SPP-300K-' + label + '-PooledPseudoRep2'
-        CommandDict['mkdirPooledPseudoRep'].append('mkdir ' + PooledPseudoRep1Dir)
-        CommandDict['mkdirPooledPseudoRep'].append('mkdir ' + PooledPseudoRep2Dir)
+        CommandDict['mkdirPooledPseudoRep'].append(
+            'mkdir ' + PooledPseudoRep1Dir)
+        CommandDict['mkdirPooledPseudoRep'].append(
+            'mkdir ' + PooledPseudoRep2Dir)
 
         Rep1IndividualPseudoRep1Dir = 'SPP-300K-' + label + '-Rep1PseudoRep1'
         Rep1IndividualPseudoRep2Dir = 'SPP-300K-' + label + '-Rep1PseudoRep2'
         Rep2IndividualPseudoRep1Dir = 'SPP-300K-' + label + '-Rep2PseudoRep1'
         Rep2IndividualPseudoRep2Dir = 'SPP-300K-' + label + '-Rep2PseudoRep2'
-        CommandDict['mkdirIndidividualPseudoRep'].append('mkdir ' + Rep1IndividualPseudoRep1Dir)
-        CommandDict['mkdirIndidividualPseudoRep'].append('mkdir ' + Rep1IndividualPseudoRep2Dir)
-        CommandDict['mkdirIndidividualPseudoRep'].append('mkdir ' + Rep2IndividualPseudoRep1Dir)
-        CommandDict['mkdirIndidividualPseudoRep'].append('mkdir ' + Rep2IndividualPseudoRep2Dir)
+        CommandDict['mkdirIndidividualPseudoRep'].append(
+            'mkdir ' + Rep1IndividualPseudoRep1Dir)
+        CommandDict['mkdirIndidividualPseudoRep'].append(
+            'mkdir ' + Rep1IndividualPseudoRep2Dir)
+        CommandDict['mkdirIndidividualPseudoRep'].append(
+            'mkdir ' + Rep2IndividualPseudoRep1Dir)
+        CommandDict['mkdirIndidividualPseudoRep'].append(
+            'mkdir ' + Rep2IndividualPseudoRep2Dir)
 
-        CommandDict['PeakCallRep12'].append('Rscript ' + SPP + ' -c=' + ChIPRep1 + ' -i=' + InputRep1 + ' -p=' + P + ' -npeak=300000 -savr -savp -rf -odir=' + Rep1Dir)
-        CommandDict['PeakCallRep12'].append('Rscript ' + SPP + ' -c=' + ChIPRep2 + ' -i=' + InputRep2 + ' -p=' + P + ' -npeak=300000 -savr -savp -rf -odir=' + Rep2Dir)
+        CommandDict['PeakCallRep12'].append(
+            'Rscript ' + SPP + ' -c=' + ChIPRep1 +
+            ' -i=' + InputRep1 + ' -p=' + P +
+            ' -npeak=300000 -savr -savp -rf -odir=' + Rep1Dir)
+        CommandDict['PeakCallRep12'].append(
+            'Rscript ' + SPP + ' -c=' + ChIPRep2 +
+            ' -i=' + InputRep2 + ' -p=' + P +
+            ' -npeak=300000 -savr -savp -rf -odir=' + Rep2Dir)
 
         PooledChIPBAMmerged = label + '.ChIP.pooled.bam'
         PooledInputBAMmerged = label + '.Control.pooled.bam'
-        CommandDict['merge'].append(samtools + ' merge ' + PooledChIPBAMmerged + ' ' + ChIPRep1 + ' ' + ChIPRep2)
-        CommandDict['merge'].append(samtools + ' merge ' + PooledInputBAMmerged + ' ' + InputRep1 + ' ' + InputRep2)
+        CommandDict['merge'].append(
+            samtools + ' merge ' + PooledChIPBAMmerged + ' ' +
+            ChIPRep1 + ' ' + ChIPRep2)
+        CommandDict['merge'].append(
+            samtools + ' merge ' + PooledInputBAMmerged + ' ' +
+            InputRep1 + ' ' + InputRep2)
 
         PooledChIPBAMsorted = label + '.ChIP.pooled.sorted.bam'
         PooledInputBAMsorted = label + '.Control.pooled.sorted.bam'
-        CommandDict['sort'].append(samtools + ' sort ' + PooledChIPBAMmerged + ' ' + PooledChIPBAMsorted[0:-4])
-        CommandDict['sort'].append(samtools + ' sort ' + PooledInputBAMmerged + ' ' + PooledInputBAMsorted[0:-4])
+        CommandDict['sort'].append(
+            samtools + ' sort ' + PooledChIPBAMmerged + ' ' +
+            PooledChIPBAMsorted[0:-4])
+        CommandDict['sort'].append(
+            samtools + ' sort ' + PooledInputBAMmerged + ' ' +
+            PooledInputBAMsorted[0:-4])
 
-        CommandDict['index'].append(samtools + ' index ' + PooledChIPBAMsorted)
-        CommandDict['index'].append(samtools + ' index ' + PooledInputBAMsorted)
+        CommandDict['index'].append(
+            samtools + ' index ' + PooledChIPBAMsorted)
+        CommandDict['index'].append(
+            samtools + ' index ' + PooledInputBAMsorted)
 
-        CommandDict['BAMPseudoRep'].append('python ' + BAMpseudoreps + ' ' + PooledChIPBAMsorted)
-        CommandDict['BAMPseudoRep'].append('python ' + BAMpseudoreps + ' ' + PooledInputBAMsorted)
-        CommandDict['BAMPseudoRep'].append('python ' + BAMpseudoreps + ' ' + ChIPRep1)
-        CommandDict['BAMPseudoRep'].append('python ' + BAMpseudoreps + ' ' + ChIPRep2)
-        CommandDict['BAMPseudoRep'].append('python ' + BAMpseudoreps + ' ' + InputRep1)
-        CommandDict['BAMPseudoRep'].append('python ' + BAMpseudoreps + ' ' + InputRep2)
+        CommandDict['BAMPseudoRep'].append(
+            'python ' + BAMpseudoreps + ' ' + PooledChIPBAMsorted)
+        CommandDict['BAMPseudoRep'].append(
+            'python ' + BAMpseudoreps + ' ' + PooledInputBAMsorted)
+        CommandDict['BAMPseudoRep'].append(
+            'python ' + BAMpseudoreps + ' ' + ChIPRep1)
+        CommandDict['BAMPseudoRep'].append(
+            'python ' + BAMpseudoreps + ' ' + ChIPRep2)
+        CommandDict['BAMPseudoRep'].append(
+            'python ' + BAMpseudoreps + ' ' + InputRep1)
+        CommandDict['BAMPseudoRep'].append(
+            'python ' + BAMpseudoreps + ' ' + InputRep2)
 
-        CommandDict['PeakCallPooled'].append('Rscript ' + SPP + ' -c=' + PooledChIPBAMsorted + ' -i=' + PooledInputBAMsorted + ' -p=' + P + ' -npeak=300000 -savr -savp -rf -odir=' + PooledDir)
+        CommandDict['PeakCallPooled'].append(
+            'Rscript ' + SPP + ' -c=' + PooledChIPBAMsorted +
+            ' -i=' + PooledInputBAMsorted + ' -p=' + P +
+            ' -npeak=300000 -savr -savp -rf -odir=' + PooledDir)
 
-        PooledChIPBAMPseudoRep1 = PooledChIPBAMsorted[0:-4] + '.pseudoRep1.bam'
-        PooledChIPBAMPseudoRep2 = PooledChIPBAMsorted[0:-4] + '.pseudoRep2.bam'
-        PooledInputBAMPseudoRep1 = PooledInputBAMsorted[0:-4] + '.pseudoRep1.bam'
-        PooledInputBAMPseudoRep2 = PooledInputBAMsorted[0:-4] + '.pseudoRep2.bam'
+        rep1ext = '.pseudoRep1.bam'
+        rep2ext = '.pseudoRep2.bam'
+        PooledChIPBAMPseudoRep1 = PooledChIPBAMsorted[0:-4] + rep1ext
+        PooledChIPBAMPseudoRep2 = PooledChIPBAMsorted[0:-4] + rep2ext
+        PooledInputBAMPseudoRep1 = PooledInputBAMsorted[0:-4] + rep1ext
+        PooledInputBAMPseudoRep2 = PooledInputBAMsorted[0:-4] + rep2ext
 
-        CommandDict['PeakCallPooledPseudoRep'].append('Rscript ' + SPP + ' -c=' + PooledChIPBAMPseudoRep1 + ' -i=' + PooledInputBAMPseudoRep1 + ' -p=' + P + ' -npeak=300000 -savr -savp -rf -odir=' + PooledPseudoRep1Dir)
-        CommandDict['PeakCallPooledPseudoRep'].append('Rscript ' + SPP + ' -c=' + PooledChIPBAMPseudoRep2 + ' -i=' + PooledInputBAMPseudoRep2 + ' -p=' + P + ' -npeak=300000 -savr -savp -rf -odir=' + PooledPseudoRep2Dir)
+        CommandDict['PeakCallPooledPseudoRep'].append(
+            'Rscript ' + SPP + ' -c=' + PooledChIPBAMPseudoRep1 +
+            ' -i=' + PooledInputBAMPseudoRep1 + ' -p=' + P +
+            ' -npeak=300000 -savr -savp -rf -odir=' + PooledPseudoRep1Dir)
+        CommandDict['PeakCallPooledPseudoRep'].append(
+            'Rscript ' + SPP + ' -c=' + PooledChIPBAMPseudoRep2 +
+            ' -i=' + PooledInputBAMPseudoRep2 + ' -p=' + P +
+            ' -npeak=300000 -savr -savp -rf -odir=' + PooledPseudoRep2Dir)
 
         Rep1ChIPIndividualPseudoRep1 = ChIPRep1[0:-4] + '.pseudoRep1.bam'
         Rep2ChIPIndividualPseudoRep1 = ChIPRep2[0:-4] + '.pseudoRep1.bam'
@@ -123,33 +164,76 @@ def main():
         Rep2ChIPIndividualPseudoRep2 = ChIPRep2[0:-4] + '.pseudoRep2.bam'
         Rep1InputIndividualPseudoRep2 = InputRep1[0:-4] + '.pseudoRep2.bam'
         Rep2InputIndividualPseudoRep2 = InputRep2[0:-4] + '.pseudoRep2.bam'
-        CommandDict['PeakCallIndividualPseudoRep'].append('Rscript ' + SPP + ' -c=' + Rep1ChIPIndividualPseudoRep1 + ' -i=' + Rep1InputIndividualPseudoRep1 + ' -p=' + P + ' -npeak=300000 -savr -savp -rf -odir=' + Rep1IndividualPseudoRep1Dir)
-        CommandDict['PeakCallIndividualPseudoRep'].append('Rscript ' + SPP + ' -c=' + Rep1ChIPIndividualPseudoRep2 + ' -i=' + Rep1InputIndividualPseudoRep2 + ' -p=' + P + ' -npeak=300000 -savr -savp -rf -odir=' + Rep1IndividualPseudoRep2Dir)
-        CommandDict['PeakCallIndividualPseudoRep'].append('Rscript ' + SPP + ' -c=' + Rep2ChIPIndividualPseudoRep1 + ' -i=' + Rep2InputIndividualPseudoRep1 + ' -p=' + P + ' -npeak=300000 -savr -savp -rf -odir=' + Rep2IndividualPseudoRep1Dir)
-        CommandDict['PeakCallIndividualPseudoRep'].append('Rscript ' + SPP + ' -c=' + Rep2ChIPIndividualPseudoRep2 + ' -i=' + Rep2InputIndividualPseudoRep2 + ' -p=' + P + ' -npeak=300000 -savr -savp -rf -odir=' + Rep2IndividualPseudoRep2Dir)
+        CommandDict['PeakCallIndividualPseudoRep'].append(
+            'Rscript ' + SPP + ' -c=' + Rep1ChIPIndividualPseudoRep1 +
+            ' -i=' + Rep1InputIndividualPseudoRep1 + ' -p=' + P +
+            ' -npeak=300000 -savr -savp -rf -odir=' +
+            Rep1IndividualPseudoRep1Dir)
+        CommandDict['PeakCallIndividualPseudoRep'].append(
+            'Rscript ' + SPP + ' -c=' + Rep1ChIPIndividualPseudoRep2 +
+            ' -i=' + Rep1InputIndividualPseudoRep2 + ' -p=' + P +
+            ' -npeak=300000 -savr -savp -rf -odir=' +
+            Rep1IndividualPseudoRep2Dir)
+        CommandDict['PeakCallIndividualPseudoRep'].append(
+            'Rscript ' + SPP + ' -c=' + Rep2ChIPIndividualPseudoRep1 +
+            ' -i=' + Rep2InputIndividualPseudoRep1 + ' -p=' + P +
+            ' -npeak=300000 -savr -savp -rf -odir=' +
+            Rep2IndividualPseudoRep1Dir)
+        CommandDict['PeakCallIndividualPseudoRep'].append(
+            'Rscript ' + SPP + ' -c=' + Rep2ChIPIndividualPseudoRep2 +
+            ' -i=' + Rep2InputIndividualPseudoRep2 + ' -p=' + P +
+            ' -npeak=300000 -savr -savp -rf -odir=' +
+            Rep2IndividualPseudoRep2Dir)
 
-        CommandDict['IDRRep12'].append('Rscript batch-consistency-analysis.r' + ' ' + Rep1Dir + '/' + ChIPRep1.split('/')[-1][0:-4] + '_VS_' + InputRep1.split('/')[-1][0:-4] + '.regionPeak' +
-                                                                                ' ' + Rep2Dir + '/' + ChIPRep2.split('/')[-1][0:-4] + '_VS_' + InputRep2.split('/')[-1][0:-4] + '.regionPeak' +
-                                                                            ' -1 IDR-SPP-' + label + ' 0 F signal.value')
+        CommandDict['IDRRep12'].append(
+            'Rscript batch-consistency-analysis.r' + ' ' +
+            Rep1Dir + '/' + ChIPRep1.split('/')[-1][0:-4] +
+            '_VS_' + InputRep1.split('/')[-1][0:-4] + '.regionPeak' + ' ' +
+            Rep2Dir + '/' + ChIPRep2.split('/')[-1][0:-4] +
+            '_VS_' + InputRep2.split('/')[-1][0:-4] + '.regionPeak' +
+            ' -1 IDR-SPP-' + label + ' 0 F signal.value')
 
-        CommandDict['IDRPooledPseudoRep'].append('Rscript batch-consistency-analysis.r' + ' ' + PooledPseudoRep1Dir + '/' + PooledChIPBAMPseudoRep1[0:-4] + '_VS_' + PooledInputBAMPseudoRep1[0:-4] + '.regionPeak' +
-                                                                                          ' ' + PooledPseudoRep2Dir + '/' + PooledChIPBAMPseudoRep2[0:-4] + '_VS_' + PooledInputBAMPseudoRep2[0:-4] + '.regionPeak' +
-                                                                            ' -1 IDR-SPP-' + label + '-PooledPseudoReps 0 F signal.value')
+        CommandDict['IDRPooledPseudoRep'].append(
+            'Rscript batch-consistency-analysis.r' + ' ' +
+            PooledPseudoRep1Dir + '/' + PooledChIPBAMPseudoRep1[0:-4] +
+            '_VS_' + PooledInputBAMPseudoRep1[0:-4] + '.regionPeak' +
+            ' ' + PooledPseudoRep2Dir + '/' + PooledChIPBAMPseudoRep2[0:-4] +
+            '_VS_' + PooledInputBAMPseudoRep2[0:-4] + '.regionPeak' +
+            ' -1 IDR-SPP-' + label + '-PooledPseudoReps 0 F signal.value')
 
-        CommandDict['IDRIndividualPseudoRep'].append('Rscript batch-consistency-analysis.r' + ' ' + Rep1IndividualPseudoRep1Dir + '/' + Rep1ChIPIndividualPseudoRep1[0:-4] + '_VS_' + Rep1InputIndividualPseudoRep1[0:-4] + '.regionPeak' +
-                                                                                              ' ' + Rep1IndividualPseudoRep2Dir + '/' + Rep1ChIPIndividualPseudoRep2[0:-4] + '_VS_' + Rep1InputIndividualPseudoRep2[0:-4] + '.regionPeak' +
-                                                                            ' -1 IDR-SPP-' + label + '-Rep1PseudoReps 0 F signal.value')
-        CommandDict['IDRIndividualPseudoRep'].append('Rscript batch-consistency-analysis.r' + ' ' + Rep2IndividualPseudoRep1Dir + '/' + Rep2ChIPIndividualPseudoRep1[0:-4] + '_VS_' + Rep2InputIndividualPseudoRep1[0:-4] + '.regionPeak' +
-                                                                                              ' ' + Rep2IndividualPseudoRep2Dir + '/' + Rep2ChIPIndividualPseudoRep2[0:-4] + '_VS_' + Rep2InputIndividualPseudoRep2[0:-4] + '.regionPeak' +
-                                                                            ' -1 IDR-SPP-' + label + '-Rep2PseudoReps 0 F signal.value')
+        CommandDict['IDRIndividualPseudoRep'].append(
+            'Rscript batch-consistency-analysis.r' + ' ' +
+            Rep1IndividualPseudoRep1Dir + '/' +
+            Rep1ChIPIndividualPseudoRep1[0:-4] +
+            '_VS_' + Rep1InputIndividualPseudoRep1[0:-4] + '.regionPeak ' +
+            Rep1IndividualPseudoRep2Dir + '/' +
+            Rep1ChIPIndividualPseudoRep2[0:-4] +
+            '_VS_' + Rep1InputIndividualPseudoRep2[0:-4] + '.regionPeak' +
+            ' -1 IDR-SPP-' + label + '-Rep1PseudoReps 0 F signal.value')
+        CommandDict['IDRIndividualPseudoRep'].append(
+            'Rscript batch-consistency-analysis.r' + ' ' +
+            Rep2IndividualPseudoRep1Dir + '/' +
+            Rep2ChIPIndividualPseudoRep1[0:-4] +
+            '_VS_' + Rep2InputIndividualPseudoRep1[0:-4] + '.regionPeak ' +
+            Rep2IndividualPseudoRep2Dir + '/' +
+            Rep2ChIPIndividualPseudoRep2[0:-4] +
+            '_VS_' + Rep2InputIndividualPseudoRep2[0:-4] + '.regionPeak' +
+            ' -1 IDR-SPP-' + label + '-Rep2PseudoReps 0 F signal.value')
 
+        CommandDict['PlotsRep12'].append(
+            'Rscript batch-consistency-plot.r 1 ' +
+            'IDR-SPP-' + label + ' IDR-SPP-' + label)
 
-        CommandDict['PlotsRep12'].append('Rscript batch-consistency-plot.r 1 ' + 'IDR-SPP-' + label + ' IDR-SPP-' + label)
+        CommandDict['PlotsPooledPseudoRep'].append(
+            'Rscript batch-consistency-plot.r 1 ' + 'IDR-SPP-' + label +
+            '-PooledPseudoReps' + ' IDR-SPP-' + label + '-PooledPseudoReps')
 
-        CommandDict['PlotsPooledPseudoRep'].append('Rscript batch-consistency-plot.r 1 ' + 'IDR-SPP-' + label + '-PooledPseudoReps' + ' IDR-SPP-' + label + '-PooledPseudoReps')
-
-        CommandDict['PlotsIndividualPseudoRep'].append('Rscript batch-consistency-plot.r 1 ' + 'IDR-SPP-' + label + '-Rep1PseudoReps' + ' IDR-SPP-' + label + '-Rep1PseudoReps')
-        CommandDict['PlotsIndividualPseudoRep'].append('Rscript batch-consistency-plot.r 1 ' + 'IDR-SPP-' + label + '-Rep2PseudoReps' + ' IDR-SPP-' + label + '-Rep2PseudoReps')
+        CommandDict['PlotsIndividualPseudoRep'].append(
+            'Rscript batch-consistency-plot.r 1 ' + 'IDR-SPP-' + label +
+            '-Rep1PseudoReps' + ' IDR-SPP-' + label + '-Rep1PseudoReps')
+        CommandDict['PlotsIndividualPseudoRep'].append(
+            'Rscript batch-consistency-plot.r 1 ' + 'IDR-SPP-' + label +
+            '-Rep2PseudoReps' + ' IDR-SPP-' + label + '-Rep2PseudoReps')
 
     print('# make SPP output folders for individual replicates:')
     for command in CommandDict['mkdirRep']:
