@@ -21,11 +21,14 @@ def main():
         sys.exit(1)
 
     BAM = sys.argv[1]
+    BAM_basename = os.path.splitext(BAM)[0]
 
     samfile = pysam.Samfile(BAM, "rb")
 
-    outfile1 = pysam.Samfile(BAM.split('.bam')[0] + '.pseudoRep1.bam', "wb", template=samfile)
-    outfile2 = pysam.Samfile(BAM.split('.bam')[0] + '.pseudoRep2.bam', "wb", template=samfile)
+    outfile1 = pysam.Samfile(BAM_basename + '.pseudoRep1.bam', "wb",
+                             template=samfile)
+    outfile2 = pysam.Samfile(BAM_basename + '.pseudoRep2.bam', "wb",
+                             template=samfile)
 
     for alignedread in samfile.fetch():
         chr = samfile.getrname(alignedread.tid)
