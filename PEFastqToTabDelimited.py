@@ -15,9 +15,12 @@ import random
 def main():
 
     if len(sys.argv) < 2:
-        print('usage: python %s end1 end2 [-renameReads prefix] [-shuffle]' % sys.argv[0])
-        print('\tThe script can read compressed files as long as they have the correct suffix - .bz2 or .gz')
-        print('\tYou can have multiple files in each end1 or end2 argument, they have to be comma-separated')
+        print('usage: python %s end1 end2 [-renameReads prefix] [-shuffle]' %
+              sys.argv[0])
+        print('\tThe script can read compressed files as long as they have '
+              'the correct suffix - .bz2 or .gz')
+        print('\tYou can have multiple files in each end1 or end2 argument, '
+              'they have to be comma-separated')
         print('\tit will print to standard output')
         sys.exit(1)
 
