@@ -15,10 +15,14 @@ def make_parser():
     parser.add_argument("SAM", help="SAM file")
     parser.add_argument("chrominfo", help="chrominfo file")
     parser.add_argument("outputfilename", help="output file name")
-    parser.add_argument("--nomulti", help="discard multireads", action="store_true", dest="noMulti")
-    parser.add_argument("--nounique", action="store_true", help="discard unique reads", dest="noUnique")
-    parser.add_argument("--noNH", help="use if multi reads do not have NH tags", action="store_true", dest="noNH")
-    parser.add_argument("--verbose", help="verbose output", action="store_true")
+    parser.add_argument("--nomulti", help="discard multireads",
+                        action="store_true", dest="noMulti")
+    parser.add_argument("--nounique", action="store_true", dest="noUnique",
+                        help="discard unique reads")
+    parser.add_argument("--noNH", action="store_true", dest="noNH",
+                        help="use if multi reads do not have NH tags",)
+    parser.add_argument("--verbose", action="store_true",
+                        help="verbose output")
 
     return parser
 
@@ -40,11 +44,14 @@ def main(cmdline=None):
 
     samfile = pysam.Samfile(args.SAM, "rb")
     if args.noNH:
-        ReadMultiplicityDict = getReadMultiplicity(chromInfoList, samfile, verbose=args.verbose)
+        ReadMultiplicityDict = getReadMultiplicity(
+            chromInfoList, samfile, verbose=args.verbose)
     else:
         ReadMultiplicityDict = {}
 
-    PosCountsDict, TotalReads = pileUpReads(chromInfoList, samfile, ReadMultiplicityDict, noNH=False, noMulti=False, verbose=args.verbos)
+    PosCountsDict, TotalReads = pileUpReads(
+        chromInfoList, samfile, ReadMultiplicityDict, noNH=False,
+        noMulti=False, verbose=args.verbos)
     if args.verbose:
         print('....................................')
 
@@ -74,7 +81,8 @@ def getReadMultiplicity(chromInfoList, samfile, verbose=False):
     readMultiplicityDict = {}
     i = 0
     for (chrom, start, end) in chromInfoList:
-        # this just checks to see if there is an entry by looking instead of error handling
+        # this just checks to see if there is an entry by looking
+        # instead of error handling
         try:
             jj = 0
             for alignedread in samfile.fetch(chrom, start, end):
@@ -91,7 +99,10 @@ def getReadMultiplicity(chromInfoList, samfile, verbose=False):
             if verbose:
                 i += 1
                 if i % 5000000 == 0:
-                    print(str(i/1000000) + 'M alignments processed in multiplicity examination', chrom, start, alignedread.pos, end)
+                    print(
+                        str(i/1000000) +
+                        'M alignments processed in multiplicity examination',
+                        chrom, start, alignedread.pos, end)
 
             fields = str(alignedread).split('\t')
             ID = fields[0]
@@ -109,7 +120,8 @@ def getReadMultiplicity(chromInfoList, samfile, verbose=False):
     return readMultiplicityDict
 
 
-def pileUpReads(chromInfoList, samfile, readMultiplicityDict, noNH=False, noMulti=False, verbose=False):
+def pileUpReads(chromInfoList, samfile, readMultiplicityDict,
+                noNH=False, noMulti=False, verbose=False):
     posCountsDict = {}
     i = 0
     totalReads = 0.0
@@ -123,7 +135,8 @@ def pileUpReads(chromInfoList, samfile, readMultiplicityDict, noNH=False, noMult
                     break
         except ValueError:
             if verbose:
-                print('{} {} {} not found in BAM file, skipping'.format(chrom, start, end))
+                print('{} {} {} not found in BAM file, skipping'.format(
+                    chrom, start, end))
             continue
 
         if chrom in posCountsDict:
@@ -184,12 +197,15 @@ def getCounts(posCountsDict, geneDict, verbose=False):
                 for i in range(start, stop):
                     try:
                         exonicReads += posCountsDict[chrom][i]
-                        # delete entry so that it is not counted multiple times either because of multiple models or the next intron pass
+                        # delete entry so that it is not counted multiple times
+                        # either because of multiple models or the next
+                        # intron pass
                         del posCountsDict[chrom][i]
                     except KeyError:
                         pass
 
-            # all the exonic reads have been counted and removed so the remainder in the rage is intronic
+            # all the exonic reads have been counted and removed
+            # so the remainder in the rage is intronic
             for i in range(min(coordinates), max(coordinates)):
                 try:
                     intronicReads += posCountsDict[chrom][i]
