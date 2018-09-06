@@ -17,7 +17,8 @@ def main():
 
     if len(sys.argv) < 2:
         print('usage: python %s BAM' % sys.argv[0])
-        print('Only run this script for files containing uniquely aligned reads; the script will not check for alignment multiplicity!')
+        print('Only run this script for files containing uniquely aligned'
+              'reads; the script will not check for alignment multiplicity!')
         sys.exit(1)
 
     BAM = sys.argv[1]
