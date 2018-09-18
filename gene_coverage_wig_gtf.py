@@ -283,7 +283,7 @@ def initializeCoverageDict(GeneDict, all_gene_models):
     CoverageDict = {}
     genesToRemove = set()
     for geneID in GeneDict:
-        if all_gene_models == False and len(GeneDict[geneID]) > 1:
+        if all_gene_models is False and len(GeneDict[geneID]) > 1:
             genesToRemove.add(geneID)
             continue
         for transcriptID in GeneDict[geneID]:

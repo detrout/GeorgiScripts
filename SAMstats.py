@@ -150,7 +150,7 @@ def main():
                     else:
                         Multi += 1
                 if multiplicity == 1:
-                    if alignedread.cigar == None:
+                    if alignedread.cigar is None:
                         Unique += 1
                         continue
                     if len(alignedread.cigar) > 1:
