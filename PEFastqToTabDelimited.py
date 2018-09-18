@@ -75,9 +75,16 @@ def main():
                 line3 = p2.readline().strip()
                 line4 = p2.readline().strip()
                 if doRename:
-                    outline = prefix + str(i/4) + '\t' + lines[1] + '\t' + lines[3] + '\t' + line2 + '\t' + line4
+                    outline = prefix + str(i/4) + '\t' + \
+                              lines[1] + '\t' + \
+                              lines[3] + '\t' + \
+                              line2 + '\t' + \
+                              line4
                 else:
-                    outline = lines[0][1:len(lines[0])].split('/')[0].split(' ')[0] + '\t' + lines[1] + '\t' + lines[3] + '\t' + line2 + '\t' + line4
+                    # used to be [1:len(lines[0])]
+                    head = lines[0][1:].split('/')[0].split(' ')[0]
+                    outline = head + '\t' + lines[1] + '\t' + \
+                              lines[3] + '\t' + line2 + '\t' + line4
                 if doShuffle:
                     DataList.append(outline)
                 else:
