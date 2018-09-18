@@ -1,4 +1,8 @@
 import unittest
+import os
+from subprocess import check_call
+from contextlib import contextmanager
+from tempfile import TemporaryDirectory
 from SAM_reads_in_genes3_BAM import *
 
 
@@ -102,3 +106,41 @@ class SAMReadsInGenesBAMTest(unittest.TestCase):
         self.assertEquals(distribution.read(), "Intronic:0.3\t\n")
         self.assertEquals(distribution.read(), "Exonic:0.5\t\n")
         self.assertEquals(distribution.read(), "#Class\tFraction\n")
+
+    def test_get_read_multiplicity_unique(self):
+        chromInfoList = [("chr1", 0, 3000)]
+        with prepare_bam('unique-read.sam') as unique:
+            alignment = pysam.Samfile(unique, "rb")
+
+            self.assertEqual(getReadMultiplicity(chromInfoList, alignment),
+                             {'r0001': 1})
+
+    def test_get_read_multiplicity_multi(self):
+        chromInfoList = [("chr1", 0, 3000)]
+        with prepare_bam('multireads.sam') as multireads:
+            alignment = pysam.Samfile(multireads, "rb")
+
+            self.assertEqual(getReadMultiplicity(chromInfoList, alignment),
+                             {'r0001': 3})
+
+
+@contextmanager
+def prepare_bam(samfile):
+    with TemporaryDirectory('_sam_reads') as tempdir:
+        try:
+            path, name = os.path.split(samfile)
+            bamfile = os.path.join(tempdir, name.replace('.sam', '.bam'))
+            baifile = bamfile + '.bai'
+
+            if not os.path.exists(bamfile):
+                check_call(['samtools', 'view', '-t', 'bam', '-o', bamfile, samfile])
+            if not os.path.exists(baifile):
+                check_call(['samtools', 'index', bamfile])
+
+            yield bamfile
+        finally:
+            if os.path.exists(bamfile):
+                os.unlink(bamfile)
+            if os.path.exists(baifile):
+                os.unlink(baifile)
+
