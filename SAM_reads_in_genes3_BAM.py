@@ -51,7 +51,7 @@ def main(cmdline=None):
 
     PosCountsDict, TotalReads = pileUpReads(
         chromInfoList, samfile, ReadMultiplicityDict, noNH=False,
-        noMulti=False, verbose=args.verbos)
+        noMulti=False, verbose=args.verbose)
     if args.verbose:
         print('....................................')
 
@@ -61,7 +61,7 @@ def main(cmdline=None):
         print('finished inputting annotation')
 
     ExonicReads, IntronicReads = getCounts(PosCountsDict, geneDict)
-    with open(args.outfilename, 'w') as outfile:
+    with open(args.outputfilename, 'w') as outfile:
         writeOutput(outfile, TotalReads, ExonicReads, IntronicReads)
 
 
