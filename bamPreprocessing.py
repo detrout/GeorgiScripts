@@ -1,12 +1,18 @@
 '''
 User specs:
 1. Checks if there are NH tags presents
-2. If there aren't, it goes through the BAM file, calculates the read multiplicity
-3. Then makes a temp BAM file into which all alignments (and unaligned reads) are written but this time with the NH tags
-4. Then deletes the original file and replaces with the temp file / renames the temp file to have the name of the original file
-5. Also, if we can write the number of reads into the header and check for its presence and if present, use it, if not replace
-the file with one that has that information in the same manner, it will save the need to count all the reads every time.
-It will have to be several numbers - total reads, unique reads, multi reads, reads mapping on the plus and minus strand.
+2. If there aren't, it goes through the BAM file, calculates the read
+    multiplicity
+3. Then makes a temp BAM file into which all alignments (and unaligned reads)
+   are written but this time with the NH tags
+4. Then deletes the original file and replaces with the temp file / renames
+   the temp file to have the name of the original file
+5. Also, if we can write the number of reads into the header and check for its
+   presence and if present, use it, if not replace the file with one that has
+   that information in the same manner, it will save the need to count all the
+   reads every time.
+It will have to be several numbers - total reads, unique reads, multi reads,
+reads mapping on the plus and minus strand.
 '''
 from __future__ import print_function
 
@@ -47,7 +53,9 @@ def getReadMultiplicity(samfile):
     for alignedread in samfile.fetch(until_eof=True):
         processedReads += 1
         if processedReads % 5000000 == 0:
-                print(str(processedReads/1000000) + 'M alignments processed in multiplicity examination')
+                print(
+                    str(processedReads/1000000) +
+                    'M alignments processed in multiplicity examination')
 
         ID = getReadID(alignedread)
         try:
