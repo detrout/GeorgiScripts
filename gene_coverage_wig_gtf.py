@@ -315,7 +315,7 @@ def createCoveragePercentiles(
         if maxGeneLength is not None and geneLength > maxGeneLength:
             continue
         final_vector = numpy.zeros(shape=100)
-        bins = numpy.linspace(0, geneLength, num = 101, dtype=int)
+        bins = numpy.linspace(0, geneLength, num=101, dtype=int)
         start = bins[0]
         for i, end in enumerate(bins[1:]):
             region = NucleotideList[start:end]
