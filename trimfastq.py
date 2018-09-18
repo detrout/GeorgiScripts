@@ -13,11 +13,19 @@ import os
 def main():
 
     if len(sys.argv) < 2:
-        print('usage: python %s <inputfilename> <bpToKeep | max> [-trim5 bp] [-flowcellID flowcell] [-addEnd 1 | 2] [-replace string newstring | blank] [-renameIDs prefix] [-stdout]' % sys.argv[0])
-        print('\tthe -trim5 option will trim additional bp from the 5 end, i.e. if you want the middle 36bp of 38bp reads, use 36 as bp to keep and 1 as the trim5 argument')
-        print('\tUse - to specify standard input, and the -stdout option to tell the script to print to standard output')
-        print('\tThe script can read compressed files as long as they have the correct suffix - .bz2 or .gz')
-        print('\tReplace inputfilename with - if you want to read from standard input')
+        print('usage: python %s <inputfilename> <bpToKeep | max> [-trim5 bp] '
+              '[-flowcellID flowcell] [-addEnd 1 | 2] '
+              '[-replace string newstring | blank] [-renameIDs prefix] '
+              '[-stdout]' % sys.argv[0])
+        print('\tthe -trim5 option will trim additional bp from the 5 end, '
+              'i.e. if you want the middle 36bp of 38bp reads, use 36 as bp '
+              'to keep and 1 as the trim5 argument')
+        print('\tUse - to specify standard input, and the -stdout option to '
+              'tell the script to print to standard output')
+        print('\tThe script can read compressed files as long as they have '
+              'the correct suffix - .bz2 or .gz')
+        print('\tReplace inputfilename with - if you want to read from '
+              'standard input')
         sys.exit(1)
 
     inputfilename = sys.argv[1]
@@ -27,7 +35,8 @@ def main():
         trim = 'max'
     else:
         trim = int(sys.argv[2])
-    outputfilename = inputfilename.split('/')[-1].split('.fastq')[0] + '.' + str(trim) + 'mers.fastq'
+    outputfilename = inputfilename.split('/')[-1].split('.fastq')[0] + \
+                     '.' + str(trim) + 'mers.fastq'
     doFlowcellID = False
 
     doStdOut = False
@@ -55,7 +64,8 @@ def main():
             pass
         else:
             print('will trim ', trim5, 'bp from the 5-end')
-        outputfilename = inputfilename.split('.fastq')[0] + '.' + str(trim)+'bp-5prim-trim.fastq'
+        outputfilename = inputfilename.split('.fastq')[0] + '.' + \
+                         str(trim) + 'bp-5prim-trim.fastq'
 
     doAddEnd = False
     if '-addEnd' in sys.argv:
@@ -112,7 +122,8 @@ def main():
                 break
             if i == 1 and line[0] == '@':
                 if doFlowcellID and flowcellID not in line:
-                    ID = '@' + flowcellID + '_' + line.replace(' ', '_')[1:-1] + '\n'
+                    ID = '@' + flowcellID + '_' + \
+                         line.replace(' ', '_')[1:-1] + '\n'
                 else:
                     ID = line.replace(' ', '_')
                 if doReplace:
@@ -169,7 +180,8 @@ def main():
                 break
             if i == 1 and line[0] == '@':
                 if doFlowcellID and flowcellID not in line:
-                    ID = '@' + flowcellID + '_' + line.replace(' ', '_')[1:-1] + '\n'
+                    ID = '@' + flowcellID + '_' + \
+                         line.replace(' ', '_')[1:-1] + '\n'
                 else:
                     ID = line.replace(' ', '_')
                 if doReplace:
