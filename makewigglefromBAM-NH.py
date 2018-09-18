@@ -125,10 +125,10 @@ def main():
             print('no NH: tags in BAM file, will replace with a new BAM file '
                   'with NH tags')
             samtools = sys.argv[sys.argv.index('-noNH')+1]
-            BAMpreporcessingScript = sys.argv[0].rpartition('/')[0] + \
-                                     '/bamPreprocessing.py'
-            cmd = 'python ' + BAMpreporcessingScript + ' ' + BAM + ' ' + \
-                  BAM + '.NH'
+            BAMpreporcessingScript = (sys.argv[0].rpartition('/')[0] +
+                                      '/bamPreprocessing.py')
+            cmd = ('python ' + BAMpreporcessingScript + ' ' + BAM + ' ' +
+                   BAM + '.NH')
             os.system(cmd)
             cmd = 'rm ' + BAM
             os.system(cmd)

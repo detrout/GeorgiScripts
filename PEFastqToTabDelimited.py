@@ -83,8 +83,8 @@ def main():
                 else:
                     # used to be [1:len(lines[0])]
                     head = lines[0][1:].split('/')[0].split(' ')[0]
-                    outline = head + '\t' + lines[1] + '\t' + \
-                              lines[3] + '\t' + line2 + '\t' + line4
+                    outline = (head + '\t' + lines[1] + '\t' +
+                               lines[3] + '\t' + line2 + '\t' + line4)
                 if doShuffle:
                     DataList.append(outline)
                 else:

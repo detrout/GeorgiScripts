@@ -72,8 +72,8 @@ def main():
         except:
             print('no NH: tags in BAM file, will replace with a new BAM '
                   'file with NH tags')
-            BAMpreporcessingScript = sys.argv[0].rpartition('/')[0] + \
-                                     '/bamPreprocessing.py'
+            BAMpreporcessingScript = (sys.argv[0].rpartition('/')[0] +
+                                      '/bamPreprocessing.py')
             cmd = 'python ' + \
                 BAMpreporcessingScript + ' ' + SAM + ' ' + SAM + '.NH'
             os.system(cmd)

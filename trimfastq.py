@@ -35,8 +35,8 @@ def main():
         trim = 'max'
     else:
         trim = int(sys.argv[2])
-    outputfilename = inputfilename.split('/')[-1].split('.fastq')[0] + \
-                     '.' + str(trim) + 'mers.fastq'
+    outputfilename = (inputfilename.split('/')[-1].split('.fastq')[0] +
+                      '.' + str(trim) + 'mers.fastq')
     doFlowcellID = False
 
     doStdOut = False
@@ -64,8 +64,8 @@ def main():
             pass
         else:
             print('will trim ', trim5, 'bp from the 5-end')
-        outputfilename = inputfilename.split('.fastq')[0] + '.' + \
-                         str(trim) + 'bp-5prim-trim.fastq'
+        outputfilename = (inputfilename.split('.fastq')[0] + '.' +
+                          str(trim) + 'bp-5prim-trim.fastq')
 
     doAddEnd = False
     if '-addEnd' in sys.argv:
