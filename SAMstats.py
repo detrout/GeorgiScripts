@@ -40,7 +40,8 @@ def FLAG(FLAG):
 def main():
 
     if len(sys.argv) < 2:
-        print('usage: python %s SAMfilename outputfilename [-bam chrom.sizes samtools] [-paired]' % sys.argv[0])
+        print('usage: python %s SAMfilename outputfilename '
+              '[-bam chrom.sizes samtools] [-paired]' % sys.argv[0])
         print('       BAM file has to be indexed')
         print('       Complexity will be calculated only for BAM files')
         sys.exit(1)
@@ -69,9 +70,12 @@ def main():
                 print('file has NH tags')
                 break
         except:
-            print('no NH: tags in BAM file, will replace with a new BAM file with NH tags')
-            BAMpreporcessingScript = sys.argv[0].rpartition('/')[0] + '/bamPreprocessing.py'
-            cmd = 'python ' + BAMpreporcessingScript + ' ' + SAM + ' ' + SAM + '.NH'
+            print('no NH: tags in BAM file, will replace with a new BAM '
+                  'file with NH tags')
+            BAMpreporcessingScript = sys.argv[0].rpartition('/')[0] + \
+                                     '/bamPreprocessing.py'
+            cmd = 'python ' + \
+                BAMpreporcessingScript + ' ' + SAM + ' ' + SAM + '.NH'
             os.system(cmd)
             cmd = 'rm ' + SAM
             os.system(cmd)
@@ -116,7 +120,8 @@ def main():
             for alignedread in samfile.fetch(chr, start, end):
                 i += 1
                 if i % 5000000 == 0:
-                    print(str(i/1000000) + 'M alignments processed', chr, start, alignedread.pos, end)
+                    print(str(i/1000000) + 'M alignments processed',
+                          chr, start, alignedread.pos, end)
                 fields = str(alignedread).split('\t')
                 ID = fields[0]
                 length = len(alignedread.seq)
@@ -225,7 +230,10 @@ def main():
             for alignedread in samfile.fetch(chr, start, end):
                 i += 1
                 if i % 5000000 == 0:
-                    print(str(i/1000000) + 'M alignments processed in complexity calculation', chr, start, alignedread.pos, end)
+                    print(
+                        str(i/1000000) +
+                        'M alignments processed in complexity calculation',
+                        chr, start, alignedread.pos, end)
                     gc.collect()
                 fields = str(alignedread).split('\t')
                 if 16 in FLAG(alignedread.flag):
@@ -252,11 +260,13 @@ def main():
                 if strand == '+':
                     CurrentPosDictPlus.append(str(alignedread.cigar))
                     if doPaired:
-                        CurrentPosDictPlus.append((str(alignedread.cigar), alignedread.mpos))
+                        CurrentPosDictPlus.append(
+                            (str(alignedread.cigar), alignedread.mpos))
                 if strand == '-':
                     CurrentPosDictMinus.append(str(alignedread.cigar))
                     if doPaired:
-                        CurrentPosDictMinus.append((str(alignedread.cigar), alignedread.mpos))
+                        CurrentPosDictMinus.append(
+                            (str(alignedread.cigar), alignedread.mpos))
         Complexity = DistinctUniqueReads/float(TotalUniqueReads)
 
     SeenDict = ''
