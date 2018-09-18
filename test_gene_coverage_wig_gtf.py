@@ -193,14 +193,16 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
         maxGeneLength = None
         doPrintList = False
         generatedArray = createCoveragePercentiles(geneDict, coverageDict,
-                                                   minGeneLength, maxGeneLength,
+                                                   minGeneLength,
+                                                   maxGeneLength,
                                                    outputfilename,
                                                    doPrintList)
         numpy.testing.assert_array_equal(outputArray, generatedArray)
         minGeneLength = 0
         maxGeneLength = 5
         generatedArray = createCoveragePercentiles(geneDict, coverageDict,
-                                                   minGeneLength, maxGeneLength,
+                                                   minGeneLength,
+                                                   maxGeneLength,
                                                    outputfilename,
                                                    doPrintList)
         numpy.testing.assert_array_equal(outputArray, generatedArray)
