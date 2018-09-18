@@ -13,15 +13,18 @@ import pysam
 import os
 
 # FLAG field meaning
-# 0x0001 1 the read is paired in sequencing, no matter whether it is mapped in a pair
-# 0x0002 2 the read is mapped in a proper pair (depends on the protocol, normally inferred during alignment) 1
+# 0x0001 1 the read is paired in sequencing, no matter whether it
+#          is mapped in a pair
+# 0x0002 2 the read is mapped in a proper pair (depends on the protocol,
+#          normally inferred during alignment) 1
 # 0x0004 4 the query sequence itself is unmapped
 # 0x0008 8 the mate is unmapped 1
 # 0x0010 16 strand of the query (0 for forward; 1 for reverse strand)
 # 0x0020 32 strand of the mate 1
 # 0x0040 64 the read is the first read in a pair 1,2
 # 0x0080 128 the read is the second read in a pair 1,2
-# 0x0100 256 the alignment is not primary (a read having split hits may have multiple primary alignment records)
+# 0x0100 256 the alignment is not primary (a read having split hits may
+#            have multiple primary alignment records)
 # 0x0200 512 the read fails platform/vendor quality checks
 # 0x0400 1024 the read is either a PCR duplicate or an optical duplicate
 
@@ -52,9 +55,19 @@ def FLAG(FLAG):
 def main():
 
     if len(sys.argv) < 4:
-        print('usage: python %s title BAMfilename chrom.sizes outputfilename [-stranded + | -] [-fragments first-read-strand | second-read-strand] [-shift bp] [-nomulti] [-RPM] [-notitle] [-singlebasepair] [-mismatchesMD M] [-mismatches M] [-end2only] [-end1only] [-readLength min max] [-chr chrN1(,chrN2....)] [-uniqueBAM] [-noNH samtools]' % sys.argv[0])
-        print('\tUse the -mismatches option to specify the maximum number of mismatches allowed for an alignment to be considered; use the -mimatchesMD option is mismatches are specified with the MD special tag')
-        print('\tuse the -noNH option and supply a path to samtools in order to have the file converted to one that has NH tags')
+        print('usage: python %s title BAMfilename chrom.sizes outputfilename '
+              '[-stranded + | -] '
+              '[-fragments first-read-strand | second-read-strand] '
+              '[-shift bp] [-nomulti] [-RPM] [-notitle] [-singlebasepair] '
+              '[-mismatchesMD M] [-mismatches M] [-end2only] [-end1only] '
+              '[-readLength min max] [-chr chrN1(,chrN2....)] [-uniqueBAM] '
+              '[-noNH samtools]' % sys.argv[0])
+        print('\tUse the -mismatches option to specify the maximum number of '
+              'mismatches allowed for an alignment to be considered; use the '
+              '-mimatchesMD option is mismatches are specified with '
+              'the MD special tag')
+        print('\tuse the -noNH option and supply a path to samtools in order '
+              'to have the file converted to one that has NH tags')
         sys.exit(1)
 
     title = sys.argv[1]
@@ -73,7 +86,8 @@ def main():
     doEnd1Only = False
     doEnd2Only = False
     if '-end1only' in sys.argv and '-end2only' in sys.argv:
-        print('both -end1only and -end2only option specified, a logical impossibility, exiting')
+        print('both -end1only and -end2only option specified, a logical '
+              'impossibility, exiting')
         sys.exit(1)
 
     if '-end1only' in sys.argv:
@@ -108,10 +122,13 @@ def main():
             break
     except:
         if '-noNH' in sys.argv:
-            print('no NH: tags in BAM file, will replace with a new BAM file with NH tags')
+            print('no NH: tags in BAM file, will replace with a new BAM file '
+                  'with NH tags')
             samtools = sys.argv[sys.argv.index('-noNH')+1]
-            BAMpreporcessingScript = sys.argv[0].rpartition('/')[0] + '/bamPreprocessing.py'
-            cmd = 'python ' + BAMpreporcessingScript + ' ' + BAM + ' ' + BAM + '.NH'
+            BAMpreporcessingScript = sys.argv[0].rpartition('/')[0] + \
+                                     '/bamPreprocessing.py'
+            cmd = 'python ' + BAMpreporcessingScript + ' ' + BAM + ' ' + \
+                  BAM + '.NH'
             os.system(cmd)
             cmd = 'rm ' + BAM
             os.system(cmd)
@@ -130,13 +147,15 @@ def main():
         doReadLength = True
         minRL = int(sys.argv[sys.argv.index('-readLength')+1])
         maxRL = int(sys.argv[sys.argv.index('-readLength')+2])
-        print('will only consider reads between', minRL, 'and', maxRL, 'bp length')
+        print('will only consider reads between', minRL, 'and',
+              maxRL, 'bp length')
 
     doMaxMMMD = False
     if '-mismatchesMD' in sys.argv:
         doMaxMMMD = True
         maxMM = int(sys.argv[sys.argv.index('-mismatchesMD')+1])
-        print('Will only consider alignments with', maxMM, 'or less mismatches')
+        print('Will only consider alignments with', maxMM,
+              'or less mismatches')
 
     doMaxMM = False
     if '-mismatches' in sys.argv:
@@ -175,7 +194,8 @@ def main():
     if '-fragments' in sys.argv:
         doFragments = True
         FragmentStrandAssignment = sys.argv[sys.argv.index('-fragments')+1]
-        print('will assign strand for both reads based on', FragmentStrandAssignment)
+        print('will assign strand for both reads based on',
+              FragmentStrandAssignment)
 
     TotalNumberRead = 0
 
@@ -195,13 +215,16 @@ def main():
                 for alignedread in samfile.fetch(chr, 0, 100):
                     a = 'b'
             except:
-                print('region', chr, start, end, 'not found in bam file, skipping')
+                print('region', chr, start, end,
+                      'not found in bam file, skipping')
                 continue
             currentPos = 0
             for alignedread in samfile.fetch(chr, start, end):
                 RN += 1
                 if RN % 5000000 == 0:
-                    print('counting total number of reads', str(RN/1000000) + 'M alignments processed', chr, currentPos, end)
+                    print('counting total number of reads',
+                          str(RN/1000000) + 'M alignments processed',
+                          chr, currentPos, end)
                 fields = str(alignedread).split('\t')
                 FLAGfields = FLAG(int(fields[1]))
                 if doEnd1Only:
@@ -211,7 +234,8 @@ def main():
                     if 64 in FLAGfields:
                         continue
                 if doReadLength:
-                    if len(alignedread.seq) > maxRL or len(alignedread.seq) < minRL:
+                    if len(alignedread.seq) > maxRL or \
+                       len(alignedread.seq) < minRL:
                         continue
                 if doMaxMM:
                     mismatches = 0
@@ -271,7 +295,8 @@ def main():
             if RN % 5000000 == 0:
                 print(str(RN/1000000) + 'M alignments processed', chr, currentPos, end)
             if doReadLength:
-                if len(alignedread.seq) > maxRL or len(alignedread.seq) < minRL:
+                if len(alignedread.seq) > maxRL or \
+                   len(alignedread.seq) < minRL:
                     continue
             fields = str(alignedread).split('\t')
             FLAGfields = FLAG(int(fields[1]))
@@ -356,21 +381,29 @@ def main():
                 if i in coverageDict:
                     if doStranded and strand == '-':
                         if doRPM:
-                            outline = chr + '\t' + str(i-1) + '\t' + str(i+1-1) + '\t-' + str(coverageDict[i]/normFactor)
+                            outline = chr + '\t' + str(i-1) + '\t' + \
+                                      str(i+1-1) + '\t-' + \
+                                      str(coverageDict[i]/normFactor)
                         else:
-                            outline = chr + '\t' + str(i-1) + '\t' + str(i+1-1) + '\t-' + str(coverageDict[i])
+                            outline = chr + '\t' + str(i-1) + '\t' + \
+                                      str(i+1-1) + '\t-' + \
+                                      str(coverageDict[i])
                     else:
                         if doRPM:
-                            outline = chr + '\t' + str(i-1) + '\t' + str(i+1-1) + '\t' + str(coverageDict[i]/normFactor)
+                            outline = chr + '\t' + str(i-1) + '\t' + \
+                                      str(i+1-1) + '\t' + \
+                                      str(coverageDict[i]/normFactor)
                         else:
-                            outline = chr + '\t' + str(i-1) + '\t' + str(i+1-1) + '\t' + str(coverageDict[i])
+                            outline = chr + '\t' + str(i-1) + '\t' + \
+                                      str(i+1-1) + '\t' + str(coverageDict[i])
                     outfile.write(outline+'\n')
                 else:
-                    outline = chr + '\t' + str(i-1) + '\t' + str(i+1-1) + '\t' + str(0)
+                    outline = chr + '\t' + str(i-1) + '\t' + str(i+1-1) + \
+                              '\t' + str(0)
                     outfile.write(outline+'\n')
         else:
             for i in posKeys[1:len(posKeys)]:
-                if previous[0]+1 == i and previous[1] = =coverageDict[i]:
+                if previous[0]+1 == i and previous[1] == coverageDict[i]:
                     previous = (i, coverageDict[i])
                 else:
                     if written[0] == initial[0]:
