@@ -205,7 +205,6 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
                                                    doPrintList)
         numpy.testing.assert_array_equal(outputArray, generatedArray)
 
-
     def testComputeCoverageWithIntrons(self):
         outputArray = numpy.asarray([8 for x in range(100)])
         outputArray[50:60] = 4
