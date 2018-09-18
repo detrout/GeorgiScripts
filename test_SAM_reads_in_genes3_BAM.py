@@ -63,6 +63,20 @@ class SAMReadsInGenesBAMTest(unittest.TestCase):
         gtf = []
         self.assertEquals({}, readGtf(gtf))
 
+
+    def testReadGtfComment(self):
+        gtf = [
+            '# test',
+            '# more tests',
+        ]
+        self.assertEquals({}, readGtf(gtf))
+
+    def testReadGtfNoExons(self):
+        gtf = [
+            'chr2\t\tCDS\t0\t10\t\t+\t\tgene_id "gene1";transcript_id "tr1";',
+        ]
+        self.assertEquals({}, readGtf(gtf))
+
     def testReadGtfMulti(self):
         gtf = ['chr2\t\texon\t0\t10\t\t+\t\t'
                'gene_id "gene1";transcript_id "tr1";',
