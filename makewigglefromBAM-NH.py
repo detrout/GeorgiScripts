@@ -161,7 +161,8 @@ def main():
     if '-mismatches' in sys.argv:
         doMaxMM = True
         maxMM = int(sys.argv[sys.argv.index('-mismatches')+1])
-        print('Will only consider alignments with', maxMM, 'or less mismatches')
+        print('Will only consider alignments with', maxMM,
+              'or less mismatches')
 
     shift = 0
     if '-shift' in sys.argv:
@@ -293,7 +294,8 @@ def main():
         for alignedread in samfile.fetch(chr, start, end):
             RN += 1
             if RN % 5000000 == 0:
-                print(str(RN/1000000) + 'M alignments processed', chr, currentPos, end)
+                print(str(RN/1000000) + 'M alignments processed', chr,
+                      currentPos, end)
             if doReadLength:
                 if len(alignedread.seq) > maxRL or \
                    len(alignedread.seq) < minRL:
