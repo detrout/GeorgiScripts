@@ -10,8 +10,8 @@ from __future__ import print_function
 import sys
 import os
 
-def main():
 
+def main():
     if len(sys.argv) < 2:
         print('usage: python %s <inputfilename> <bpToKeep | max> [-trim5 bp] '
               '[-flowcellID flowcell] [-addEnd 1 | 2] '

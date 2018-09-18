@@ -30,6 +30,7 @@ NORMALIZATIONS = {
     'median': numpy.median,
 }
 
+
 def main(cmdline=None):
     parser = make_parser()
     args = parser.parse_args(cmdline)
@@ -93,6 +94,7 @@ def main(cmdline=None):
         for i in range(100):
             outfile.write(str(i) + '\t' + str(outputArray[i])+'\n')
 
+
 def make_parser():
     parser = ArgumentParser()
     parser.add_argument('--gtf', required=True, help='GTF file name')
@@ -127,12 +129,14 @@ def make_parser():
                         help='report version number')
     return parser
 
+
 def loadAnnotation(filename, source_type, gene_type_filter):
     with open(filename, 'rt') as gtfStream:
         return parseAnnotation(
             gtfStream,
             source_type,
             gene_type_filter)
+
 
 def parseAnnotation(stream, source_type, gene_type_filter):
     geneDict = {}
@@ -206,6 +210,7 @@ def loadGeneCoverage(filename, geneDict, all_gene_models):
         gene_coverage = readWiggle(instream, geneDict, all_gene_models)
 
     return gene_coverage
+
 
 def guessFileOpen(filename):
     """Try opening the file with supported file readers

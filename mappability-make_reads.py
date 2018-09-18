@@ -9,8 +9,8 @@ from __future__ import print_function
 
 import sys
 
-def main():
 
+def main():
     if len(sys.argv) < 4:
         print('usage: python %s genome_fasta readlength outifle' % sys.argv[0])
         print('\tuse - instead of a filename to indicated printing to stdout')

@@ -10,8 +10,8 @@ from __future__ import print_function
 import sys
 import string
 
-def main():
 
+def main():
     if len(sys.argv) < 4:
         print('usage: python %s wanted fieldID fasta outputfilename' %
               sys.argv[0])

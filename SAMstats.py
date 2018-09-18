@@ -13,8 +13,8 @@ import pysam
 import string
 import os
 
-def FLAG(FLAG):
 
+def FLAG(FLAG):
     Numbers = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
 
     FLAGList = []
@@ -37,8 +37,8 @@ def FLAG(FLAG):
 
     return FLAGList
 
-def main():
 
+def main():
     if len(sys.argv) < 2:
         print('usage: python %s SAMfilename outputfilename '
               '[-bam chrom.sizes samtools] [-paired]' % sys.argv[0])

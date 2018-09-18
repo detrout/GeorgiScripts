@@ -21,8 +21,6 @@ import pysam
 
 
 def main(argv=None):
-
-
     if len(sys.argv) < 3:
         print('usage: python %s BAMfilename outputfilename' % sys.argv[0])
         print('       BAM file has to be indexed')

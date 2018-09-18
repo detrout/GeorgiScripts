@@ -28,8 +28,8 @@ import os
 # 0x0200 512 the read fails platform/vendor quality checks
 # 0x0400 1024 the read is either a PCR duplicate or an optical duplicate
 
-def FLAG(FLAG):
 
+def FLAG(FLAG):
     Numbers = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
 
     FLAGList = []
@@ -52,8 +52,8 @@ def FLAG(FLAG):
 
     return FLAGList
 
-def main():
 
+def main():
     if len(sys.argv) < 4:
         print('usage: python %s title BAMfilename chrom.sizes outputfilename '
               '[-stranded + | -] '

@@ -1,6 +1,7 @@
 import unittest
 from gene_coverage_wig_gtf import *
 
+
 class GeneCoverageWigGtfTest(unittest.TestCase):
     def testInitializeCoverageDictEmpty(self):
         coverageDict = {}
