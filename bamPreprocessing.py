@@ -100,15 +100,16 @@ def getReadCounts(samfile, readMultiplicityDict):
                 multis += 1
 
     totalReads = uniques + multis + uniqueSplice + multiSplice
-    counts = ["Total\t%d" % totalReads,
-              "Unique\t%d" % uniques,
-              "Multis\t%d" % multis,
-              "UniqueSplices\t%d" % uniqueSplice,
-              "Multisplices\t%d" % multiSplice,
-              "PlusUnique\t%d" % plusUnique,
-              "PlusMulti\t%d" % plusMulti,
-              "MinusUnique\t%d" % minusUnique,
-              "MinusMulti\t%d" % minusMulti
+    counts = [
+        "Total\t%d" % totalReads,
+        "Unique\t%d" % uniques,
+        "Multis\t%d" % multis,
+        "UniqueSplices\t%d" % uniqueSplice,
+        "Multisplices\t%d" % multiSplice,
+        "PlusUnique\t%d" % plusUnique,
+        "PlusMulti\t%d" % plusMulti,
+        "MinusUnique\t%d" % minusUnique,
+        "MinusMulti\t%d" % minusMulti
     ]
 
     return counts

@@ -29,25 +29,26 @@ def main():
     BAMpseudoreps = sys.argv[4]
     P = sys.argv[5]
 
-    CommandDict = {'mkdirRep': [],
-                   'mkdirPooled': [],
-                   'mkdirPooledPseudoRep': [],
-                   'mkdirIndidividualPseudoRep': [],
-                   'PeakCallRep12': [],
-                   'PeakCallPooled': [],
-                   'PeakCallPooledPseudoRep': [],
-                   'PeakCallIndividualPseudoRep': [],
-                   'IDRRep12': [],
-                   'IDRPooledPseudoRep': [],
-                   'IDRIndividualPseudoRep': [],
-                   'merge': [],
-                   'sort': [],
-                   'index': [],
-                   'BAMPseudoRep': [],
-                   'PlotsRep12': [],
-                   'PlotsPooledPseudoRep': [],
-                   'PlotsIndividualPseudoRep': []
-                    }
+    CommandDict = {
+        'mkdirRep': [],
+        'mkdirPooled': [],
+        'mkdirPooledPseudoRep': [],
+        'mkdirIndidividualPseudoRep': [],
+        'PeakCallRep12': [],
+        'PeakCallPooled': [],
+        'PeakCallPooledPseudoRep': [],
+        'PeakCallIndividualPseudoRep': [],
+        'IDRRep12': [],
+        'IDRPooledPseudoRep': [],
+        'IDRIndividualPseudoRep': [],
+        'merge': [],
+        'sort': [],
+        'index': [],
+        'BAMPseudoRep': [],
+        'PlotsRep12': [],
+        'PlotsPooledPseudoRep': [],
+        'PlotsIndividualPseudoRep': []
+    }
     DataList = []
 
     linelist = open(config)
