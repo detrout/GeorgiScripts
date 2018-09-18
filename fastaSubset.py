@@ -13,7 +13,8 @@ import string
 def main():
 
     if len(sys.argv) < 4:
-        print('usage: python %s wanted fieldID fasta outputfilename' % sys.argv[0])
+        print('usage: python %s wanted fieldID fasta outputfilename' %
+              sys.argv[0])
         sys.exit(1)
 
     wanted = sys.argv[1]
