@@ -6,14 +6,16 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
         coverageDict = {}
         geneDict = {}
         all_gene_models = True
-        self.assertEqual(coverageDict, initializeCoverageDict(geneDict, all_gene_models))
+        self.assertEqual(coverageDict,
+                         initializeCoverageDict(geneDict, all_gene_models))
 
     def testInitializeCoverageDictSimple(self):
         coverageDict = {"chr1": {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0,
                                  7: 0, 8: 0, 9: 0}}
         geneDict = {"gene1": {"transcript1": [("chr1", 0, 10, "+")]}}
         all_gene_models = True
-        self.assertEqual(coverageDict, initializeCoverageDict(geneDict, all_gene_models))
+        self.assertEqual(coverageDict,
+                         initializeCoverageDict(geneDict, all_gene_models))
 
     def testInitializeCoverageDictMultiAllModels(self):
         coverageDict = {"chr1": {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0,
@@ -25,7 +27,8 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
                               "transcript2": [("chr1", 15, 20, "+")]},
                     "gene2": {"transcript1": [("chr2", 20, 30, "+")]}}
         all_gene_models = True
-        self.assertEqual(coverageDict, initializeCoverageDict(geneDict, all_gene_models))
+        self.assertEqual(coverageDict,
+                         initializeCoverageDict(geneDict, all_gene_models))
 
     def testInitializeCoverageDictMultiSingleModel(self):
         coverageDict = {"chr2": {20: 0, 21: 0, 22: 0, 23: 0, 24: 0, 25: 0,
@@ -34,14 +37,16 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
                               "transcript2": [("chr1", 15, 20, "+")]},
                     "gene2": {"transcript1": [("chr2", 20, 30, "+")]}}
         all_gene_models = False
-        self.assertEqual(coverageDict, initializeCoverageDict(geneDict, all_gene_models))
+        self.assertEqual(coverageDict,
+                         initializeCoverageDict(geneDict, all_gene_models))
 
     def testReadWiggleEmpty(self):
         coverageDict = {}
         wig = []
         geneDict = {}
         all_gene_models = True
-        self.assertEqual(coverageDict, readWiggle(wig, geneDict, all_gene_models))
+        self.assertEqual(coverageDict,
+                         readWiggle(wig, geneDict, all_gene_models))
 
     def testReadWiggleSingle(self):
         coverageDict = {"chr1": {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 0, 6: 0,
@@ -52,7 +57,8 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
                ]
         geneDict = {"gene1": {"transcript1": [("chr1", 0, 10, "+")]}}
         all_gene_models = True
-        self.assertEqual(coverageDict, readWiggle(wig, geneDict, all_gene_models))
+        self.assertEqual(coverageDict,
+                         readWiggle(wig, geneDict, all_gene_models))
 
     def testReadWiggleMultiAllModels(self):
         coverageDict = {"chr1": {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 0, 6: 0,
@@ -71,7 +77,8 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
                     "gene2": {"transcript1": [("chr2", 20, 30, "+")]}
                     }
         all_gene_models = True
-        self.assertEqual(coverageDict, readWiggle(wig, geneDict, all_gene_models))
+        self.assertEqual(coverageDict,
+                         readWiggle(wig, geneDict, all_gene_models))
 
     def testReadWiggleMultiSingleModels(self):
         coverageDict = {"chr2": {20: 0, 21: 7, 22: 7, 23: 7, 24: 0, 25: 0,
@@ -86,7 +93,8 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
                               "transcript2": [("chr1", 15, 20, "+")]},
                     "gene2": {"transcript1": [("chr2", 20, 30, "+")]}}
         all_gene_models = False
-        self.assertEqual(coverageDict, readWiggle(wig, geneDict, all_gene_models))
+        self.assertEqual(coverageDict,
+                         readWiggle(wig, geneDict, all_gene_models))
 
     def testReadAnnotationEmpty(self):
         geneDict = {}
@@ -109,7 +117,8 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
         geneDict = {"gene1": {"tr1": [("chr2", 0, 10, "+")]}}
         gtf = ['# comment',
                'chr1\t\tnot_exon',
-               'chr2\t\texon\t0\t10\t\t+\t\tgene_id "gene1";transcript_id "tr1";'
+               'chr2\t\texon\t0\t10\t\t+\t\t'
+               'gene_id "gene1";transcript_id "tr1";'
                ]
         bioType = None
         geneType = None
@@ -121,10 +130,14 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
                               "tr2": [("chr2", 0, 10, "+")]},
                     "gene2": {"tr1": [("chr3", 0, 80, "-")]}
                     }
-        gtf = ['chr2\t\texon\t0\t10\t\t+\t\tgene_id "gene1";transcript_id "tr1";',
-               'chr2\t\texon\t20\t50\t\t+\t\tgene_id "gene1";transcript_id "tr1";',
-               'chr2\t\texon\t0\t10\t\t+\t\tgene_id "gene1";transcript_id "tr2";',
-               'chr3\t\texon\t0\t80\t\t-\t\tgene_id "gene2";transcript_id "tr1";'
+        gtf = ['chr2\t\texon\t0\t10\t\t+\t\t'
+               'gene_id "gene1";transcript_id "tr1";',
+               'chr2\t\texon\t20\t50\t\t+\t\t'
+               'gene_id "gene1";transcript_id "tr1";',
+               'chr2\t\texon\t0\t10\t\t+\t\t'
+               'gene_id "gene1";transcript_id "tr2";',
+               'chr3\t\texon\t0\t80\t\t-\t\t'
+               'gene_id "gene2";transcript_id "tr1";'
                ]
         bioType = None
         geneType = None
@@ -135,10 +148,14 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
                                       ("chr2", 20, 50, "+")]},
                     "gene2": {"tr1": [("chr3", 0, 80, "-")]}
                     }
-        gtf = ['chr2\tgoodType\texon\t0\t10\t\t+\t\tgene_id "gene1";transcript_id "tr1";',
-               'chr2\tgoodType\texon\t20\t50\t\t+\t\tgene_id "gene1";transcript_id "tr1";',
-               'chr2\tbad_type\texon\t0\t10\t\t+\t\tgene_id "gene1";transcript_id "tr2";',
-               'chr3\tgoodType\texon\t0\t80\t\t-\t\tgene_id "gene2";transcript_id "tr1";'
+        gtf = ['chr2\tgoodType\texon\t0\t10\t\t+\t\t'
+               'gene_id "gene1";transcript_id "tr1";',
+               'chr2\tgoodType\texon\t20\t50\t\t+\t\t'
+               'gene_id "gene1";transcript_id "tr1";',
+               'chr2\tbad_type\texon\t0\t10\t\t+\t\t'
+               'gene_id "gene1";transcript_id "tr2";',
+               'chr3\tgoodType\texon\t0\t80\t\t-\t\t'
+               'gene_id "gene2";transcript_id "tr1";'
                ]
         bioType = "goodType"
         geneType = None
@@ -175,16 +192,16 @@ class GeneCoverageWigGtfTest(unittest.TestCase):
         maxGeneLength = None
         doPrintList = False
         generatedArray = createCoveragePercentiles(geneDict, coverageDict,
-                                             minGeneLength, maxGeneLength,
-                                             outputfilename,
-                                             doPrintList)
+                                                   minGeneLength, maxGeneLength,
+                                                   outputfilename,
+                                                   doPrintList)
         numpy.testing.assert_array_equal(outputArray, generatedArray)
         minGeneLength = 0
         maxGeneLength = 5
         generatedArray = createCoveragePercentiles(geneDict, coverageDict,
-                                             minGeneLength, maxGeneLength,
-                                             outputfilename,
-                                             doPrintList)
+                                                   minGeneLength, maxGeneLength,
+                                                   outputfilename,
+                                                   doPrintList)
         numpy.testing.assert_array_equal(outputArray, generatedArray)
 
 
