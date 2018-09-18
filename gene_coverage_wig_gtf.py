@@ -43,20 +43,24 @@ def main(cmdline=None):
         parser.exit(message="version {}\n".format(version))
 
     if args.source_type is not None:
-        logger.info('will only consider genes from source %s', args.source_type)
+        logger.info('will only consider genes from source %s',
+                    args.source_type)
 
     if args.max_gene_length is not None:
-        logger.info('will only consider genes longer than %s and shorter than %s',
-                    args.min_gene_length,
-                    args.max_gene_length)
+        logger.info(
+            'will only consider genes longer than %s and shorter than %s',
+            args.min_gene_length,
+            args.max_gene_length)
     else:
-        logger.info('will only consider genes longer than %s', args.min_gene_length)
+        logger.info('will only consider genes longer than %s',
+                    args.min_gene_length)
 
     if args.normalize:
         logger.info('will normalize scores')
 
     if args.gene_normalization in NORMALIZATIONS:
-        logger.info('Will normalize gene bins by %s', args.gene_normalization)
+        logger.info('Will normalize gene bins by %s',
+                    args.gene_normalization)
 
     if args.all_gene_models:
         logger.info('will only all genes')
@@ -69,7 +73,8 @@ def main(cmdline=None):
     geneDict = loadAnnotation(args.gtf, args.source_type, args.gene_type)
     logger.info('genes passed type filters %s', len(geneDict))
 
-    gene_coverage = loadGeneCoverage(args.filename, geneDict, args.all_gene_models)
+    gene_coverage = loadGeneCoverage(args.filename, geneDict,
+                                     args.all_gene_models)
 
     if args.print_list:
         geneListFilename = args.output + '.geneList'
@@ -91,15 +96,19 @@ def main(cmdline=None):
 def make_parser():
     parser = ArgumentParser()
     parser.add_argument('--gtf', required=True, help='GTF file name')
-    parser.add_argument('filename', help='file of type gedgraph or bigwig to compute coverage of')
-    parser.add_argument('-o', '--output', required=True, help='output file name')
+    parser.add_argument(
+        'filename',
+        help='file of type gedgraph or bigwig to compute coverage of')
+    parser.add_argument('-o', '--output', required=True,
+                        help='output file name')
     parser.add_argument('--source-type', help='source type name')
     parser.add_argument('--max-gene-length', default=None, type=int,
                         help='maximum gene length to consider')
     parser.add_argument('--min-gene-length', type=int, default=1000,
                         help='minimum gene length to consider')
-    parser.add_argument('--all-gene-models', default=False, action='store_true',
-                        help='use all gene models, not just the ones with a single model')
+    parser.add_argument(
+        '--all-gene-models', default=False, action='store_true',
+        help='use all gene models, not just the ones with a single model')
     parser.add_argument('--gene-type', help='limit to specified gene type')
     parser.add_argument('--print-list', default=False, action='store_true',
                         help='write gene ids considered to <outfile>.geneList')
@@ -108,12 +117,14 @@ def make_parser():
     parser.add_argument('--gene-normalization',
                         choices=['none'] + sorted(NORMALIZATIONS.keys()),
                         default='none',
-                        help='Per gene model normalization. sum is total number of reads assigned to gene. '\
-                        'max is the maximum gene bin size.')
+                        help='Per gene model normalization. sum is total '
+                             'number of reads assigned to gene. '
+                             'max is the maximum gene bin size.')
 
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='only report errors')
-    parser.add_argument('--version', action='store_true', help='report version number')
+    parser.add_argument('--version', action='store_true',
+                        help='report version number')
     return parser
 
 def loadAnnotation(filename, source_type, gene_type_filter):
@@ -152,7 +163,8 @@ def parseAnnotation(stream, source_type, gene_type_filter):
                 continue
         else:
             geneDict[geneID][transcriptID] = []
-        geneDict[geneID][transcriptID].append((chromosome, left, right, strand))
+        geneDict[geneID][transcriptID].append(
+            (chromosome, left, right, strand))
 
     logger.info('finished inputting annotation %s', len(geneDict.keys()))
     return geneDict
@@ -182,10 +194,13 @@ def loadGeneCoverage(filename, geneDict, all_gene_models):
     """
     instream = guessFileOpen(filename)
     if instream is None:
-        logger.error('Unable to open %s. Not a supported file-type', os.path.abspath(filename))
+        logger.error('Unable to open %s. Not a supported file-type',
+                     os.path.abspath(filename))
         raise RuntimeError('Unsupported file type')
 
-    if pyBigWig and isinstance(instream, pyBigWig.pyBigWig) and instream.isBigWig():
+    if pyBigWig and \
+       isinstance(instream, pyBigWig.pyBigWig) and \
+       instream.isBigWig():
         gene_coverage = readBigwig(instream, geneDict, all_gene_models)
     else:
         gene_coverage = readWiggle(instream, geneDict, all_gene_models)
@@ -207,7 +222,8 @@ def guessFileOpen(filename):
         stream.seek(0)
         return stream
     except ValueError as e:
-        logger.warning('%s is not a text file. %s', os.path.abspath(filename), str(e))
+        logger.warning('%s is not a text file. %s',
+                       os.path.abspath(filename), str(e))
 
     if pyBigWig:
         try:
@@ -266,7 +282,8 @@ def initializeCoverageDict(GeneDict, all_gene_models):
             genesToRemove.add(geneID)
             continue
         for transcriptID in GeneDict[geneID]:
-            for (chromosome, left, right, strand) in GeneDict[geneID][transcriptID]:
+            transcript = GeneDict[geneID][transcriptID]
+            for (chromosome, left, right, strand) in transcript:
                 for j in range(left, right):
                     CoverageDict.setdefault(chromosome, {})[j] = 0
     for geneID in genesToRemove:
@@ -274,11 +291,12 @@ def initializeCoverageDict(GeneDict, all_gene_models):
     return CoverageDict
 
 
-def createCoveragePercentiles(GeneDict, coverageDict,
-                        minGeneLength, maxGeneLength=None,
-                        geneListFilename=None,
-                        doNormalize=False,
-                        gene_normalization=None):
+def createCoveragePercentiles(
+        GeneDict, coverageDict,
+        minGeneLength, maxGeneLength=None,
+        geneListFilename=None,
+        doNormalize=False,
+        gene_normalization=None):
     outputArray = numpy.zeros(shape=100)
 
     geneListStream = open(geneListFilename, 'wt') if geneListFilename else None
@@ -295,7 +313,8 @@ def createCoveragePercentiles(GeneDict, coverageDict,
         bins = numpy.linspace(0, geneLength, num = 101, dtype=int)
         start = bins[0]
         for i, end in enumerate(bins[1:]):
-            counts = [coverageDict[chromosome][pos] for pos in NucleotideList[start:end]]
+            region = NucleotideList[start:end]
+            counts = [coverageDict[chromosome][pos] for pos in region]
             final_vector[i] = numpy.mean(counts)
             start = end
         assert len(final_vector) == 100
@@ -308,7 +327,8 @@ def createCoveragePercentiles(GeneDict, coverageDict,
                 geneListStream.write('\n')
 
             if gene_normalization in NORMALIZATIONS:
-                final_vector /= NORMALIZATIONS[gene_normalization](final_vector)
+                normalization_func = NORMALIZATIONS[gene_normalization]
+                final_vector /= normalization_func(final_vector)
 
             outputArray += final_vector
             geneNumber += 1
