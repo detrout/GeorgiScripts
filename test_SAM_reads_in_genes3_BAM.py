@@ -123,6 +123,43 @@ class SAMReadsInGenesBAMTest(unittest.TestCase):
             self.assertEqual(getReadMultiplicity(chromInfoList, alignment),
                              {'r0001': 3})
 
+    def test_pileup_reads_unique(self):
+        chromInfoList = [("chr1", 0, 3000)]
+        multiplicity = {'r0001': 1}
+        with prepare_bam('unique-read-nh.sam') as unique:
+            alignment = pysam.Samfile(unique, "rb")
+
+            counts, reads = pileUpReads(
+                chromInfoList, alignment, multiplicity)
+            self.assertEqual(counts, {'chr1': {0: 1}})
+            self.assertEqual(reads, 1)
+
+    def test_pileup_reads_mutli(self):
+        chromInfoList = [("chr1", 0, 3000)]
+        multiplicity = {'r0001': 3}
+        with prepare_bam('multireads-nh.sam') as multireads:
+            alignment = pysam.Samfile(multireads, "rb")
+
+            counts, reads = pileUpReads(
+                chromInfoList, alignment, multiplicity)
+            self.assertEqual(counts, {
+                'chr1': {
+                    0: 0.3333333333333333,
+                    10: 0.3333333333333333,
+                    20: 0.3333333333333333}})
+            self.assertEqual(reads, 1)
+
+    def test_pileup_reads_mutli(self):
+        chromInfoList = [("chr1", 0, 3000)]
+        multiplicity = {'r0001': 3}
+        with prepare_bam('multireads.sam') as multireads:
+            alignment = pysam.Samfile(multireads, "rb")
+
+            self.assertRaises(SystemExit,
+                              pileUpReads,
+                              chromInfoList,
+                              alignment,
+                              multiplicity)
 
 @contextmanager
 def prepare_bam(samfile):
