@@ -40,13 +40,23 @@ def FLAG(FLAG):
 def main():
 
     if len(sys.argv) < 5:
-        print('usage: python %s bedfilename chrField BAMfilename chrom.sizes outputfilename [-nomulti] [-RPM] [-stranded +|-] [-readLength min max] [-printSum] [-uniqueBAM] [-mappabilityNormalize mappability.wig readLength] [-noNH samtools]' % sys.argv[0])
+        print('usage: python %s bedfilename chrField BAMfilename chrom.sizes '
+              'outputfilename [-nomulti] [-RPM] [-stranded +|-] '
+              '[-readLength min max] [-printSum] [-uniqueBAM] '
+              '[-mappabilityNormalize mappability.wig readLength] '
+              '[-noNH samtools]' % sys.argv[0])
         print('Note: the script will divide multireads by their multiplicity')
         print('\t-printSum option only working together with the RPM option')
-        print('\tuse the uniqueBAM option if the BAM file contains only unique alignments; this will save a lot of memory')
-        print('\tuse the -mappabilityNormalize option to get mappability normalized RPKMs (it will not do anything to the RPMs; not that a mappability track that goes from 0 to the read length is assumed')
-        print('\tuse the -noNH option and supply a path to samtools in order to have the file converted to one that has NH tags')
-        print('\tthe stranded option will normalized against all reads, not just reads on the indicated strand')
+        print('\tuse the uniqueBAM option if the BAM file contains only '
+              'unique alignments; this will save a lot of memory')
+        print('\tuse the -mappabilityNormalize option to get mappability '
+              'normalized RPKMs (it will not do anything to the RPMs; '
+              'not that a mappability track that goes from 0 to the read '
+              'length is assumed')
+        print('\tuse the -noNH option and supply a path to samtools in order '
+              'to have the file converted to one that has NH tags')
+        print('\tthe stranded option will normalized against all reads, not '
+              'just reads on the indicated strand')
         sys.exit(1)
 
     bed = sys.argv[1]
@@ -74,7 +84,8 @@ def main():
         doReadLength = True
         minRL = int(sys.argv[sys.argv.index('-readLength')+1])
         maxRL = int(sys.argv[sys.argv.index('-readLength')+2])
-        print('will only consider reads between', minRL, 'and', maxRL, 'bp length')
+        print('will only consider reads between', minRL, 'and',
+              maxRL, 'bp length')
         ORLL = 0
 
     doPrintSum = False
@@ -109,10 +120,13 @@ def main():
             break
     except:
         if '-noNH' in sys.argv:
-            print('no NH: tags in BAM file, will replace with a new BAM file with NH tags')
+            print('no NH: tags in BAM file, will replace with a new BAM file '
+                  'with NH tags')
             samtools = sys.argv[sys.argv.index('-noNH')+1]
-            BAMpreporcessingScript = sys.argv[0].rpartition('/')[0] + '/bamPreprocessing.py'
-            cmd = 'python ' + BAMpreporcessingScript + ' ' + SAM + ' ' + SAM + '.NH'
+            BAMpreporcessingScript = sys.argv[0].rpartition('/')[0] + \
+                                     '/bamPreprocessing.py'
+            cmd = 'python ' + BAMpreporcessingScript + ' ' + SAM + ' ' + \
+                  SAM + '.NH'
             os.system(cmd)
             cmd = 'rm ' + SAM
             os.system(cmd)
@@ -223,10 +237,12 @@ def main():
                 for alignedread in samfile.fetch(chr, start, end):
                     i += 1
                     if i % 5000000 == 0:
-                        print(str(i/1000000) + 'M alignments processed', chr, start, end)
+                        print(str(i/1000000) + 'M alignments processed',
+                              chr, start, end)
                     fields = str(alignedread).split('\t')
                     if doReadLength:
-                        if len(alignedread.seq) > maxRL or len(alignedread.seq) < minRL:
+                        if len(alignedread.seq) > maxRL or \
+                           len(alignedread.seq) < minRL:
                             ORLL += 1
                             continue
                     if doUniqueBAM:
@@ -284,7 +300,8 @@ def main():
             for alignedread in samfile.fetch(chr, left, right):
                 fields2 = str(alignedread).split('\t')
                 if doReadLength:
-                    if len(alignedread.seq) > maxRL or len(alignedread.seq) < minRL:
+                    if len(alignedread.seq) > maxRL or \
+                       len(alignedread.seq) < minRL:
                         continue
                 ID = fields2[0]
                 if doStranded:
@@ -304,9 +321,11 @@ def main():
                     if noMulti and alignedread.opt('NH') > 1:
                         continue
                     reads += 1./alignedread.opt('NH')
-#                    print('NH, weight:', alignedread.opt('NH'), 1./alignedread.opt('NH'))
+#                    print('NH, weight:', alignedread.opt('NH'),
+#                          1./alignedread.opt('NH'))
         except:
-            print('problem with region:', chr, left, right, 'assigning 0 value')
+            print('problem with region:', chr, left, right,
+                  'assigning 0 value')
             reads = 0
         if doRPM:
             score = reads / normalizeBy
@@ -321,11 +340,13 @@ def main():
             RPMSum += score
         outline = line.strip() + '\t' + str(score)
         if doMappabilityCorrection:
-            outline = outline + '\t' + str(MappabilityRegionDict[chr][(left, right)])
+            outline = outline + '\t' + \
+                      str(MappabilityRegionDict[chr][(left, right)])
             if MappabilityRegionDict[chr][(left, right)] == 0:
                 outline = outline + '\t0'
             else:
-                outline = outline + '\t' + str(score/MappabilityRegionDict[chr][(left, right)])
+                outline = outline + '\t' + \
+                          str(score/MappabilityRegionDict[chr][(left, right)])
         outfile.write(outline + '\n')
 
     if doPrintSum:
