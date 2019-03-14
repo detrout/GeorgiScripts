@@ -140,7 +140,6 @@ def loadAnnotation(filename, source_type, gene_type_filter):
 
 def parseAnnotation(stream, source_type, gene_type_filter):
     geneDict = {}
-    entriesToDelete = set()
     for line in stream:
         if line.startswith('#'):
             continue
