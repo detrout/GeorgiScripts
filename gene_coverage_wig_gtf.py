@@ -292,6 +292,7 @@ def initializeCoverageDict(GeneDict, all_gene_models):
                     CoverageDict.setdefault(chromosome, {})[j] = 0
     for geneID in genesToRemove:
         del GeneDict[geneID]
+    logger.info('Removed %s multi-model genes', len(genesToRemove))
     return CoverageDict
 
 
