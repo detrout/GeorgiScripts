@@ -246,10 +246,10 @@ def readGtf(gtf):
 
 def writeOutput(outfile, totalReads, exonicReads, intronicReads):
     outfile.write('#Class\tFraction\n')
-    outfile.write('Exonic:{}\t\n'.format(exonicReads/totalReads))
-    outfile.write('Intronic:{}\t\n'.format(intronicReads/totalReads))
+    outfile.write('Exonic:\t{}\n'.format(exonicReads/totalReads))
+    outfile.write('Intronic:\t{}\n'.format(intronicReads/totalReads))
     intergenicReads = totalReads - exonicReads - intronicReads
-    outfile.write('Intergenic:{}\t\n'.format(intergenicReads/totalReads))
+    outfile.write('Intergenic:\t{}\n'.format(intergenicReads/totalReads))
 
 
 class pseudoSAM():
