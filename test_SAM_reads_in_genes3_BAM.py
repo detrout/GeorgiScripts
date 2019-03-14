@@ -102,9 +102,9 @@ class SAMReadsInGenesBAMTest(unittest.TestCase):
         exonicReads = 5.
         intronicReads = 3.
         writeOutput(distribution, totalReads, exonicReads, intronicReads)
-        self.assertEquals(distribution.read(), "Intergenic:0.2\t\n")
-        self.assertEquals(distribution.read(), "Intronic:0.3\t\n")
-        self.assertEquals(distribution.read(), "Exonic:0.5\t\n")
+        self.assertEquals(distribution.read(), "Intergenic:\t0.2\n")
+        self.assertEquals(distribution.read(), "Intronic:\t0.3\n")
+        self.assertEquals(distribution.read(), "Exonic:\t0.5\n")
         self.assertEquals(distribution.read(), "#Class\tFraction\n")
 
     def test_get_read_multiplicity_unique(self):
