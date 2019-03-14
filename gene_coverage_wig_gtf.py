@@ -88,6 +88,7 @@ def main(cmdline=None):
         geneListFilename,
         args.normalize,
         args.gene_normalization,
+        args.expression_threshold,
     )
 
     with open(args.output, 'wt') as outfile:
@@ -122,6 +123,8 @@ def make_parser():
                         help='Per gene model normalization. sum is total '
                              'number of reads assigned to gene. '
                              'max is the maximum gene bin size.')
+    parser.add_argument('--expression-threshold', default=0.0, type=float,
+                        help='at least one bin must be >= this threshold to be included')
 
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='only report errors')
@@ -301,7 +304,8 @@ def createCoveragePercentiles(
         minGeneLength, maxGeneLength=None,
         geneListFilename=None,
         doNormalize=False,
-        gene_normalization=None):
+        gene_normalization=None,
+        expression_threshold=0.0):
     outputArray = numpy.zeros(shape=100)
 
     geneListStream = open(geneListFilename, 'wt') if geneListFilename else None
@@ -324,7 +328,7 @@ def createCoveragePercentiles(
             start = end
         assert len(final_vector) == 100
         final_vector_sum = numpy.sum(final_vector)
-        if final_vector_sum > 0:
+        if final_vector_sum > 0 and numpy.max(final_vector) > expression_threshold:
             if geneListStream:
                 geneListStream.write(geneID)
                 geneListStream.write('\t')
