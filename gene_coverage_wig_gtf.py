@@ -100,7 +100,7 @@ def make_parser():
     parser.add_argument('--gtf', required=True, help='GTF file name')
     parser.add_argument(
         'filename',
-        help='file of type gedgraph or bigwig to compute coverage of')
+        help='file of type bedgraph or bigwig to compute coverage of')
     parser.add_argument('-o', '--output', required=True,
                         help='output file name')
     parser.add_argument('--source-type', help='source type name')
