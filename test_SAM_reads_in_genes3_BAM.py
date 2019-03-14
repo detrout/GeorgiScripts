@@ -67,7 +67,6 @@ class SAMReadsInGenesBAMTest(unittest.TestCase):
         gtf = []
         self.assertEqual({}, readGtf(gtf))
 
-
     def testReadGtfComment(self):
         gtf = [
             '# test',
@@ -161,6 +160,7 @@ class SAMReadsInGenesBAMTest(unittest.TestCase):
                               alignment,
                               multiplicity)
 
+
 @contextmanager
 def prepare_bam(samfile):
     with TemporaryDirectory('_sam_reads') as tempdir:
@@ -180,4 +180,3 @@ def prepare_bam(samfile):
                 os.unlink(bamfile)
             if os.path.exists(baifile):
                 os.unlink(baifile)
-
