@@ -11,17 +11,17 @@ class SAMReadsInGenesBAMTest(unittest.TestCase):
     def testGetChromInfoEmpty(self):
         chrominfo = []
         chromInfoList = []
-        self.assertEquals(chromInfoList, getChromInfo(chrominfo))
+        self.assertEqual(chromInfoList, getChromInfo(chrominfo))
 
     def testGetChromInfoSingle(self):
         chrominfo = ["chr1\t30"]
         chromInfoList = [("chr1", 0, 30)]
-        self.assertEquals(chromInfoList, getChromInfo(chrominfo))
+        self.assertEqual(chromInfoList, getChromInfo(chrominfo))
 
     def testGetChromInfoMulti(self):
         chrominfo = ["chr1\t30", "chr2\t10"]
         chromInfoList = [("chr1", 0, 30), ("chr2", 0, 10)]
-        self.assertEquals(chromInfoList, getChromInfo(chrominfo))
+        self.assertEqual(chromInfoList, getChromInfo(chrominfo))
 
     def testGetReadMultiplicityEmpty(self):
         pass
@@ -65,7 +65,7 @@ class SAMReadsInGenesBAMTest(unittest.TestCase):
 
     def testReadGtfEmpty(self):
         gtf = []
-        self.assertEquals({}, readGtf(gtf))
+        self.assertEqual({}, readGtf(gtf))
 
 
     def testReadGtfComment(self):
@@ -73,13 +73,13 @@ class SAMReadsInGenesBAMTest(unittest.TestCase):
             '# test',
             '# more tests',
         ]
-        self.assertEquals({}, readGtf(gtf))
+        self.assertEqual({}, readGtf(gtf))
 
     def testReadGtfNoExons(self):
         gtf = [
             'chr2\t\tCDS\t0\t10\t\t+\t\tgene_id "gene1";transcript_id "tr1";',
         ]
-        self.assertEquals({}, readGtf(gtf))
+        self.assertEqual({}, readGtf(gtf))
 
     def testReadGtfMulti(self):
         gtf = ['chr2\t\texon\t0\t10\t\t+\t\t'
@@ -94,7 +94,7 @@ class SAMReadsInGenesBAMTest(unittest.TestCase):
         geneDict = {'chr2': {'gene1': set([(0, 10), (20, 50)])},
                     'chr3': {'gene2': set([(0, 80)])}
                     }
-        self.assertEquals(geneDict, readGtf(gtf))
+        self.assertEqual(geneDict, readGtf(gtf))
 
     def testWriteOutput(self):
         distribution = pseudoFile([])
@@ -102,10 +102,10 @@ class SAMReadsInGenesBAMTest(unittest.TestCase):
         exonicReads = 5.
         intronicReads = 3.
         writeOutput(distribution, totalReads, exonicReads, intronicReads)
-        self.assertEquals(distribution.read(), "Intergenic:\t0.2\n")
-        self.assertEquals(distribution.read(), "Intronic:\t0.3\n")
-        self.assertEquals(distribution.read(), "Exonic:\t0.5\n")
-        self.assertEquals(distribution.read(), "#Class\tFraction\n")
+        self.assertEqual(distribution.read(), "Intergenic:\t0.2\n")
+        self.assertEqual(distribution.read(), "Intronic:\t0.3\n")
+        self.assertEqual(distribution.read(), "Exonic:\t0.5\n")
+        self.assertEqual(distribution.read(), "#Class\tFraction\n")
 
     def test_get_read_multiplicity_unique(self):
         chromInfoList = [("chr1", 0, 3000)]
