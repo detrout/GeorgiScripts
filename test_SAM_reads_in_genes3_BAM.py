@@ -3,7 +3,16 @@ import os
 from subprocess import check_call
 from contextlib import contextmanager
 from tempfile import TemporaryDirectory
-from SAM_reads_in_genes3_BAM import *
+import pysam
+from SAM_reads_in_genes3_BAM import (
+    getChromInfo,
+    getCounts,
+    getReadMultiplicity,
+    pileUpReads,
+    pseudoFile,
+    readGtf,
+    writeOutput,
+)
 
 
 class SAMReadsInGenesBAMTest(unittest.TestCase):
