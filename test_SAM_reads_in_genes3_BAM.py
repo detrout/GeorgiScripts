@@ -133,7 +133,7 @@ class SAMReadsInGenesBAMTest(unittest.TestCase):
             self.assertEqual(counts, {'chr1': {0: 1}})
             self.assertEqual(reads, 1)
 
-    def test_pileup_reads_mutli(self):
+    def test_pileup_reads_mutli_nh(self):
         chromInfoList = [("chr1", 0, 3000)]
         multiplicity = {'r0001': 3}
         with prepare_bam('multireads-nh.sam') as multireads:
